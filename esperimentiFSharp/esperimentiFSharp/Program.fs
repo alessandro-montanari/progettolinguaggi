@@ -9,8 +9,10 @@ open System
 
 let someFunction x y = x + y
 
+let add a b =
+    a+b
+
 [<EntryPoint>]
 let main args = 
     Console.WriteLine("Hello world!")
     0
-
