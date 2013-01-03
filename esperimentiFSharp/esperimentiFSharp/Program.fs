@@ -14,12 +14,22 @@ let printSomething =
     printfn "Something!!"
 
 // I nomi utilizzati devono essere dei parametri del costruttore o delle propriettà dell'oggetto   
+let form = new Form(Text="Welcome")    
+                                
+form.Visible <- true
 
-let form = new Form(Text="Welcome")                                          
-form.FormBorderStyle <- FormBorderStyle.Sizable
-form.Width <- 300
-form.Height <- 300
+do Application.Run(form)     
 
-do Application.Run(form)
-                                                        
-form.Text <- "Testo modificato"
+                                              
+                                                                                            
+//----- Network -----
+open System.IO
+open System.Net
+
+let req = WebRequest.Create("http://www.microsoft.com")
+let resp = req.GetResponse()
+let stream = resp.GetResponseStream()
+let reader = new StreamReader(stream)
+let html = reader.ReadToEnd()
+printfn "%s" html
+                                                   
