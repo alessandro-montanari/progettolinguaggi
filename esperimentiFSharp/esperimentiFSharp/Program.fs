@@ -28,12 +28,14 @@ do Application.Run(form)
 open System.IO
 open System.Net
 
-let req = WebRequest.Create("http://www.microsoft.com")
-let resp = req.GetResponse()
-let stream = resp.GetResponseStream()
-let reader = new StreamReader(stream)
-let html = reader.ReadToEnd()
-printfn "%s" html
+let http url =
+    let req = WebRequest.Create(url:string)
+    let resp = req.GetResponse()
+    let stream = resp.GetResponseStream()
+    let reader = new StreamReader(stream)
+    let html = reader.ReadToEnd()
+    html
+http "http://www.google.com"
 
 //---- Cap 3 ----
 
@@ -78,6 +80,53 @@ List.length valueList
 
 let initFunction i:int = i*4
 List.init 5 initFunction
-    
+List.map initFunction valueList
+List.map (fun el -> el*el) valueList
+        
 let isEven element = element % 2 = 0
 List.filter isEven rangeIntegers
+List.filter (fun el -> el % 2 = 0) rangeIntegers
+
+// OPTION VALUES
+// Rappresenta un valore (Some) o (OPPURE) assenza di valore (None)
+// Definizione di Option
+//  type 'T option =
+//      | None
+//      | Some of 'T
+
+let people = [ ("Adam", None);
+               ("Eve", None);
+               ("Cain", Some("Adam", "Eve"))]
+               
+let showParents (name, parents) = 
+    match parents with
+    | Some(dad,mom) -> printfn "%s has father %s and mother %s" name dad mom
+    | None -> printfn "%s has no parents!!" name
+showParents ("Cain", Some("Adam", "Eve"))
+
+// Gli Option values vengono spesso utilizzati per rappresentare il successo o il fallimento di una computazione
+let fetch url =
+    try Some (http url)
+    with :? System.Net.WebException -> None
+match (fetch "http://www.microsoft.com") with
+| Some html -> printfn "text = %s" html
+| None -> printfn "No page found"
+
+// FUNZIONI RICORSIVE
+//  let rec ...
+// A default le funzioni non sono ricorsive, occorre utilizzare la parola chiave rec per abilitarla.
+// Questo per rendere esplicite le funzioni che sono ricorsive per migliorare la manutenibilità del codice.
+let rec factorial (n:bigint) : bigint =
+    if n <= bigint 1 then bigint 1
+    else n * factorial (n-bigint 1)
+factorial (bigint 70000)
+
+
+
+
+
+
+
+
+
+
