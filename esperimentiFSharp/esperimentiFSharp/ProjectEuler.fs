@@ -50,8 +50,35 @@ let rec fibonacci n =
 List.init 34 fibonacci |> List.filter (fun el -> el % 2 = 0 ) |> List.sum
 
 
+// Problem 3 ----------------------------------
+// The prime factors of 13195 are 5, 7, 13 and 29.
+// What is the largest prime factor of the number 600851475143 ?
 
-    
+// Un metodo per verificare se un numero n è primo si definisce test di primalità. Un metodo che discende direttamente dalla definizione 
+// è controllare che non sia diviso da nessun numero minore di n o, in modo più efficiente, da nessun primo minore di n. Ad esempio, per 
+// provare che 11 è primo, basta osservare che non è diviso da 2, 3, 5 e 7 (che sono i primi minori di 11).
+
+let rec checkDivisibility number sequence =
+    match Seq.length sequence with
+    | 0 -> false
+    | n -> if number % Seq.head sequence = 0 then
+                true
+           else
+                checkDivisibility number (Seq.skip 1 sequence)
+        
+checkDivisibility 12 (seq [ 2; 3; 5; 7; 11 ])
+
+let rec innerLoop (sequence : seq<int>) (primes : seq<int>) =
+    match Seq.length sequence with
+    | 0 -> primes
+    | n -> if (checkDivisibility (Seq.head sequence) primes) = false then
+               let primes2 = Seq.append primes (seq [head])
+               primes2
+
+//let primeGenerator n =
+//    let sequenceNoOdd = seq { 3 .. n } |> Seq.filter (fun el -> el % 2 <> 0)
+//    let primes = Seq.append (seq [2]) (seq [])
+//    innerLoop sequenceNoOdd primes
     
     
     
