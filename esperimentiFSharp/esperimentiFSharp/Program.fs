@@ -249,14 +249,58 @@ let rec allFiles2 dir =
           for subdir in Directory.GetDirectories dir do
             yield! allFiles2 dir }                          // il "!" indica che l'ultimo (e solo l'ultimo può essere così) yeild genera una sequenza invece che un singolo valore
             
+// Tutti i modi visti per costruire le sequences possono essere utilizzati anche per costruire liste o array utilizzando rispettivamente [ ] e [| |]
+let array = [| for i in 1 .. 10 -> (i, i*i) |]
 
 
+// TYPE DEFINITIONS
 
+// Type Abbreviations
+// Sono "espansi" ai tipi sottostanti durante la compilazione, in pratica da un'altro linguaggio .NET non si vedono le abbreviazioni
+type index = int
+let i:index = 6
 
+type StringMap<'T> = Microsoft.FSharp.Collections.Map<string, 'T>
 
+// Records (sono estendibili)
+// Di solito utilizzati per restituire valori dalle funzioni quando devono essere restituiti molti valori diversi
 
+type Person =                               // Definizione
+    { Name: string
+      DateOfBirth: System.DateTime; }
+let ale = { Name = "Ale"; DateOfBirth = new System.DateTime(1988, 6, 6) }                 // Uso
+( { Name = "Ale"; DateOfBirth = new System.DateTime(1988, 6, 6) } : Person )              // (in caso di abiguità nei nomi dei campi)
+ale.DateOfBirth
 
+let aleClone = { ale with Name = "AleClone" }
 
+// Discriminated Unions (non sono estendibili, cioè le alternative definite sono fisse)
 
+type Route = int
+type Make = string
+type Model = string
+type Transport =
+    | Car of Make*Model
+    | Bicycle
+    | Bus of Route
+    
+let car1 = Car ("BMW", "360") 
+let averageSpeed trasp =
+    match trasp with
+    | Car _ -> 50
+    | Bicycle -> 10
+    | Bus _ -> 35
+averageSpeed car1
 
+type Proposition =
+    | True
+    | And of Proposition*Proposition
+    | Or of Proposition*Proposition
+    | Not of Proposition
+let rec eval (p:Proposition) =
+    match p with
+    | True -> true
+    | And (p1, p2) -> eval p1 && eval p2
+    | Or (p1, p2) -> eval p1 || eval p2    
+    | Not p1 -> not (eval p1)
 
