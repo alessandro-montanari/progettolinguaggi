@@ -175,6 +175,88 @@ measureTime (fun () -> http "http://www.google.com")
 
 
 // PATTERN MATCHING
+// Il controllo dei pattern avviene dall'alto verso il basso e appena si ha un match si valuta l'espressione alla destra di "->"
+// Il compilatore si accorge dei match mancanti e di quelli ridondanti (warning)
+
+let urlFilter url agent =
+    match (url, agent) with         // Tupla
+    | "http://www.google.com", 99 -> true
+    | "http://www.microsoft.com", _ -> false
+    | _, 86 -> true
+    | _ -> false
+
+// E' possibile utilizzare delle condizioni come guadia in caso di matching (keyword when)
+let sing x =
+    match x with
+    | _ when x < 0 -> -1
+    | _ when x > 0 -> 1
+    | _ -> 0
+    
+let checkHead list =
+    match list with
+    | 3 :: _ -> printfn "The first element is a 3"
+    | n :: _ when n < 0 -> printfn "The first element is negative"
+    | _ :: _ | [] -> failwith "incorrect first element"
+
+let checkTail list =
+    match list with
+    | _ :: t when t = [ 4; 5; 6 ] -> printfn "OK!"
+    | [] | _ :: _ -> failwith "error"
+
+
+// SEQUENCES
+// Una struttura che è iterabile (tipo System.Collections.Generic.IEnumerable<type> in .NET)
+// Le sequences sono calcolate on demand (lazy) nel senso che i valori sono calcolati e restituiti solo se necessario, solo se si accede a quei valori
+
+seq {0 .. 2}
+seq {1I .. 10000000000000000I}
+let intSeq = seq {1 .. 2 .. 100}
+
+// Iteration
+for i in intSeq do
+    printfn "i = %d" i
+intSeq |> Seq.iter (fun el -> printfn "i = %d" el)
+
+Seq.delay (fun () -> seq {1.0 .. 1000.0} ) |> Seq.iter (fun el -> printfn "i = %e" el)
+
+open System.IO
+let rec allFiles dir =
+    Seq.append
+        (dir |> Directory.GetFiles)
+        (dir |> Directory.GetDirectories |> Seq.map allFiles |> Seq.concat)     // Seq.map applica la funzione on demand, il che vuoldire che le sottodirectory non sono lette fino a che non è strettamente necessario
+allFiles @"/dev" |> Seq.length
+
+// Sequence Expressions
+
+// for
+let squares = seq { for i in 0 .. 10 -> (i, i*i) }                      // Modo più compatto di scrivere quello sotto
+let squares2 = seq { 0 .. 10 } |> Seq.map (fun el -> (el, el*el) )
+
+// Dopo la keyword "for" ci può essere un pattern
+// Dopo la keyword "in" ci può essere una sequence o qualsiasi cosa che supporta GetEnumerator
+seq { for (i, square) in squares -> (i, square, i*square) }
+
+// Altri usi delle Sequence Expressions
+let coordinates n =
+    seq { for row in 1 .. n do
+            for col in 1 .. n do
+                if(row+col) % 2 = 0 then
+                    yield (row,col) }
+
+let rec allFiles2 dir =
+    seq { for file in Directory.GetFiles dir do
+            yield file
+          for subdir in Directory.GetDirectories dir do
+            yield! allFiles2 dir }                          // il "!" indica che l'ultimo (e solo l'ultimo può essere così) yeild genera una sequenza invece che un singolo valore
+            
+
+
+
+
+
+
+
+
 
 
 
