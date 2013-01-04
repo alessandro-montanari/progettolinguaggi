@@ -116,17 +116,65 @@ match (fetch "http://www.microsoft.com") with
 //  let rec ...
 // A default le funzioni non sono ricorsive, occorre utilizzare la parola chiave rec per abilitarla.
 // Questo per rendere esplicite le funzioni che sono ricorsive per migliorare la manutenibilità del codice.
-let rec factorial (n:bigint) : bigint =
+let rec factorial n =
+    if n <= 1 then 1
+    else n * factorial (n-1)            // Qui le parentesi ci vogliono, altrimenti va in stack overflow
+factorial 7
+
+let rec factorialBigInt (n:bigint) : bigint =
     if n <= bigint 1 then bigint 1
-    else n * factorial (n-bigint 1)
-factorial (bigint 70000)
+    else n * factorialBigInt (n-bigint 1)
+factorialBigInt (bigint 7000)
+
+// NB: per chiamare una funzione che non prende parametri occorre specificare il valore unit (void) tramite due parentesi tonde "()"
+// altrimenti, solo il nome della funzione rappresenta la funzione stessa la quale però non viene invocata
 
 
+// FUNCTION VALUES
+
+let sites = [ "http://www.live.com"; "http://www.microsoft.com" ]
+let fetch url = (url, http url)
+List.map fetch sites                    // Si noti come si passa la funzione "fetch" ad un'altra funzione (List.map viene anche chiamata aggregate operators)
+                                        // Alcuni tipi di dati dispongono anche del metodo Map che ha lo stesso significato di List.map ad esempio ( sitest.Map (fun ...) )
+
+// Anonymous function values
+let primeCubes = List.map (fun x -> x*x*x) [2; 3; 5; 7]     // Qui la funzione è anonima e appare come una espressione piuttosto che tramite let
+
+let resultOfFetch = List.map (fun url -> (url, http url)) sites
+let lenghtOfSites = List.map (fun (_,html) -> String.length html) resultOfFetch     // Pattern matching per utilizzare la tupla + wildcard per ignorare il primo elemento della tupla
+
+let delimiters = [| ' '; '\n'; '\t'; '<'; '>'; '=' |]
+let getWords (text:string) = text.Split delimiters
+let getStats site =
+    let url = "http://" + site
+    let html = http url
+    let nWords = html |> getWords                                       // Operatore pipeline, aiuta la leggibilità e il sistema di type inference
+    let nRef = nWords |> Array.filter (fun el -> el.Equals "href")      // Si poteva anche scrivere fun el -> el = "href" (= non è l'assegnamento in questo caso)
+    (site, html.Length, nWords.Length, nRef.Length)
+List.map getStats [ "www.google.com"; "www.microsoft.com"; "www.facebook.com" ]
+
+// Composizione di funzioni (operatore >>)
+// Permette di comporre diverse funzioni per ottenere così una nuova funzione in un modo più leggibile
+let countLinks = getWords >> Array.filter (fun el -> el = "href") >> Array.length       // Non occorre indicare che countLinks prende un parametro in ingresso 
+                                                                                        // perché viene inferito da getWords
+// Partial apllication
+// E' possibile creare nuove funzioni fissando (bind) uno o più parametri di una funzione già esistente
+let add x y = x + y
+let add10 = add 10
+
+let addTuples (x, y) (t, z) = (x+t, y+z)
+let addTuples10 = addTuples (10, 10)
+
+open System
+let measureTime f =
+    let start = DateTime.Now
+    let res = f ()
+    let finish = DateTime.Now
+    (res, finish-start)
+measureTime (fun () -> http "http://www.google.com")
 
 
-
-
-
+// PATTERN MATCHING
 
 
 
