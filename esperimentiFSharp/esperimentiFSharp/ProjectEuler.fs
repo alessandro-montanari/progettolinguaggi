@@ -54,6 +54,12 @@ List.init 34 fibonacci |> List.filter (fun el -> el % 2 = 0 ) |> List.sum
 // The prime factors of 13195 are 5, 7, 13 and 29.
 // What is the largest prime factor of the number 600851475143 ?
 
+// Proprietà dei numeri primi utilizzate:
+//  - Il più piccolo numero primo è 2; tutti gli altri sono dispari, in quanto ogni numero pari è divisibile per 2.
+//  - Se si utilizza il metodo delle divisioni per dimostrare la primalità di un numero X si può evitare di controllare la divisibilità di X per 
+//      numeri maggiori della radice quadrata di X.
+//          -> sqrt(600851475143) = 775146,0992
+
 // Un metodo per verificare se un numero n è primo si definisce test di primalità. Un metodo che discende direttamente dalla definizione 
 // è controllare che non sia diviso da nessun numero minore di n o, in modo più efficiente, da nessun primo minore di n. Ad esempio, per 
 // provare che 11 è primo, basta osservare che non è diviso da 2, 3, 5 e 7 (che sono i primi minori di 11).
@@ -61,27 +67,26 @@ List.init 34 fibonacci |> List.filter (fun el -> el % 2 = 0 ) |> List.sum
 let rec checkDivisibility number sequence =
     match Seq.length sequence with
     | 0 -> false
-    | n -> if number % Seq.head sequence = 0 then
-                true
-           else
-                checkDivisibility number (Seq.skip 1 sequence)
-        
-checkDivisibility 12 (seq [ 2; 3; 5; 7; 11 ])
+    | n when (float (Seq.head sequence)) < System.Math.Sqrt (float number) -> false 
+    | n when number % Seq.head sequence = 0 -> true
+    | _ -> checkDivisibility number (Seq.skip 1 sequence)
 
 let rec innerLoop (sequence : seq<int>) (primes : seq<int>) =
     match Seq.length sequence with
     | 0 -> primes
-    | n -> if (checkDivisibility (Seq.head sequence) primes) = false then
-               let primes2 = Seq.append primes (seq [head])
-               primes2
+    | _ when checkDivisibility (Seq.head sequence) primes = false -> innerLoop (Seq.skip 1 sequence) (Seq.append primes (seq [(Seq.head sequence)])) 
+    | _ -> innerLoop (Seq.skip 1 sequence) primes
+
+let primes = innerLoop (seq { for i in 3 .. 10000 do if i % 2 <> 0 then yield i }) (seq [2])
+let maxPrme = primes |> Seq.filter (fun seqEl -> 600851475 % seqEl = 0 ) |> Seq.max
+
 
 //let primeGenerator n =
 //    let sequenceNoOdd = seq { 3 .. n } |> Seq.filter (fun el -> el % 2 <> 0)
 //    let primes = Seq.append (seq [2]) (seq [])
 //    innerLoop sequenceNoOdd primes
     
-    
-    
+   
     
     
     

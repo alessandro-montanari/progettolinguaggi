@@ -3,14 +3,12 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="esperimentiFSharp/ProjectEuler.fs">
     <Files>
       <File FileName="esperimentiFSharp/Program.fs" Line="82" Column="25" />
-      <File FileName="esperimentiFSharp/ProjectEuler.fs" Line="75" Column="13" />
+      <File FileName="esperimentiFSharp/ProjectEuler.fs" Line="74" Column="53" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="esperimentiFSharp" expanded="True">
-            <Node name="ProjectEuler.fs" selected="True" />
-          </Node>
+        <State expanded="True" selected="True">
+          <Node name="esperimentiFSharp" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">
