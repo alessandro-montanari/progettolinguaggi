@@ -100,7 +100,7 @@ let rec primesGenerator sequence sieveChain primes =
 primesGenerator ( seq { 3 .. 1000 } ) (sieveGenerator 2) (seq [2]) |> Seq.iter ( fun x -> printfn "%d" x )
 
 
-//Generatore numeri primi (SOLUZIONE) - http://learningfsharp.blogspot.it/2010/12/project-euler-problem-3.html
+//Generatore numeri primi (SOLUZIONE) - Crivello di eratostene - http://learningfsharp.blogspot.it/2010/12/project-euler-problem-3.html
 
 open System.Collections
 open System.Numerics
