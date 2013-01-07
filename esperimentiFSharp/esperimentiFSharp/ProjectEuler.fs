@@ -100,4 +100,51 @@ let rec primesGenerator sequence sieveChain primes =
 primesGenerator ( seq { 3 .. 1000 } ) (sieveGenerator 2) (seq [2]) |> Seq.iter ( fun x -> printfn "%d" x )
 
 
-//Generatore numeri primi - Crivello di eratostene
+//Generatore numeri primi (SOLUZIONE) - http://learningfsharp.blogspot.it/2010/12/project-euler-problem-3.html
+
+open System.Collections
+open System.Numerics
+
+let getPrimesInt64 max =
+  let primes = new BitArray(max+1, true)
+  seq { 2 .. max } |> Seq.filter ( fun n ->
+                                            if primes.[int n] then
+                                              for i in bigint n * bigint n..bigint n..bigint max do primes.[int i] <- false     // Mette a "false" tutte le posizioni mutiple di "n"
+                                            primes.[int n] )             // Dato che l'elemento "n" è true l'elemento viene inserito nella lista risultante     
+    
+let primes = getPrimesInt64 1000000
+
+let FindLargestPrimeFactor (n:BigInteger) =
+    let primes = getPrimesInt64 775146
+    let filteredList = primes |> Seq.filter(fun x -> n % bigint x = 0I)
+    Seq.max filteredList
+
+let resultingPrimeFactor = FindLargestPrimeFactor 600851475143I
+
+
+// Generatore numeri primi - http://stackoverflow.com/questions/5404692/prime-number-lazy-sequence
+
+let isPrime (number : bigint) =
+    seq { bigint(2) .. bigint(System.Math.Sqrt(float number))}
+    |> Seq.exists (fun x -> number % x = 0I )
+    |> not
+
+let primes =
+    Seq.initInfinite (fun i -> i + 2) //need to skip 0 and 1 for isPrime
+    |> Seq.map (fun i -> bigint(i))
+    |> Seq.filter isPrime
+
+primes |> Seq.take 100 |> Seq.iter ( fun x -> printfn "%A" x )
+
+
+
+
+
+
+
+
+
+
+
+
+
