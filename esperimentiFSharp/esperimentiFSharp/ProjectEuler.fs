@@ -137,12 +137,27 @@ let primes =
 primes |> Seq.take 100 |> Seq.iter ( fun x -> printfn "%A" x )
 
 
+// Problem 4 ----------------------------------
+// A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 99.
+// Find the largest palindrome made from the product of two 3-digit numbers.
 
-
-
-
-
-
+let isPalindrome (str:string) =
+    let max = str.Length - 1
+    let indexes = seq { for i in 0 .. max/2 -> (i, max - i) }
+    let mutable res = true
+    for (i, j) in indexes do  
+        if str.[i] <> str.[j] then
+            res <- false
+    res
+    
+//function for reversing a string
+let reverse (s:string) = new string(s |> Seq.toArray |> Array.rev)
+                
+let maxPalindrome = seq { for i in 100 .. 999 do                            // Partiamo da 100 perché viene chiesto il numero formato dal prodotto di numeri a 3 digit
+                            for j in i .. 999 do                            // Con a<=b si diminuiscono i duplicati
+                                yield i*j } 
+                                |> Seq.filter ( fun el -> isPalindrome (string el) )
+                                |> Seq.max               
 
 
 
