@@ -304,3 +304,79 @@ let rec eval (p:Proposition) =
     | Or (p1, p2) -> eval p1 || eval p2    
     | Not p1 -> not (eval p1)
 
+
+
+//---- Cap 4 ----
+
+// IMPERATIVE LOOPING
+//  - for var = start-expr to end-expr do expr      (estremi inclusi)
+//  - for pattern in expr do expr                   (per uso in sequences)
+//  - while expr do expr
+// Tutti e tre con tipi di ritorno dell'espressione del body = unit
+
+
+// MUTABLE RECORDS
+// Se uno o più campi di un record sono marcati come mutable
+type MutableRecord =
+    {   mutable Total : int;
+        mutable State : bool;
+        Name : string
+    }
+let record = { Total = 54; State = true; Name = "test" }
+record.Total <- 100
+
+// MUTABLE REFERENCE CELLS
+// Molto simili ai puntatori del C ma zenza l'aritmetica
+// I valori vengono memorizzati nell'heap e sono utilizzati nelle chiusure (vedi sotto)
+
+// Creazione: "ref"
+let valore = ref 5
+
+// Lettura: "!" oppure ".contents" oppure ".Value"
+!valore
+valore.contents
+valore.Value
+
+// Modifica: ":=" 
+valore := !valore + 2
+
+
+// HIDING MUTABLE DATA
+// Nella programmazione funzionale si cerca di incapsulare i dati variabili all'interno di confini ben definiti (funzioni e chiusure -> ambiente lessicale)
+
+// CHIUSURA:    Nei linguaggi di programmazione, una chiusura è una astrazione che combina una funzione con le variabili libere presenti 
+//              nell'ambiente in cui è definita secondo le regole di scope del linguaggio. Le variabili libere dell'ambiente rimangono accessibili per 
+//              tutta la durata di vita (extent) della chiusura e pertanto persistono nel corso di invocazioni successive della chiusura. Di conseguenza, 
+//              le variabili della chiusura possono essere usate per mantenere uno stato ed emulare costrutti della programmazione a oggetti.
+//              Le chiusure si rivelano utili quando una funzione ha bisogno di "ricordare" informazioni: ad esempio un parametro specifico per un'operazione 
+//              di confronto, oppure il riferimento ad un widget in un callback di un'interfaccia grafica.
+
+// Le variabili locali in F# (e in generale "in teoria") non possono essere catturate in chiusure, infatti se si utilizza una variabile locale "mutable" al posto di ref
+// il compilatore segnala il seguente errore: " ... Mutable variables cannot be captured by closures. Consider eliminating this use of mutation or using a heap-allocated 
+// mutable reference cell via 'ref' and '!'. "
+// Infatti le variabili locali essendo allocate nello stack vengono distrutte dopo la chiamata alla funzione, mentre le variabili catturate in una chiusura devono 
+// sopravvivere e quindi di solito vengono allocate nell'heap. 
+// 
+let generateStamp =
+    let count = ref 0                               // Questa riga viene eseguta solo UNA volta all'atto della definizione di "generateStamp"
+    ( fun () -> count := !count + 1; !count ) 
+
+// In questo caso il valore x viene catturato non appena "f" viene definita e dato che x non può cambiare la funzione f utilizzerà sempre il valore 2.
+// NB: anche se si modifica il valore di x e poi si riesegue l'esperssione "let x = 6" la funzione "f" continua ad utilizzare il "vecchio" valore di x che 
+// è proprio quello catturato nella chiusura, se invece si utilizza una reference cell il valore restituito da "f" cambia se si cambia il valore di x
+let x = 2
+let f num = num + x 
+
+let y = ref 4
+let g num = num + !y
+g 5
+y := !y + 2
+g 5
+
+
+
+
+
+
+
+

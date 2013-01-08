@@ -1,15 +1,15 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="esperimentiFSharp/ProjectEuler.fs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="esperimentiFSharp/Program.fs">
     <Files>
-      <File FileName="esperimentiFSharp/Program.fs" Line="82" Column="25" />
-      <File FileName="esperimentiFSharp/ProjectEuler.fs" Line="155" Column="1" />
+      <File FileName="esperimentiFSharp/Program.fs" Line="339" Column="29" />
+      <File FileName="esperimentiFSharp/ProjectEuler.fs" Line="148" Column="118" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="esperimentiFSharp" expanded="True">
-            <Node name="ProjectEuler.fs" selected="True" />
+            <Node name="Program.fs" selected="True" />
           </Node>
         </State>
       </Pad>

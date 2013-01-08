@@ -144,8 +144,8 @@ primes |> Seq.take 100 |> Seq.iter ( fun x -> printfn "%A" x )
 let isPalindrome (str:string) =
     let max = str.Length - 1
     let indexes = seq { for i in 0 .. max/2 -> (i, max - i) }
-    let mutable res = true
-    for (i, j) in indexes do  
+    let mutable res = true                                      // Devo usare "mutable" perché i loop (for e while) sono intesi per la programmazione imperativa
+    for (i, j) in indexes do                                    //  e DEVONO avere un tipo di ritorno del body pari a unit
         if str.[i] <> str.[j] then
             res <- false
     res
