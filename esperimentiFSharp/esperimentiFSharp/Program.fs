@@ -467,11 +467,92 @@ let sparseMap = new Dictionary<(int * int), float>()
 sparseMap.[(0,2)] <- 4.0
 
 
+// ECCEZIONI
+
+// Lancio
+(raise (System.InvalidOperationException("not today")) : unit)
+(failwith "error" : unit)
+(invalidArg "x" "y" : unit)
+
+// Cattura
+// NB: "try .. with .. " è una singola espressione e quindi è possibile restituire una valore in entrambi i rami
+open System.IO
+open System.Net
+
+let http url =
+    try
+        let req = WebRequest.Create(url:string)
+        let resp = req.GetResponse()
+        let stream = resp.GetResponseStream()
+        let reader = new StreamReader(stream)
+        let html = reader.ReadToEnd()
+        html
+    with
+        | :? System.UriFormatException -> ""
+        | :? System.Net.WebException -> ""
+        | exn -> ""                         // Cattura qualsiasi eccezione. "exn" è un'abbreviazione per System.Exception
+http "aaa"
+
+// Finally
+let httpViaTryFinally url =
+    let req = WebRequest.Create(url:string)
+    let resp = req.GetResponse()
+    try
+        let stream = resp.GetResponseStream()
+        let reader = new StreamReader(stream)
+        let html = reader.ReadToEnd()
+        html
+    finally
+        resp.Close()
+
+// In F# non esiste il costrutto "try .. with .. finally .."
+// anche perché di solito per pulire le risorse si utilizza il binding "use" che chiude le risorse 
+// alla fine dello scope di quel binding
+let httpViaUseBinding url =
+    let req = WebRequest.Create(url:string)
+    use resp = req.GetResponse()
+    let stream = resp.GetResponseStream()
+    let reader = new StreamReader(stream)
+    let html = reader.ReadToEnd()
+    html
+
+// Definire delle nuove eccezioni
+exception BlockedURL of string
+try
+    raise(BlockedURL("..."))
+with
+    | BlockedURL(url) -> printfn "Bloccato! url = %s" url               // Pattern matching in "| BlockedURL(url)"
 
 
+// BASIC I/O
 
+// Files
+// Si utilizzano principalmente le classi di .NET System.IO.File e System.IO.Directory
+open System.IO
 
+File.WriteAllLines("test.txt", [| "line 1"; "line 2" |])
+File.ReadAllLines("test.txt")
+File.Delete("test.txt")
 
+// Stream
+let outStream = File.CreateText("test.txt")
+outStream.WriteLine("Line a")
+outStream.WriteLine("Line b")
+outStream.Close()
 
+let inStream = File.OpenText("test.txt")
+inStream.ReadLine()
+inStream.Close()
+ 
+// Nel seguente modulo ci sono diverse funzioni di formattazione 
+//  Microsoft.FSharp.Core.Printf
 
-
+// Codici di formattazione più comuni
+//  - &b : boolean
+//  - %s : string
+//  - %d : int
+//  - %e : float
+//  - %A : Any Type
+//  - %O : Usa Object.ToString()
+//  - %a : prende due argomenti, uno è la funzione di formattazione e uno è il valore dal formattare
+//  - %t : esegue la funzione passata come parametro
