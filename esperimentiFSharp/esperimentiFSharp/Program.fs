@@ -493,6 +493,14 @@ let http url =
         | exn -> ""                         // Cattura qualsiasi eccezione. "exn" è un'abbreviazione per System.Exception
 http "aaa"
 
+// L'operatore :? può essere usato anche con il costrutto "match ... with"
+let switchOnType (a:obj) =          // "obj" abbreviazione per System.Object
+    match a with
+        | null                      -> printf "null"
+        | :? System.Exception as e  -> printf "Eccezione %s" e.Message
+        | :? System.Int32 as i      -> printf "Intero %d" i
+        | _                         -> printf "Altro"
+
 // Finally
 let httpViaTryFinally url =
     let req = WebRequest.Create(url:string)
@@ -556,3 +564,23 @@ inStream.Close()
 //  - %O : Usa Object.ToString()
 //  - %a : prende due argomenti, uno è la funzione di formattazione e uno è il valore dal formattare
 //  - %t : esegue la funzione passata come parametro
+
+
+// Side effects e lazy computation
+// Programmare in uno stile imperativo e voler utilizzare la valutazione lazy (ad esempio restituendo una funzione che esegue la computazione)
+// potrebbe portare a degli errori come nell'esempio successivo:
+open System.IO 
+let readr1, reader2 =
+    let reader = new StreamReader(File.OpenRead("test.txt"))
+    let firstReader() = reader.ReadLine()
+    let secondReader() = reader.ReadLine()
+    reader.Close()                              //Chiudo lo stream ma restituisco le due funzioni che lo usano
+    firstReader, secondReader
+
+// Una soluzione potrebbe essere quella di utilizzare la keyword use all'interno di una sequence expression, così che lo stream sia chiuso automaticamente (vedi cap 8)
+let reader =
+    seq {   use reader = new StreamReader(File.OpenRead("test.txt"))
+            while not reader.EndOfStream do
+                yield reader.ReadLine() }
+
+
