@@ -252,6 +252,13 @@ let rec allFiles2 dir =
 // Tutti i modi visti per costruire le sequences possono essere utilizzati anche per costruire liste o array utilizzando rispettivamente [ ] e [| |]
 let array = [| for i in 1 .. 10 -> (i, i*i) |]
 
+// Funzione Seq.fold
+// Applica una funzione ad ogni elemento della sequenza portandosi avanti (elemento dopo elemento) lo stato della computazione,
+// infatti la funzione prende in ingresso uno "lo stato corrente" e un elemento della sequenza e calcola il nuovo stato
+let sumSeq sequence1 = Seq.fold (fun acc elem -> acc + elem) 0 sequence1
+Seq.init 10 (fun index -> index * index)
+|> sumSeq
+|> printfn "The sum of the elements is %d."
 
 // TYPE DEFINITIONS
 
@@ -306,7 +313,7 @@ let rec eval (p:Proposition) =
 
 
 
-//---- Cap 4 ----
+//---- Cap 4 ---- IMPERATIVE PROGRAMMING
 
 // IMPERATIVE LOOPING
 //  - for var = start-expr to end-expr do expr      (estremi inclusi)
@@ -362,7 +369,7 @@ let generateStamp =
     ( fun () -> count := !count + 1; !count ) 
 
 // In questo caso il valore x viene catturato non appena "f" viene definita e dato che x non può cambiare la funzione f utilizzerà sempre il valore 2.
-// NB: anche se si modifica il valore di x e poi si riesegue l'esperssione "let x = 6" la funzione "f" continua ad utilizzare il "vecchio" valore di x che 
+// NB: anche se si modifica il valore di x rieseguendo l'esperssione "let x = 6" la funzione "f" continua ad utilizzare il "vecchio" valore di x che 
 // è proprio quello catturato nella chiusura, se invece si utilizza una reference cell il valore restituito da "f" cambia se si cambia il valore di x
 let x = 2
 let f num = num + x 
@@ -372,6 +379,94 @@ let g num = num + !y
 g 5
 y := !y + 2
 g 5
+
+
+// ARRAY
+// Gli array sono mutable e sono zero-indexed
+// NB: array di "value types" sono allocati in modo "piatto" ossia viene allocato un solo oggetto. 
+// In .NET sono value types tutti i tipi primitivi e altri (chiamati di solito struct) 
+// IN F# è possibile definire dei value types (vedi capitolo 6) ma tutti gli altri tipi (esclusi i primitivi)
+// sono dei reference type, come ad esempio i record, le tuple, i discriminated unions e le classi
+
+let arr = [| 1; 2; 3 |]
+arr.[1]
+arr.[1] <- 5
+arr
+
+// Possono essere costruiti con la sintassi delle sequence expressions
+let arr2 = [| 1 .. 100 |]
+let arr3 = [| for i in 1 .. 100 do 
+                if i % 2 = 0 then
+                    yield i |]
+let arr4 = [| for i in 1 .. 100 -> (i*i) |]
+
+// Nel modulo Array ci sono diverse funzioni utili e gli Aggregate Operators
+arr4 |> Array.iter (fun el -> printfn "%d" el)
+arr4 |> Array.map (fun el -> (el, el*el) )
+let revArr4 = Array.rev arr4
+
+// Slice Notation
+// In questi casi vengono generati nuovi array
+arr4.[3..9]
+arr4.[3..]
+arr4.[..5]
+
+// Array bidimensionali
+let arr2D = Array2D.init 5 5 (fun i j -> i*j)
+arr2D.[0,0]
+arr2D.[0,0] <- 56
+
+// Non esiste una sintassi per scrivere array literal multidimensionali è necessario usare il modulo Array2D o l'operatore array2D
+let my2DArray = array2D [ [ 1; 0]; [0; 1] ]     // Lista di liste con gli elementi dell'array
+
+// E' possibile utilizzare tutte le collezioni presenti nel framework .NET
+// In alcuni casi sono state definite delle abbreviazioni in F# come ad esempio per le liste: type ResizeArray<'T> = System.Collections.Generic.List<'T>
+open System.Collections.Generic
+
+let netList = new List<string>()
+netList.Add("ciao")
+netList.Add("ciao2")
+netList.Add("ciao3")
+netList.[0]
+
+// NB: i resizeble array utilizzano un array nella implementazione e garantiscono un tempo di accesso random costante, quindi in molti casi
+// hanno delle performance più elevate delle liste di F# che supportano un'accesso efficiente solo per la testa della lista
+
+// NB2: queste liste supportano l'interfaccia seq<'T> quindi possono essere utilizzate come le sequence
+let squaresRes = new ResizeArray<int>(seq { for i in 0 .. 100 -> i*i })
+squaresRes |> Seq.iter (fun el -> printfn "%d" el )
+
+// Dizionari
+let capitals = new Dictionary<string, string>()
+capitals.["USA"] <- "Washington"
+capitals.["Bangladesh"] <- "Dhaka"
+
+// I dizionari sono compatibili con il tipo seq<KeyValuePair<'key, 'value>> dove KeyValuePair non è altro che un tipo che ha le due proprietà
+// Key e Value, quindi anche in questo caso possono essere utilizzate le funzione del modulo Seq
+capitals |> Seq.iter ( fun el -> printfn "%s = %s" el.Key el.Value )
+
+// Dato che il metodo Dictionary.TryGetValue utilizza un "out" parameter in F# può essere usato in tre modi diversi
+// 1 - usando un valore mutable e l'operatore & (indirizzo-di)
+let lookupName nm (dict : Dictionary<string, string>) =
+    let mutable res = ""
+    let foundIt = dict.TryGetValue(nm, &res)
+    if foundIt then res
+    else failwithf "Didn't find %s" nm
+
+// 2 - usando una reference cell
+let res = ref ""
+capitals.TryGetValue("Australia", res)
+capitals.TryGetValue("USA", res)
+
+// 3 - se non si passa l'ultimo parametro il risultato viene restituito come una tupla (bool * 'T)
+capitals.TryGetValue("Australia")
+capitals.TryGetValue("USA")
+
+// Per rappresentare delle mappe sparse può essere conveniente utilizzare delle chiavi composte per un dizionario, come ad esempio una tupla
+let sparseMap = new Dictionary<(int * int), float>()
+sparseMap.[(0,2)] <- 4.0
+
+
 
 
 
