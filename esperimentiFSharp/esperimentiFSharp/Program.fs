@@ -584,3 +584,64 @@ let reader =
                 yield reader.ReadLine() }
 
 
+//---- Cap 5 ---- MASTERING TYPES AND GENERICS
+
+// Generic Comparison
+// Gli operatori classici di confronto (=, <, >, ...) sono generici e possono funzionare su diversi tipi di dato, in particolare sulla maggiorparte dei tipi strutturati
+// di F#, come liste e tuple
+("abc", "def") < ("abc", "xyz")
+compare (10, 30) (10, 20)
+compare [10; 30] [10; 20]
+
+// Generic Hashing
+// Restituisce un intero che rappresenta l'hash stabile del valore in input
+hash "abc"
+hash (100, "abc")
+
+// Realizzare funzioni generiche
+// Si consideri il codice per il massimo comune divisore
+let rec hcf a b =
+    if a=0 then b
+    elif a<b then hcf a (b-a)
+    else hcf (a-b) b
+// L'algoritmo non è generico perché lavora solo su interi (int -> int -> int). Anche se l'operatore (-) è overloaded in F#, ogni uso dell'operatore
+// DEVE essere associato al più ad un solo tipo deciso a compile time (int a default). In più, la costante zero è un intero e non è overloaded.
+// Per rendere generico il codice è necessario fornire ESPLICITAMENTE lo zero, una funzione di sottrazione e una di ordinamento.
+let hcfGeneric (zero, sub, lessThan) =
+    let rec hcf a b =
+        if a=zero then b                                // "when 'a : equality" : il tipo generico 'a deve supportare il confronto
+        elif lessThan a b then hcf a (sub b a)
+        else hcf (sub a b) b
+    hcf
+    
+let hcfInt = hcfGeneric (0, (-), (<))                   // Durante l'instanziazione della funzione generica si associano gli operatori ad un particolare tipo
+let hcfInt64 = hcfGeneric (0L, (-), (<))
+
+// Di solito si raggruppano i tre parametri della funzione genrica in un singolo tipo, un record o un'interfaccia
+type Numeric<'T> =                              // Tipi come questo sono di solito chiamati "dictionaries of operations"
+    {   Zero : 'T;
+        Subtract : ('T -> 'T -> 'T);
+        LessThan : ('T -> 'T -> bool); }
+
+let intOps = { Zero=0; Subtract=(-); LessThan=(<) }
+let int64Ops = { Zero=0L; Subtract=(-); LessThan=(<) }
+
+let hcfGeneric (ops : Numeric<'T>) =
+    let rec hcf a b =
+        if a=ops.Zero then b                                // "when 'T : equality" : il tipo generico 'T deve supportare il confronto
+        elif ops.LessThan a b then hcf a (ops.Subtract b a)
+        else hcf (ops.Subtract a b) b
+    hcf
+
+let hcfInt = hcfGeneric intOps
+
+// NB:  con questa tecnica è possibile rendere il codice generico utilizzabile con qualsiasi tipo di dato anche se tali tipi non sono correlati fra loro (in gerarchia)
+//      Infatti è sufficiente passare il giusto insieme di operazioni (sub e lessThan) e valori (zero) per ottenere una funzione che opera sul tipo voluto.
+//      In questo modo quindi si rende ESPLICITA la fattorizzazione delle funzioni, ossia per ottenere una funzione per il mio tipo devo espressamente passare le funzioni 
+//      richieste. Nella programmazione ad oggetti invece si tende a fattorizzare gli algortimi in un modo IMPLICITO e basato sulla gerarchia dei tipi, quindi non è necessario
+//      passare nessuna funzione o dato aggiuntivo ma si perde in flessibilità in quanto quegli algoritmi possono essere utilizzati solo in base alle relazioni tra i tipi
+//      decisi dal programmatore.
+
+
+
+
