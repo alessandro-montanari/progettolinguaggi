@@ -694,6 +694,51 @@ type Vector2DClass(dx : float, dy : float) =     // dx e dy sono visibili per tu
 let v = new Vector2DClass(5.0, 4.0)
 let v2 = Vector2DClass(6.0, 3.0)
 
+// E' possibile cotrollare che i parametri d'ingresso al costruttore implicito rispettino certe condizioni tramite la parola chiave "do"
+// E' possibbile definire altri costruttori con la parola chiave "new"
+type UnitVector2D(dx, dy) =
+    let tolerance = 0.000001
+    let length = sqrt(dx*dy + dy*dy)
+    do if abs (length - 1.0) >= tolerance then failwith "not a unit vector";
+
+    new() = UnitVector2D(1.0, 0.0)
+
+    member v.DX = dx
+    member v.DY = dy
+
+ // Property in get e set
+ type MyType() =
+    let mutable x = ""
+    let mutable y = 1
+    member t.X  with get() = x
+                and set v = x <- v
+    member t.Y  with get() = y
+                and set v = y <- v 
+
+let myType = MyType(X="ciao", Y=54)
+myType.X <- "ciao ciao"
+
+// INTERFACCE
+
+open System.Drawing
+type IShape =
+    abstract Contains : Point -> bool
+    abstract BoundingBox : Rectangle
+
+// Funzione che crea un cerchio dato il centro e il raggio
+let circle (center : Point, radius : int) =
+    { new IShape with
+        member x.Contains(p : Point) =
+            let dx = float32 (p.X - center.X)
+            let dy = float32 (p.Y - center.Y)
+            sqrt(dx*dx+dy*dy) <= float32 radius
+
+        member x.BoundingBox =
+            Rectangle(center.X-radius, center.Y-radius, 2*radius+1,2*radius+1) }
+
+
+
+
 
 
   
