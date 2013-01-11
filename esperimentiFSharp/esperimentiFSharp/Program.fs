@@ -725,7 +725,7 @@ type IShape =
     abstract Contains : Point -> bool
     abstract BoundingBox : Rectangle
 
-// Funzione che crea un cerchio dato il centro e il raggio
+// Funzione che crea un cerchio dato il centro e il raggio (object expression)
 let circle (center : Point, radius : int) =
     { new IShape with
         member x.Contains(p : Point) =
@@ -736,10 +736,34 @@ let circle (center : Point, radius : int) =
         member x.BoundingBox =
             Rectangle(center.X-radius, center.Y-radius, 2*radius+1,2*radius+1) }
 
+// Implementazione con un tipo concreto
+type MutableCircle() =
+    let mutable center = Point(x=0, y=0)
+    let mutable radius = 10
 
+    interface IShape with
+        member x.Contains(p : Point) =
+            let dx = float32 (p.X - center.X)
+            let dy = float32 (p.Y - center.Y)
+            sqrt(dx*dx+dy*dy) <= float32 radius
 
+        member x.BoundingBox =
+            Rectangle(center.X-radius, center.Y-radius, 2*radius+1,2*radius+1)
 
+let mutCircle = MutableCircle()
+(mutCircle :> IShape).BoundingBox
 
+// MODULI
+// Contenitore di tipi, funzioni, stato globale e sottomoduli
+// Sono compilati in classi che contengono solo valori statici, tipi e sottomoduli
 
+type Vector2D =
+    { DX : float; DY : float }
+
+module Vector2DOps =
+    let length v = sqrt( v.DX*v.DX + v.DY*v.DY )
   
-    
+// E' possibile aprire un modulo per non dover specificare il suo nome quando si utilizzano i suoi contenuti
+
+
+
