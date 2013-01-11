@@ -693,8 +693,5 @@ type Vector2DClass(dx : float, dy : float) =     // dx e dy sono visibili per tu
     
 let v = new Vector2DClass(5.0, 4.0)
 let v2 = Vector2DClass(6.0, 3.0)
-
-
-
   
     

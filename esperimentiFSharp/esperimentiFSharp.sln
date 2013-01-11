@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "esperimentiFSharp", "esperimentiFSharp\esperimentiFSharp.fsproj", "{297C66B4-EA49-4B9B-BDF9-B95D0AA75BFC}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Web
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "esperimentiFSharp", "esperimentiFSharp\esperimentiFSharp.fsproj", "{297C66B4-EA49-4B9B-BDF9-B95D0AA75BFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +13,9 @@ Global
 		{297C66B4-EA49-4B9B-BDF9-B95D0AA75BFC}.Debug|x86.Build.0 = Debug|x86
 		{297C66B4-EA49-4B9B-BDF9-B95D0AA75BFC}.Release|x86.ActiveCfg = Release|x86
 		{297C66B4-EA49-4B9B-BDF9-B95D0AA75BFC}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = esperimentiFSharp\esperimentiFSharp.fsproj
