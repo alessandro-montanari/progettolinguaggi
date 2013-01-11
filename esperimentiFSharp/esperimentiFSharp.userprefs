@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="esperimentiFSharp/Program.fs">
     <Files>
-      <File FileName="esperimentiFSharp/Program.fs" Line="607" Column="80" />
+      <File FileName="esperimentiFSharp/Program.fs" Line="695" Column="33" />
       <File FileName="esperimentiFSharp/ProjectEuler.fs" Line="20" Column="1" />
     </Files>
     <Pads>

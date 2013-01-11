@@ -644,4 +644,54 @@ let hcfInt = hcfGeneric intOps
 
 
 
+//---- Cap 6 ---- WORKING WITH OBJECTS AND MODULES (OOP)
 
+
+// Aggiungere membri ad un record
+type Vector2D =
+    {   DX : float;
+        DY : float }
+    // Property
+    member v.Lenght = sqrt(v.DX * v.DX + v.DY * v.DY)       // L'identificatore "v" sta per "this". In F# si può usare qualsiasi identificatore valido per denotare "this".
+    
+    // Method
+    member v.Scale(k) = { DX=k*v.DX; DY=k*v.DY }
+    
+    // Static property
+    static member Zero = { DX=0.0; DY=0.0 }
+
+let vector2D = { DX=3.0; DY=5.0 }
+vector2D.Lenght
+let vectorScaled = vector2D.Scale(3.0)
+
+// NB: dato che nel caso dei record e delle union i valori utilizzati per costruire l'oggetto sono gli stessi che sono mmorizzati nell'oggetto stesso, il compilatore è 
+// in grado di inferire automaticamente le funzioni di confronto, uguaglianza ed hashing.
+
+//Aggiungere membri ad una discriminated union
+type Tree<'T> =
+    | Node of 'T * Tree<'T> * Tree<'T>
+    | Tip
+    
+    member t.Size =
+        match t with
+        | Node(_,l,r) -> 1+ l.Size + r.Size
+        | Tip -> 0
+        
+// Come scegliere se usare le funzioni o i membri?
+// Di solito si utilizzano i membri per le proprietà e le operazioni che sono strettamente correlate con il tipo che si sta definendo, mentre si utilizzano funzioni 
+// statiche agginte ad un modulo per le funzionalità addizionali
+
+// CLASSI
+type Vector2DClass(dx : float, dy : float) =     // dx e dy sono visibili per tutti i membri non statici della definizione. Qui stiamo anche definendo un construttore implicito 
+                                                 // con due argomenti di tipo float, in realtà è una tupla di due float (vedi definizione del tipo)
+    let len = sqrt(dx * dx + dy * dy)       // l'espressione dopo l'= viene calcolata ad ogni costruzione di un oggetto. len è come se fosse un field privato della classe
+    
+    // Accessor properties
+    member v.DX = dx
+    member v.DY = dy
+    member v.Length = len
+    
+let v = new Vector2DClass(5.0, 4.0)
+let v2 = Vector2DClass(6.0, 3.0)
+  
+    
