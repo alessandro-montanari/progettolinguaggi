@@ -254,7 +254,7 @@ let array = [| for i in 1 .. 10 -> (i, i*i) |]
 
 // Funzione Seq.fold
 // Applica una funzione ad ogni elemento della sequenza portandosi avanti (elemento dopo elemento) lo stato della computazione,
-// infatti la funzione prende in ingresso uno "lo stato corrente" e un elemento della sequenza e calcola il nuovo stato
+// infatti la funzione prende in ingresso "lo stato corrente" e un elemento della sequenza e calcola il nuovo stato
 let sumSeq sequence1 = Seq.fold (fun acc elem -> acc + elem) 0 sequence1
 Seq.init 10 (fun index -> index * index)
 |> sumSeq
@@ -292,6 +292,7 @@ type Transport =
     | Bus of Route
     
 let car1 = Car ("BMW", "360") 
+let bus1 = Bus 5
 let averageSpeed trasp =
     match trasp with
     | Car _ -> 50
@@ -767,3 +768,38 @@ module Vector2DOps =
 
 
 
+//---- Cap 9 ---- INTRODUCING LANGUAGE ORIENTED PROGRAMMING
+
+
+// ACTIVE PATTERNS
+// Permettono di definire dei nuovi tag da usare nel pattern matching
+
+[<Struct>]
+type Complex(r:float, i:float) =
+    static member Polar(mag, phase) = Complex(mag*cos phase, mag * sin phase)
+    member x.Magnitude = sqrt(r*r + i*i)
+    member x.Phase = atan2 i r
+    member x.RealPart = r
+    member x.ImaginaryPart = i
+
+// Sono funzioni (da qui la paroloa "active") che vengono invocate quando si usa Rect o Polar nel patten matching e
+// restituiscono una tupla di float
+let (|Rect|) (x:Complex) = (x.RealPart, x.ImaginaryPart)    
+let (|Polar|) (x:Complex) = (x.Magnitude, x.Phase)
+
+let c = Complex(3.0, 4.0)
+
+
+let addViaRect a b =
+    match a, b with
+    | Rect(ar, ai), Rect(br, bi) -> Complex(ar+br, ai+bi)
+
+//
+    
+    
+    
+    
+    
+    
+    
+    
