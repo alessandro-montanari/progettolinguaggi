@@ -794,12 +794,79 @@ let addViaRect a b =
     match a, b with
     | Rect(ar, ai), Rect(br, bi) -> Complex(ar+br, ai+bi)
 
-//
+// E' possibile utilizzare il matching anche nei parametri di una funzione
+// Tipo inferito "val add2 : Complex -> Complex -> Complex"
+let add2 (Rect (ar, ai)) (Rect (br, bi)) = Complex(ar+br, ai+bi)    
+
+
+
+
+//---- Cap 12 ---- WORKING WITH SYMBOLIC REPRESENTATIONS
+open System
+
+type Expr =
+    | Var
+    | Num of int
+    | Sum of Expr * Expr
+    | Prod of Expr * Expr
     
+let rec deriv expr =
+    match expr with
+    | Var -> Num 1
+    | Num _ -> Num 0
+    | Sum (e1, e2) -> Sum (deriv e1, deriv e2)
+    | Prod (e1, e2) -> Sum (Prod (e1, deriv e2), Prod (e2, deriv e1) )    
     
-    
-    
-    
-    
-    
-    
+// 1+2x
+let e1 = Sum ( Num 1, Prod (Num 2, Var))    
+let devE1 = deriv e1    
+
+// Regola per le parentesi: devono essere inserite quando c'è un operatore con una priorità minore rispetto a quello che lo wrappa
+// Parametro "prec" della funzione "stringOfExpr" indica il livello di priorità all'interno del quale si trova "expr"
+// Quindi se si incontra una somma (expr = Sum(e1,e2)) che è dentro un prodotto (prec = precProd) si aggiungono le parentesi (prec > precSum)
+let precSum = 10
+let precProd = 20
+let rec stringOfExpr prec expr =
+    match expr with
+    | Var -> "x"
+    | Num i -> i.ToString()
+    | Sum (e1, e2) ->
+        if prec > precSum then
+            "(" + stringOfExpr precSum e1 + "+" + stringOfExpr precSum e2 + ")"
+        else
+            stringOfExpr precSum e1 + "+" + stringOfExpr precSum e2
+    | Prod (e1, e2) ->
+        stringOfExpr precProd e1 + "*" + stringOfExpr precProd e2
+
+fsi.AddPrinter( fun expr -> stringOfExpr 0 expr )         
+
+let e3 = Prod ( Var, Prod (Var, Num 2) )    
+let derivE3 = deriv e3
+
+let e4 = Sum ( Prod (Sum (Num 1, Num 5), Sum(Num 3, Var)), Var)
+
+// Semplificazioni locali. Interessano solo somme e prodotti singolarmente non riguardano tutto il polinomio
+
+// Sintassi: function pattern-rules -> expression è equivalente a (fun x -> match x with pattern-rules -> expression) e viene utilizzata per essere concisi
+// quando si scrivono funzioni che lavorano su Discriminated Unions
+
+// Tipo inferito: val simpSum : Expr * Expr -> Expr
+let simpSum = function
+    | Num n, Num m -> Num (n+m)
+    | Num 0, e | e, Num 0 -> e
+    | e1, e2 -> Sum (e1, e2)
+
+let simpProd = function
+    | Num n, Num m -> Num (n*m)
+    | Num 0, e | e, Num 0 -> Num 0
+    | Num 1, e | e, Num 1 -> e
+    | e1, e2 -> Prod (e1, e2)
+
+let rec simpDeriv = function
+    | Var -> Num 1
+    | Num _ -> Num 0
+    | Sum (e1, e2) -> simpSum (simpDeriv e1, simpDeriv e2)
+    | Prod (e1, e2) -> simpSum (simpProd (e1, simpDeriv e2), simpProd(e2, simpDeriv e1))
+
+simpDeriv e3
+
