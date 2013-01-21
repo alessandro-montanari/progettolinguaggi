@@ -41,6 +41,8 @@
     <Compile Include="Program.fs" />
     <Compile Include="ProjectEuler.fs" />
     <None Include="packages.config" />
+    <None Include="text2htmllex.fsl" />
+    <Compile Include="text2htmllex.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack">
