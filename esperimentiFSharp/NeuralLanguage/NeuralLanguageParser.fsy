@@ -14,7 +14,7 @@ open AST
 %token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
 %token MEAN SD MIN MAX SUM SUMSQUARED
 %token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS
-%token PREPROC TRAINING VALIDATION
+%token PREPROC TRAINING VALIDATION PLOT
 %token EOF
 
 // Associatività operatori e priorità (priorità minore prima)

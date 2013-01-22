@@ -10,6 +10,7 @@ state 0:
     action 'PREPROC' (noprec):   reduce directives --> 
     action 'TRAINING' (noprec):   reduce directives --> 
     action 'VALIDATION' (noprec):   reduce directives --> 
+    action 'PLOT' (noprec):   reduce directives --> 
     action 'LP' (noprec):   reduce directives --> 
     action 'RP' (noprec):   reduce directives --> 
     action 'LCB' (noprec):   reduce directives --> 
@@ -75,6 +76,7 @@ state 1:
     action 'PREPROC' (noprec):   accept
     action 'TRAINING' (noprec):   accept
     action 'VALIDATION' (noprec):   accept
+    action 'PLOT' (noprec):   accept
     action 'LP' (noprec):   accept
     action 'RP' (noprec):   accept
     action 'LCB' (noprec):   accept
@@ -137,6 +139,7 @@ state 2:
     action 'PREPROC' (noprec):   shift 140
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -200,6 +203,7 @@ state 3:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -263,6 +267,7 @@ state 4:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   shift 142
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -326,6 +331,7 @@ state 5:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   shift 144
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -389,6 +395,7 @@ state 6:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -451,6 +458,7 @@ state 7:
     action 'PREPROC' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
     action 'TRAINING' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
     action 'VALIDATION' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
+    action 'PLOT' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
     action 'LP' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
     action 'RP' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
     action 'LCB' (noprec):   reduce start --> directives preprocessing network training validation 'EOF'
@@ -513,6 +521,7 @@ state 8:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -575,6 +584,7 @@ state 9:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -642,6 +652,7 @@ state 10:
     action 'PREPROC' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
     action 'TRAINING' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
     action 'VALIDATION' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
+    action 'PLOT' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
     action 'LP' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
     action 'RP' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
     action 'LCB' (noprec):   reduce parameter --> 'ID' 'COLON' parameterValue
@@ -704,6 +715,7 @@ state 11:
     action 'PREPROC' (noprec):   reduce parameterValue --> attributeList
     action 'TRAINING' (noprec):   reduce parameterValue --> attributeList
     action 'VALIDATION' (noprec):   reduce parameterValue --> attributeList
+    action 'PLOT' (noprec):   reduce parameterValue --> attributeList
     action 'LP' (noprec):   reduce parameterValue --> attributeList
     action 'RP' (noprec):   reduce parameterValue --> attributeList
     action 'LCB' (noprec):   reduce parameterValue --> attributeList
@@ -766,6 +778,7 @@ state 12:
     action 'PREPROC' (noprec):   reduce parameterValue --> numberList
     action 'TRAINING' (noprec):   reduce parameterValue --> numberList
     action 'VALIDATION' (noprec):   reduce parameterValue --> numberList
+    action 'PLOT' (noprec):   reduce parameterValue --> numberList
     action 'LP' (noprec):   reduce parameterValue --> numberList
     action 'RP' (noprec):   reduce parameterValue --> numberList
     action 'LCB' (noprec):   reduce parameterValue --> numberList
@@ -841,6 +854,7 @@ state 13:
     action 'PREPROC' (noprec):   reduce parameterValue --> expression
     action 'TRAINING' (noprec):   reduce parameterValue --> expression
     action 'VALIDATION' (noprec):   reduce parameterValue --> expression
+    action 'PLOT' (noprec):   reduce parameterValue --> expression
     action 'LP' (noprec):   reduce parameterValue --> expression
     action 'RP' (noprec):   reduce parameterValue --> expression
     action 'LCB' (noprec):   reduce parameterValue --> expression
@@ -904,6 +918,7 @@ state 14:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -972,6 +987,7 @@ state 15:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -1034,6 +1050,7 @@ state 16:
     action 'PREPROC' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
     action 'TRAINING' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
     action 'VALIDATION' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
+    action 'PLOT' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
     action 'LP' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
     action 'RP' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
     action 'LCB' (noprec):   reduce attributeList --> 'LB' attributeInnerList 'RB'
@@ -1096,6 +1113,7 @@ state 17:
     action 'PREPROC' (noprec):   reduce attributeInnerList --> attributeElement
     action 'TRAINING' (noprec):   reduce attributeInnerList --> attributeElement
     action 'VALIDATION' (noprec):   reduce attributeInnerList --> attributeElement
+    action 'PLOT' (noprec):   reduce attributeInnerList --> attributeElement
     action 'LP' (noprec):   reduce attributeInnerList --> attributeElement
     action 'RP' (noprec):   reduce attributeInnerList --> attributeElement
     action 'LCB' (noprec):   reduce attributeInnerList --> attributeElement
@@ -1158,6 +1176,7 @@ state 18:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -1221,6 +1240,7 @@ state 19:
     action 'PREPROC' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
     action 'TRAINING' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
     action 'VALIDATION' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
+    action 'PLOT' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
     action 'LP' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
     action 'RP' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
     action 'LCB' (noprec):   reduce attributeInnerList --> attributeInnerList 'COMMA' attributeElement
@@ -1284,6 +1304,7 @@ state 20:
     action 'PREPROC' (noprec):   reduce attributeElement --> 'ATTID'
     action 'TRAINING' (noprec):   reduce attributeElement --> 'ATTID'
     action 'VALIDATION' (noprec):   reduce attributeElement --> 'ATTID'
+    action 'PLOT' (noprec):   reduce attributeElement --> 'ATTID'
     action 'LP' (noprec):   reduce attributeElement --> 'ATTID'
     action 'RP' (noprec):   reduce attributeElement --> 'ATTID'
     action 'LCB' (noprec):   reduce attributeElement --> 'ATTID'
@@ -1346,6 +1367,7 @@ state 21:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -1408,6 +1430,7 @@ state 22:
     action 'PREPROC' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
     action 'TRAINING' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
     action 'VALIDATION' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
+    action 'PLOT' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
     action 'LP' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
     action 'RP' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
     action 'LCB' (noprec):   reduce attributeElement --> 'ATTID' 'DOTS' 'ATTID'
@@ -1470,6 +1493,7 @@ state 23:
     action 'PREPROC' (noprec):   reduce attributeElement --> 'ID'
     action 'TRAINING' (noprec):   reduce attributeElement --> 'ID'
     action 'VALIDATION' (noprec):   reduce attributeElement --> 'ID'
+    action 'PLOT' (noprec):   reduce attributeElement --> 'ID'
     action 'LP' (noprec):   reduce attributeElement --> 'ID'
     action 'RP' (noprec):   reduce attributeElement --> 'ID'
     action 'LCB' (noprec):   reduce attributeElement --> 'ID'
@@ -1533,6 +1557,7 @@ state 24:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -1595,6 +1620,7 @@ state 25:
     action 'PREPROC' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
     action 'TRAINING' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
     action 'VALIDATION' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
+    action 'PLOT' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
     action 'LP' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
     action 'RP' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
     action 'LCB' (noprec):   reduce numberList --> 'LB' numberInnerList 'RB'
@@ -1657,6 +1683,7 @@ state 26:
     action 'PREPROC' (noprec):   reduce numberInnerList --> numberElement
     action 'TRAINING' (noprec):   reduce numberInnerList --> numberElement
     action 'VALIDATION' (noprec):   reduce numberInnerList --> numberElement
+    action 'PLOT' (noprec):   reduce numberInnerList --> numberElement
     action 'LP' (noprec):   reduce numberInnerList --> numberElement
     action 'RP' (noprec):   reduce numberInnerList --> numberElement
     action 'LCB' (noprec):   reduce numberInnerList --> numberElement
@@ -1719,6 +1746,7 @@ state 27:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -1783,6 +1811,7 @@ state 28:
     action 'PREPROC' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
     action 'TRAINING' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
     action 'VALIDATION' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
+    action 'PLOT' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
     action 'LP' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
     action 'RP' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
     action 'LCB' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
@@ -1846,6 +1875,7 @@ state 29:
     action 'PREPROC' (noprec):   reduce numberElement --> number
     action 'TRAINING' (noprec):   reduce numberElement --> number
     action 'VALIDATION' (noprec):   reduce numberElement --> number
+    action 'PLOT' (noprec):   reduce numberElement --> number
     action 'LP' (noprec):   reduce numberElement --> number
     action 'RP' (noprec):   reduce numberElement --> number
     action 'LCB' (noprec):   reduce numberElement --> number
@@ -1908,6 +1938,7 @@ state 30:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -1971,6 +2002,7 @@ state 31:
     action 'PREPROC' (noprec):   reduce numberElement --> number 'DOTS' number
     action 'TRAINING' (noprec):   reduce numberElement --> number 'DOTS' number
     action 'VALIDATION' (noprec):   reduce numberElement --> number 'DOTS' number
+    action 'PLOT' (noprec):   reduce numberElement --> number 'DOTS' number
     action 'LP' (noprec):   reduce numberElement --> number 'DOTS' number
     action 'RP' (noprec):   reduce numberElement --> number 'DOTS' number
     action 'LCB' (noprec):   reduce numberElement --> number 'DOTS' number
@@ -2034,6 +2066,7 @@ state 32:
     action 'PREPROC' (noprec):   reduce directives --> parameter
     action 'TRAINING' (noprec):   reduce directives --> parameter
     action 'VALIDATION' (noprec):   reduce directives --> parameter
+    action 'PLOT' (noprec):   reduce directives --> parameter
     action 'LP' (noprec):   reduce directives --> parameter
     action 'RP' (noprec):   reduce directives --> parameter
     action 'LCB' (noprec):   reduce directives --> parameter
@@ -2096,6 +2129,7 @@ state 33:
     action 'PREPROC' (noprec):   reduce directives --> 
     action 'TRAINING' (noprec):   reduce directives --> 
     action 'VALIDATION' (noprec):   reduce directives --> 
+    action 'PLOT' (noprec):   reduce directives --> 
     action 'LP' (noprec):   reduce directives --> 
     action 'RP' (noprec):   reduce directives --> 
     action 'LCB' (noprec):   reduce directives --> 
@@ -2160,6 +2194,7 @@ state 34:
     action 'PREPROC' (noprec):   reduce directives --> parameter 'NEWLINE' directives
     action 'TRAINING' (noprec):   reduce directives --> parameter 'NEWLINE' directives
     action 'VALIDATION' (noprec):   reduce directives --> parameter 'NEWLINE' directives
+    action 'PLOT' (noprec):   reduce directives --> parameter 'NEWLINE' directives
     action 'LP' (noprec):   reduce directives --> parameter 'NEWLINE' directives
     action 'RP' (noprec):   reduce directives --> parameter 'NEWLINE' directives
     action 'LCB' (noprec):   reduce directives --> parameter 'NEWLINE' directives
@@ -2235,6 +2270,7 @@ state 35:
     action 'PREPROC' (explicit left 9995):   reduce expression --> expression 'LT' expression
     action 'TRAINING' (explicit left 9995):   reduce expression --> expression 'LT' expression
     action 'VALIDATION' (explicit left 9995):   reduce expression --> expression 'LT' expression
+    action 'PLOT' (explicit left 9995):   reduce expression --> expression 'LT' expression
     action 'LP' (explicit left 9995):   reduce expression --> expression 'LT' expression
     action 'RP' (explicit left 9995):   reduce expression --> expression 'LT' expression
     action 'LCB' (explicit left 9995):   reduce expression --> expression 'LT' expression
@@ -2310,6 +2346,7 @@ state 36:
     action 'PREPROC' (explicit left 9995):   reduce expression --> expression 'LTE' expression
     action 'TRAINING' (explicit left 9995):   reduce expression --> expression 'LTE' expression
     action 'VALIDATION' (explicit left 9995):   reduce expression --> expression 'LTE' expression
+    action 'PLOT' (explicit left 9995):   reduce expression --> expression 'LTE' expression
     action 'LP' (explicit left 9995):   reduce expression --> expression 'LTE' expression
     action 'RP' (explicit left 9995):   reduce expression --> expression 'LTE' expression
     action 'LCB' (explicit left 9995):   reduce expression --> expression 'LTE' expression
@@ -2385,6 +2422,7 @@ state 37:
     action 'PREPROC' (explicit left 9995):   reduce expression --> expression 'GT' expression
     action 'TRAINING' (explicit left 9995):   reduce expression --> expression 'GT' expression
     action 'VALIDATION' (explicit left 9995):   reduce expression --> expression 'GT' expression
+    action 'PLOT' (explicit left 9995):   reduce expression --> expression 'GT' expression
     action 'LP' (explicit left 9995):   reduce expression --> expression 'GT' expression
     action 'RP' (explicit left 9995):   reduce expression --> expression 'GT' expression
     action 'LCB' (explicit left 9995):   reduce expression --> expression 'GT' expression
@@ -2460,6 +2498,7 @@ state 38:
     action 'PREPROC' (explicit left 9995):   reduce expression --> expression 'GTE' expression
     action 'TRAINING' (explicit left 9995):   reduce expression --> expression 'GTE' expression
     action 'VALIDATION' (explicit left 9995):   reduce expression --> expression 'GTE' expression
+    action 'PLOT' (explicit left 9995):   reduce expression --> expression 'GTE' expression
     action 'LP' (explicit left 9995):   reduce expression --> expression 'GTE' expression
     action 'RP' (explicit left 9995):   reduce expression --> expression 'GTE' expression
     action 'LCB' (explicit left 9995):   reduce expression --> expression 'GTE' expression
@@ -2535,6 +2574,7 @@ state 39:
     action 'PREPROC' (explicit left 9995):   reduce expression --> expression 'EQ' expression
     action 'TRAINING' (explicit left 9995):   reduce expression --> expression 'EQ' expression
     action 'VALIDATION' (explicit left 9995):   reduce expression --> expression 'EQ' expression
+    action 'PLOT' (explicit left 9995):   reduce expression --> expression 'EQ' expression
     action 'LP' (explicit left 9995):   reduce expression --> expression 'EQ' expression
     action 'RP' (explicit left 9995):   reduce expression --> expression 'EQ' expression
     action 'LCB' (explicit left 9995):   reduce expression --> expression 'EQ' expression
@@ -2610,6 +2650,7 @@ state 40:
     action 'PREPROC' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
     action 'TRAINING' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
     action 'VALIDATION' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
+    action 'PLOT' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
     action 'LP' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
     action 'RP' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
     action 'LCB' (explicit left 9995):   reduce expression --> expression 'NOTEQ' expression
@@ -2685,6 +2726,7 @@ state 41:
     action 'PREPROC' (explicit left 9994):   reduce expression --> expression 'AND' expression
     action 'TRAINING' (explicit left 9994):   reduce expression --> expression 'AND' expression
     action 'VALIDATION' (explicit left 9994):   reduce expression --> expression 'AND' expression
+    action 'PLOT' (explicit left 9994):   reduce expression --> expression 'AND' expression
     action 'LP' (explicit left 9994):   reduce expression --> expression 'AND' expression
     action 'RP' (explicit left 9994):   reduce expression --> expression 'AND' expression
     action 'LCB' (explicit left 9994):   reduce expression --> expression 'AND' expression
@@ -2760,6 +2802,7 @@ state 42:
     action 'PREPROC' (explicit left 9994):   reduce expression --> expression 'OR' expression
     action 'TRAINING' (explicit left 9994):   reduce expression --> expression 'OR' expression
     action 'VALIDATION' (explicit left 9994):   reduce expression --> expression 'OR' expression
+    action 'PLOT' (explicit left 9994):   reduce expression --> expression 'OR' expression
     action 'LP' (explicit left 9994):   reduce expression --> expression 'OR' expression
     action 'RP' (explicit left 9994):   reduce expression --> expression 'OR' expression
     action 'LCB' (explicit left 9994):   reduce expression --> expression 'OR' expression
@@ -2835,6 +2878,7 @@ state 43:
     action 'PREPROC' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
     action 'TRAINING' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
     action 'VALIDATION' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
+    action 'PLOT' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
     action 'LP' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
     action 'RP' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
     action 'LCB' (explicit left 9996):   reduce expression --> expression 'PLUS' expression
@@ -2910,6 +2954,7 @@ state 44:
     action 'PREPROC' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
     action 'TRAINING' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
     action 'VALIDATION' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
+    action 'PLOT' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
     action 'LP' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
     action 'RP' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
     action 'LCB' (explicit left 9996):   reduce expression --> expression 'MINUS' expression
@@ -2985,6 +3030,7 @@ state 45:
     action 'PREPROC' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
     action 'TRAINING' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
     action 'VALIDATION' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
+    action 'PLOT' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
     action 'LP' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
     action 'RP' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
     action 'LCB' (explicit left 9997):   reduce expression --> expression 'TIMES' expression
@@ -3060,6 +3106,7 @@ state 46:
     action 'PREPROC' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
     action 'TRAINING' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
     action 'VALIDATION' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
+    action 'PLOT' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
     action 'LP' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
     action 'RP' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
     action 'LCB' (explicit left 9997):   reduce expression --> expression 'FRAC' expression
@@ -3135,6 +3182,7 @@ state 47:
     action 'PREPROC' (explicit right 9999):   reduce expression --> expression 'POW' expression
     action 'TRAINING' (explicit right 9999):   reduce expression --> expression 'POW' expression
     action 'VALIDATION' (explicit right 9999):   reduce expression --> expression 'POW' expression
+    action 'PLOT' (explicit right 9999):   reduce expression --> expression 'POW' expression
     action 'LP' (explicit right 9999):   reduce expression --> expression 'POW' expression
     action 'RP' (explicit right 9999):   reduce expression --> expression 'POW' expression
     action 'LCB' (explicit right 9999):   reduce expression --> expression 'POW' expression
@@ -3210,6 +3258,7 @@ state 48:
     action 'PREPROC' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
     action 'TRAINING' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
     action 'VALIDATION' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
+    action 'PLOT' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
     action 'LP' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
     action 'RP' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
     action 'LCB' (explicit nonassoc 10000):   reduce expression --> 'NOT' expression
@@ -3285,6 +3334,7 @@ state 49:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 76
     action 'LCB' (noprec):   error
@@ -3360,6 +3410,7 @@ state 50:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 79
     action 'LCB' (noprec):   error
@@ -3435,6 +3486,7 @@ state 51:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 82
     action 'LCB' (noprec):   error
@@ -3510,6 +3562,7 @@ state 52:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 85
     action 'LCB' (noprec):   error
@@ -3585,6 +3638,7 @@ state 53:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 88
     action 'LCB' (noprec):   error
@@ -3660,6 +3714,7 @@ state 54:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 91
     action 'LCB' (noprec):   error
@@ -3735,6 +3790,7 @@ state 55:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 94
     action 'LCB' (noprec):   error
@@ -3810,6 +3866,7 @@ state 56:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 97
     action 'LCB' (noprec):   error
@@ -3885,6 +3942,7 @@ state 57:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 100
     action 'LCB' (noprec):   error
@@ -3960,6 +4018,7 @@ state 58:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 103
     action 'LCB' (noprec):   error
@@ -4035,6 +4094,7 @@ state 59:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 105
     action 'LCB' (noprec):   error
@@ -4097,6 +4157,7 @@ state 60:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4161,6 +4222,7 @@ state 61:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4225,6 +4287,7 @@ state 62:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4289,6 +4352,7 @@ state 63:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4353,6 +4417,7 @@ state 64:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4417,6 +4482,7 @@ state 65:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4481,6 +4547,7 @@ state 66:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4545,6 +4612,7 @@ state 67:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4609,6 +4677,7 @@ state 68:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4673,6 +4742,7 @@ state 69:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4737,6 +4807,7 @@ state 70:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4801,6 +4872,7 @@ state 71:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4865,6 +4937,7 @@ state 72:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4929,6 +5002,7 @@ state 73:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -4994,6 +5068,7 @@ state 74:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 75
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5056,6 +5131,7 @@ state 75:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5120,6 +5196,7 @@ state 76:
     action 'PREPROC' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'MINUS' 'LP' expression 'RP'
@@ -5182,6 +5259,7 @@ state 77:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 78
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5244,6 +5322,7 @@ state 78:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5308,6 +5387,7 @@ state 79:
     action 'PREPROC' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'SIN' 'LP' expression 'RP'
@@ -5370,6 +5450,7 @@ state 80:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 81
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5432,6 +5513,7 @@ state 81:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5496,6 +5578,7 @@ state 82:
     action 'PREPROC' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'COS' 'LP' expression 'RP'
@@ -5558,6 +5641,7 @@ state 83:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 84
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5620,6 +5704,7 @@ state 84:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5684,6 +5769,7 @@ state 85:
     action 'PREPROC' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'TAN' 'LP' expression 'RP'
@@ -5746,6 +5832,7 @@ state 86:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 87
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5808,6 +5895,7 @@ state 87:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5872,6 +5960,7 @@ state 88:
     action 'PREPROC' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'ATAN' 'LP' expression 'RP'
@@ -5934,6 +6023,7 @@ state 89:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 90
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -5996,6 +6086,7 @@ state 90:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6060,6 +6151,7 @@ state 91:
     action 'PREPROC' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'LOG' 'LP' expression 'RP'
@@ -6122,6 +6214,7 @@ state 92:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 93
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6184,6 +6277,7 @@ state 93:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6248,6 +6342,7 @@ state 94:
     action 'PREPROC' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'LN' 'LP' expression 'RP'
@@ -6310,6 +6405,7 @@ state 95:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 96
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6372,6 +6468,7 @@ state 96:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6436,6 +6533,7 @@ state 97:
     action 'PREPROC' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'FLOOR' 'LP' expression 'RP'
@@ -6498,6 +6596,7 @@ state 98:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 99
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6560,6 +6659,7 @@ state 99:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6624,6 +6724,7 @@ state 100:
     action 'PREPROC' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'CEIL' 'LP' expression 'RP'
@@ -6686,6 +6787,7 @@ state 101:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 102
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6748,6 +6850,7 @@ state 102:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6812,6 +6915,7 @@ state 103:
     action 'PREPROC' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'SQRT' 'LP' expression 'RP'
@@ -6874,6 +6978,7 @@ state 104:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 104
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -6938,6 +7043,7 @@ state 105:
     action 'PREPROC' (noprec):   reduce expression --> 'LP' expression 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'LP' expression 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'LP' expression 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'LP' expression 'RP'
     action 'LP' (noprec):   reduce expression --> 'LP' expression 'RP'
     action 'RP' (noprec):   reduce expression --> 'LP' expression 'RP'
     action 'LCB' (noprec):   reduce expression --> 'LP' expression 'RP'
@@ -7000,6 +7106,7 @@ state 106:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 107
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7062,6 +7169,7 @@ state 107:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7125,6 +7233,7 @@ state 108:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 109
     action 'LCB' (noprec):   error
@@ -7187,6 +7296,7 @@ state 109:
     action 'PREPROC' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
     action 'LP' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
     action 'RP' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
     action 'LCB' (noprec):   reduce expression --> 'MEAN' 'LP' statElement 'RP'
@@ -7249,6 +7359,7 @@ state 110:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 111
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7311,6 +7422,7 @@ state 111:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7374,6 +7486,7 @@ state 112:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 113
     action 'LCB' (noprec):   error
@@ -7436,6 +7549,7 @@ state 113:
     action 'PREPROC' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
     action 'LP' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
     action 'RP' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
     action 'LCB' (noprec):   reduce expression --> 'SD' 'LP' statElement 'RP'
@@ -7498,6 +7612,7 @@ state 114:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 115
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7560,6 +7675,7 @@ state 115:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7623,6 +7739,7 @@ state 116:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 117
     action 'LCB' (noprec):   error
@@ -7685,6 +7802,7 @@ state 117:
     action 'PREPROC' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
     action 'LP' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
     action 'RP' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
     action 'LCB' (noprec):   reduce expression --> 'MIN' 'LP' statElement 'RP'
@@ -7747,6 +7865,7 @@ state 118:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 119
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7809,6 +7928,7 @@ state 119:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -7872,6 +7992,7 @@ state 120:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 121
     action 'LCB' (noprec):   error
@@ -7934,6 +8055,7 @@ state 121:
     action 'PREPROC' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
     action 'LP' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
     action 'RP' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
     action 'LCB' (noprec):   reduce expression --> 'MAX' 'LP' statElement 'RP'
@@ -7996,6 +8118,7 @@ state 122:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 123
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -8058,6 +8181,7 @@ state 123:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -8121,6 +8245,7 @@ state 124:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 125
     action 'LCB' (noprec):   error
@@ -8183,6 +8308,7 @@ state 125:
     action 'PREPROC' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
     action 'LP' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
     action 'RP' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
     action 'LCB' (noprec):   reduce expression --> 'SUM' 'LP' statElement 'RP'
@@ -8245,6 +8371,7 @@ state 126:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   shift 127
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -8307,6 +8434,7 @@ state 127:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -8370,6 +8498,7 @@ state 128:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   shift 129
     action 'LCB' (noprec):   error
@@ -8432,6 +8561,7 @@ state 129:
     action 'PREPROC' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
     action 'TRAINING' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
     action 'VALIDATION' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
+    action 'PLOT' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
     action 'LP' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
     action 'RP' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
     action 'LCB' (noprec):   reduce expression --> 'SUMSQUARED' 'LP' statElement 'RP'
@@ -8494,6 +8624,7 @@ state 130:
     action 'PREPROC' (noprec):   reduce expression --> 'ID'
     action 'TRAINING' (noprec):   reduce expression --> 'ID'
     action 'VALIDATION' (noprec):   reduce expression --> 'ID'
+    action 'PLOT' (noprec):   reduce expression --> 'ID'
     action 'LP' (noprec):   reduce expression --> 'ID'
     action 'RP' (noprec):   reduce expression --> 'ID'
     action 'LCB' (noprec):   reduce expression --> 'ID'
@@ -8556,6 +8687,7 @@ state 131:
     action 'PREPROC' (noprec):   reduce expression --> 'ATTID'
     action 'TRAINING' (noprec):   reduce expression --> 'ATTID'
     action 'VALIDATION' (noprec):   reduce expression --> 'ATTID'
+    action 'PLOT' (noprec):   reduce expression --> 'ATTID'
     action 'LP' (noprec):   reduce expression --> 'ATTID'
     action 'RP' (noprec):   reduce expression --> 'ATTID'
     action 'LCB' (noprec):   reduce expression --> 'ATTID'
@@ -8618,6 +8750,7 @@ state 132:
     action 'PREPROC' (noprec):   reduce expression --> 'TRUE'
     action 'TRAINING' (noprec):   reduce expression --> 'TRUE'
     action 'VALIDATION' (noprec):   reduce expression --> 'TRUE'
+    action 'PLOT' (noprec):   reduce expression --> 'TRUE'
     action 'LP' (noprec):   reduce expression --> 'TRUE'
     action 'RP' (noprec):   reduce expression --> 'TRUE'
     action 'LCB' (noprec):   reduce expression --> 'TRUE'
@@ -8680,6 +8813,7 @@ state 133:
     action 'PREPROC' (noprec):   reduce expression --> 'FALSE'
     action 'TRAINING' (noprec):   reduce expression --> 'FALSE'
     action 'VALIDATION' (noprec):   reduce expression --> 'FALSE'
+    action 'PLOT' (noprec):   reduce expression --> 'FALSE'
     action 'LP' (noprec):   reduce expression --> 'FALSE'
     action 'RP' (noprec):   reduce expression --> 'FALSE'
     action 'LCB' (noprec):   reduce expression --> 'FALSE'
@@ -8742,6 +8876,7 @@ state 134:
     action 'PREPROC' (noprec):   reduce expression --> number
     action 'TRAINING' (noprec):   reduce expression --> number
     action 'VALIDATION' (noprec):   reduce expression --> number
+    action 'PLOT' (noprec):   reduce expression --> number
     action 'LP' (noprec):   reduce expression --> number
     action 'RP' (noprec):   reduce expression --> number
     action 'LCB' (noprec):   reduce expression --> number
@@ -8804,6 +8939,7 @@ state 135:
     action 'PREPROC' (noprec):   reduce number --> 'NUMBER'
     action 'TRAINING' (noprec):   reduce number --> 'NUMBER'
     action 'VALIDATION' (noprec):   reduce number --> 'NUMBER'
+    action 'PLOT' (noprec):   reduce number --> 'NUMBER'
     action 'LP' (noprec):   reduce number --> 'NUMBER'
     action 'RP' (noprec):   reduce number --> 'NUMBER'
     action 'LCB' (noprec):   reduce number --> 'NUMBER'
@@ -8866,6 +9002,7 @@ state 136:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -8928,6 +9065,7 @@ state 137:
     action 'PREPROC' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
     action 'TRAINING' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
     action 'VALIDATION' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
+    action 'PLOT' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
     action 'LP' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
     action 'RP' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
     action 'LCB' (explicit left 9998):   reduce number --> 'MINUS' 'NUMBER'
@@ -8990,6 +9128,7 @@ state 138:
     action 'PREPROC' (noprec):   reduce statElement --> 'ID'
     action 'TRAINING' (noprec):   reduce statElement --> 'ID'
     action 'VALIDATION' (noprec):   reduce statElement --> 'ID'
+    action 'PLOT' (noprec):   reduce statElement --> 'ID'
     action 'LP' (noprec):   reduce statElement --> 'ID'
     action 'RP' (noprec):   reduce statElement --> 'ID'
     action 'LCB' (noprec):   reduce statElement --> 'ID'
@@ -9052,6 +9191,7 @@ state 139:
     action 'PREPROC' (noprec):   reduce statElement --> 'ATTID'
     action 'TRAINING' (noprec):   reduce statElement --> 'ATTID'
     action 'VALIDATION' (noprec):   reduce statElement --> 'ATTID'
+    action 'PLOT' (noprec):   reduce statElement --> 'ATTID'
     action 'LP' (noprec):   reduce statElement --> 'ATTID'
     action 'RP' (noprec):   reduce statElement --> 'ATTID'
     action 'LCB' (noprec):   reduce statElement --> 'ATTID'
@@ -9114,6 +9254,7 @@ state 140:
     action 'PREPROC' (noprec):   reduce preprocessing --> 'PREPROC'
     action 'TRAINING' (noprec):   reduce preprocessing --> 'PREPROC'
     action 'VALIDATION' (noprec):   reduce preprocessing --> 'PREPROC'
+    action 'PLOT' (noprec):   reduce preprocessing --> 'PREPROC'
     action 'LP' (noprec):   reduce preprocessing --> 'PREPROC'
     action 'RP' (noprec):   reduce preprocessing --> 'PREPROC'
     action 'LCB' (noprec):   reduce preprocessing --> 'PREPROC'
@@ -9176,6 +9317,7 @@ state 141:
     action 'PREPROC' (noprec):   reduce network --> 'ID'
     action 'TRAINING' (noprec):   reduce network --> 'ID'
     action 'VALIDATION' (noprec):   reduce network --> 'ID'
+    action 'PLOT' (noprec):   reduce network --> 'ID'
     action 'LP' (noprec):   reduce network --> 'ID'
     action 'RP' (noprec):   reduce network --> 'ID'
     action 'LCB' (noprec):   reduce network --> 'ID'
@@ -9238,6 +9380,7 @@ state 142:
     action 'PREPROC' (noprec):   error
     action 'TRAINING' (noprec):   error
     action 'VALIDATION' (noprec):   error
+    action 'PLOT' (noprec):   error
     action 'LP' (noprec):   error
     action 'RP' (noprec):   error
     action 'LCB' (noprec):   error
@@ -9300,6 +9443,7 @@ state 143:
     action 'PREPROC' (noprec):   reduce training --> 'TRAINING' 'ID'
     action 'TRAINING' (noprec):   reduce training --> 'TRAINING' 'ID'
     action 'VALIDATION' (noprec):   reduce training --> 'TRAINING' 'ID'
+    action 'PLOT' (noprec):   reduce training --> 'TRAINING' 'ID'
     action 'LP' (noprec):   reduce training --> 'TRAINING' 'ID'
     action 'RP' (noprec):   reduce training --> 'TRAINING' 'ID'
     action 'LCB' (noprec):   reduce training --> 'TRAINING' 'ID'
@@ -9362,6 +9506,7 @@ state 144:
     action 'PREPROC' (noprec):   reduce validation --> 'VALIDATION'
     action 'TRAINING' (noprec):   reduce validation --> 'VALIDATION'
     action 'VALIDATION' (noprec):   reduce validation --> 'VALIDATION'
+    action 'PLOT' (noprec):   reduce validation --> 'VALIDATION'
     action 'LP' (noprec):   reduce validation --> 'VALIDATION'
     action 'RP' (noprec):   reduce validation --> 'VALIDATION'
     action 'LCB' (noprec):   reduce validation --> 'VALIDATION'
