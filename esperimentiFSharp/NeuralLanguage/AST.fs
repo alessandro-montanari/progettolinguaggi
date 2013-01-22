@@ -17,10 +17,10 @@ type Expression =
     | Or of Expression * Expression
     | Not of Expression
     | Rel of Expression * Relation * Expression
-    | Id of string
-    | AttId of string
+    | ExpId of string
+    | ExpAttId of int
     | Neg of Expression
-    | Num of double
+    | ExpNum of double
     | Add of Expression * Expression
     | Sub of Expression * Expression
     | Prod of Expression * Expression
@@ -35,37 +35,30 @@ type Expression =
     | Floor of Expression
     | Ceil of Expression
     | Sqrt of Expression
-    | Mean of string
+    | Mean of string                    // il nome dell'attributo o l'indice
     | Sd of string
     | Min of string
     | Max of string
     | Sum of string
     | SumSquared of string
 
-// La sequenza di attributi o di numeri viene espansa in fase di valutazione, quindi
-// si memorizza come tupla di stringhe o di double
-type AttributeSequence = string * string
-type NumberSequence = double * double
-
 type AttributeListElement =
     | Id of string
-    | AttId of string
-    | Seq of AttributeSequence
+    | AttId of int
+    | AttributeSequence of int * int
 
 type NumberListElement =
     | Num of double
-    | Seq of NumberSequence
+    | NumberSequence of double * double
 
 type ParameterValue =
     | AttList of AttributeListElement list
     | NumList of NumberListElement list
-    | Val of Expression
+    | Exp of Expression
 
-type Parameter = string * ParameterValue
-
-type Filter = string * Parameter list
-
-type Aspect = string * string * Parameter list
+type Parameter = Parameter of string * ParameterValue
+type Filter = Filter of string * Parameter list
+type Aspect = Aspect of string * string * Parameter list
 
 type Network =
     {
@@ -75,4 +68,26 @@ type Network =
         Training : string * Parameter list;
         Validation : (string * Parameter list) option;   // Forse qui conviene fattorizzare in un tipo Validation = string * Parameter list option
     }
-    
+
+
+// Utilizzo le Discriminated Unions anche dove non sarebbero strettamente necessarie (Parameter, Filter, Aspect)
+// perché così i pattern matching saranno più leggibili, del tipo:
+// match p with
+//    | Parameter(name, value) -> printfn "%s - %A" name value
+
+let p = Parameter("ciao", AttList [Id "ciao"; AttributeSequence(0, 5); AttId 7])   
+let p2 = Parameter("ciao2", NumList [Num 4.0; Num 5.9; NumberSequence(4.5, 5.6)])
+let p3 = Parameter("ciao3", Exp (Add(ExpNum 4.5, ExpNum 5.6)))
+let ex1 = Add(Prod(ExpId "ciao", ExpId "ciao2"), Sub(ExpNum 4.5, Sin (ExpNum 5.8)))
+let f1 = [Filter("f1",[p; p2; p3])]
+let net = { 
+            Directives = [p; p3]; 
+            Preprocessing = (f1, [Filter("f2", [p2;p3])]);
+            NetworkDefinition = ("net", true, [p3], [Aspect("a", "a2", [p2;p3])])
+            Training = ("tra", [p; p2; p3]);
+            Validation = Some("ciao",  [p; p3]) 
+          }
+
+match f1 with
+    | Filter(_, plist) :: _ -> match plist with
+                                    | Parameter(name, exp) :: _ when name = "ciao" -> printfn "%s --- %A" name exp
