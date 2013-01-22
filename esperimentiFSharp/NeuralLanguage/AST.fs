@@ -3,12 +3,12 @@
 // Pensare se servono dei membri nei vari tipi
 
 type Relation =
-    | LT
-    | LTE
-    | GT
-    | GTE
-    | EQ
-    | NotEQ
+    | Lt
+    | Lte
+    | Gt
+    | Gte
+    | Eq
+    | NotEq
 
 type Expression =
     | True

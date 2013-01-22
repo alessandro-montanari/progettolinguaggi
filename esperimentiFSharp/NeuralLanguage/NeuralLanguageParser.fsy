@@ -14,21 +14,19 @@ open AST
 %token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
 %token MEAN SD MIN MAX SUM SUMSQUARED
 %token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS
+%token PREPROC TRAINING VALIDATION
 %token EOF
 
 // Associatività operatori e priorità (priorità minore prima)
 
 // Forse bisogna mettere anche le parentesi
-%left prec_negate						// DA RIVEDERE -----------------
-%left AND
-%left OR
-%nonassoc LT LTE GT GTE EQ NOTEQ			// Questi operatori si compaiono più di una volta si ha errore "1 > 2 > 3 -> Errore"
+%left AND OR
+%left LT LTE GT GTE EQ NOTEQ			// NONASSOC -  Questi operatori se compaiono più di una volta si ha errore "1 > 2 > 3 -> Errore"
 %left PLUS MINUS
 %left TIMES FRAC 
+%left UMINUS							// Non esiste veramente, serve solo per la precedenza
 %right POW								// POW è left?
-%nonassoc NOT NEG
-%nonassoc LP
-%nonassoc ID ATTID
+%nonassoc NOT NEG		
 
 // Scopo della grammatica
 %start start
@@ -55,16 +53,14 @@ start:	directives
 							}
 						}
 
-parameter :
-	| ID COLON parameterValue		{ Parameter ($1, $3) }
+parameter : ID COLON parameterValue		{ Parameter ($1, $3) }
 
 parameterValue :
 	| attributeList					{ AttList $1 }
 	| numberList					{ NumList $1 }
 	| expression					{ Val $1 }
 
-attributeList :
-	| LB attributeInnerList RB						{ $2 }
+attributeList : LB attributeInnerList RB						{ $2 }
 
 attributeInnerList :
 	| attributeElement								{ [$1] }
@@ -94,13 +90,12 @@ directives :
 
 // Mettendo l'associatività e la priorità sopra posso definire la grammatica delle espressioni in modo molto più compatto
 expression :
-	| ID								{ Id $1 }
-	| expression LT expression			{ Rel ($1, LT, $3) }
-	| expression LTE expression			{ Rel ($1, LTE, $3) }
-	| expression GT expression			{ Rel ($1, GT, $3) }
-	| expression GTE expression			{ Rel ($1, GTE, $3) }
-	| expression EQ expression			{ Rel ($1, EQ, $3) }
-	| expression NOTEQ expression		{ Rel ($1, NOTEQ, $3) }
+	| expression LT expression			{ Rel ($1, Lt, $3) }
+	| expression LTE expression			{ Rel ($1, Lte, $3) }
+	| expression GT expression			{ Rel ($1, Gt, $3) }
+	| expression GTE expression			{ Rel ($1, Gte, $3) }
+	| expression EQ expression			{ Rel ($1, Eq, $3) }
+	| expression NOTEQ expression		{ Rel ($1, NotEq, $3) }
 	| expression AND expression			{ And ($1, $3) }
 	| expression OR expression			{ Or ($1, $3) }
 	| expression PLUS expression		{ Add ($1, $3) }
@@ -109,7 +104,7 @@ expression :
 	| expression FRAC expression		{ Frac ($1, $3) }
 	| expression POW expression			{ Pow ($1, $3) }
 	| NOT expression					{ Not $2 }
-	| MINUS LP expression RP			{ Neg $3 }
+	| MINUS LP expression RP 			{ Neg $3 }
 	| SIN LP expression RP				{ Sin $3 }
 	| COS LP expression RP				{ Cos $3 }
 	| TAN LP expression RP				{ Tan $3 }
@@ -126,6 +121,7 @@ expression :
 	| MAX LP statElement RP				{ Max $3 }
 	| SUM LP statElement RP				{ Sum $3 }
 	| SUMSQUARED LP statElement RP		{ Sumsquared $3 }
+	| ID								{ Id $1 }
 	| ATTID								{ AttId $1 }
 	| TRUE								{ True }
 	| FALSE								{ False }
@@ -133,7 +129,7 @@ expression :
 
 number:
     | NUMBER                           { Convert.ToDouble($1) }
-    | MINUS NUMBER %prec prec_negate   { Convert.ToDouble(-$2) }
+    | MINUS NUMBER %prec UMINUS		   { Convert.ToDouble(-$2) }		// La precedenza di questa REGOLA è pari alla precedenza di UMINUS
 
 statElement :
 	| ID							{ Id $1 }
@@ -147,10 +143,10 @@ statElement :
 
 
 
-preprocessing : ID	{}
+preprocessing : PREPROC	{}
 
 network : ID	{}
 
-training : ID	{}
+training : TRAINING ID	{}
 
-validation : ID {}
+validation : VALIDATION {}
