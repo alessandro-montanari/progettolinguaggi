@@ -48,9 +48,11 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AST.fs" />
+    <None Include="NeuralLanguageLexer.fsl" />
+    <None Include="NeuralLanguageParser.fsy" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
-    <Compile Include="AST.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

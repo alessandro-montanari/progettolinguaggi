@@ -1,0 +1,52 @@
+﻿%{
+open AST
+%}
+
+// Simboli terminali
+%token <string> ID
+%token <string> PATH
+%token <double> NUMBER
+%token PLUS MINUS TIMES FRAC POW NEG
+%token AND OR NOT
+%token LT LTE GT GTE EQ NOTEQ
+%token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
+%token MEAN SD MIN MAX SUM SUMSQUARED
+%toke LP RP LCB RCB LB RB COMMA
+%toke EOF
+
+// Associatività operatori e priorità (priorità minore prima)
+%left AND
+%left OR
+%left LT LTE GT GTE EQ NOTEQ
+%left PLUS MINUS
+%left TIMES FRAC 
+%right POW		// POW è left?
+%right NOT NEG
+
+// Scopo della grammatica
+%start start
+
+// Tipo di uscita in caso di parsing corretto
+%type <AST.Network> start
+
+%%
+
+// Produzioni
+
+start:	directives
+		preprocessing
+		netowrk
+		training
+		validation
+		EOF				{
+							{
+								Directives = $1;
+								Preprocessing = $2;
+								NetworkDefinition = $3;
+								Training = $4;
+								Validation = $5;
+							}
+						}
+
+directives :
+	| 
