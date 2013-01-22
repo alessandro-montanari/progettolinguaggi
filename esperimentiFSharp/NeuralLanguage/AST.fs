@@ -49,6 +49,7 @@ type NumberSequence = double * double
 
 type AttributeListElement =
     | Id of string
+    | AttId of string
     | Seq of AttributeSequence
 
 type NumberListElement =
@@ -57,7 +58,7 @@ type NumberListElement =
 
 type ParameterValue =
     | AttList of AttributeListElement list
-    | NumLis of NumberListElement list
+    | NumList of NumberListElement list
     | Val of Expression
 
 type Parameter = string * ParameterValue
