@@ -64,6 +64,10 @@ let whitespace	= [' ' '\t']
 let newline		= "\n\r" | '\n' | '\r'
 let identifier	= char(char|digit|['-' '_'])*
 let attIdentifier = "ATT"(digit)+
+let mathOp = '+' | '-' | '*' | '/' | '^'
+let logicOp = "&&" | "||" | '!' | "true" | "false"
+let function = "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" 
+let relOp = '<' | "<=" | '>' | ">=" | "==" | "!="
 
 // rules
 rule tokenize = parse
@@ -74,6 +78,10 @@ rule tokenize = parse
 						| Some(token)	-> token
 						| None			-> ID(lexeme lexbuf) }
 	| attIdentifier	{ ATTID(lexeme lexbuf) }
+	| mathOp		{ mathOps.[lexeme lexbuf] }
+	| logicOp		{ logicOps.[lexeme lexbuf] }
+	| function		{ functions.[lexeme lexbuf] }
+	| relOp			{ relOps.[lexeme lexbuf] }
 	| ','			{ COMMA }
 	| '('			{ LP }
 	| ')'			{ RP }
@@ -82,6 +90,6 @@ rule tokenize = parse
 	| '['			{ LB }
 	| ']'			{ RB }
 	| ':'			{ COLON }
-	| '..'			{ DOTS }
+	| ".."			{ DOTS }
 	| eof			{ EOF }
 
