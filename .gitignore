@@ -1,0 +1,6 @@
+# git ignore file
+esperimentiFSharp/Neural/*
+esperimentiFSharp/NeuralLanguage/obj/*
+esperimentiFSharp/NeuralLanguage/bin/*
+esperimentiFSharp/NeuralLanguage/NeuralLanguageParser.fs
+esperimentiFSharp/NeuralLanguage/NeuralLanguageParser.fsi
