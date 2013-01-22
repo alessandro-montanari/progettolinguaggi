@@ -1550,7 +1550,6 @@ state 23:
 state 24:
   items:
     numberList -> 'LB' numberInnerList . 'RB'
-    numberInnerList -> numberInnerList . 'COMMA' numberElement
 
   actions:
     action 'EOF' (noprec):   error
@@ -1564,7 +1563,7 @@ state 24:
     action 'RCB' (noprec):   error
     action 'LB' (noprec):   error
     action 'RB' (noprec):   shift 25
-    action 'COMMA' (noprec):   shift 27
+    action 'COMMA' (noprec):   error
     action 'NEWLINE' (noprec):   error
     action 'COLON' (noprec):   error
     action 'DOTS' (noprec):   error
@@ -1677,6 +1676,7 @@ state 25:
 state 26:
   items:
     numberInnerList -> numberElement . 
+    numberInnerList -> numberElement . 'COMMA' numberInnerList
 
   actions:
     action 'EOF' (noprec):   reduce numberInnerList --> numberElement
@@ -1690,7 +1690,7 @@ state 26:
     action 'RCB' (noprec):   reduce numberInnerList --> numberElement
     action 'LB' (noprec):   reduce numberInnerList --> numberElement
     action 'RB' (noprec):   reduce numberInnerList --> numberElement
-    action 'COMMA' (noprec):   reduce numberInnerList --> numberElement
+    action 'COMMA' (noprec):   shift 27
     action 'NEWLINE' (noprec):   reduce numberInnerList --> numberElement
     action 'COLON' (noprec):   reduce numberInnerList --> numberElement
     action 'DOTS' (noprec):   reduce numberInnerList --> numberElement
@@ -1734,12 +1734,12 @@ state 26:
     action '#' (noprec):   reduce numberInnerList --> numberElement
     action '$$' (noprec):   reduce numberInnerList --> numberElement
 
-  immediate action:   reduce numberInnerList --> numberElement
+  immediate action: <none>
  gotos:
 
 state 27:
   items:
-    numberInnerList -> numberInnerList 'COMMA' . numberElement
+    numberInnerList -> numberElement 'COMMA' . numberInnerList
 
   actions:
     action 'EOF' (noprec):   error
@@ -1799,70 +1799,71 @@ state 27:
 
   immediate action: <none>
  gotos:
-    goto numberElement: 28
+    goto numberInnerList: 28
+    goto numberElement: 26
     goto number: 29
 
 state 28:
   items:
-    numberInnerList -> numberInnerList 'COMMA' numberElement . 
+    numberInnerList -> numberElement 'COMMA' numberInnerList . 
 
   actions:
-    action 'EOF' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'PREPROC' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'TRAINING' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'VALIDATION' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'PLOT' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LP' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'RP' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LCB' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'RCB' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LB' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'RB' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'COMMA' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'NEWLINE' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'COLON' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'DOTS' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'MEAN' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'SD' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'MIN' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'MAX' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'SUM' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'SUMSQUARED' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'SIN' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'COS' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'TAN' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'ATAN' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LOG' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LN' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'FLOOR' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'CEIL' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'SQRT' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LT' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'LTE' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'GT' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'GTE' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'EQ' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'NOTEQ' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'AND' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'OR' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'NOT' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'TRUE' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'FALSE' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'PLUS' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'MINUS' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'TIMES' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'FRAC' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'POW' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'NEG' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'NUMBER' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'PATH' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'ATTID' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'ID' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action 'error' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action '#' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
-    action '$$' (noprec):   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
+    action 'EOF' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'PREPROC' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'TRAINING' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'VALIDATION' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'PLOT' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LP' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'RP' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LCB' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'RCB' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LB' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'RB' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'COMMA' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'NEWLINE' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'COLON' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'DOTS' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'MEAN' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'SD' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'MIN' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'MAX' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'SUM' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'SUMSQUARED' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'SIN' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'COS' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'TAN' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'ATAN' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LOG' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LN' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'FLOOR' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'CEIL' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'SQRT' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LT' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'LTE' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'GT' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'GTE' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'EQ' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'NOTEQ' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'AND' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'OR' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'NOT' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'TRUE' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'FALSE' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'PLUS' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'MINUS' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'TIMES' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'FRAC' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'POW' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'NEG' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'NUMBER' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'PATH' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'ATTID' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'ID' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action 'error' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action '#' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
+    action '$$' (noprec):   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
 
-  immediate action:   reduce numberInnerList --> numberInnerList 'COMMA' numberElement
+  immediate action:   reduce numberInnerList --> numberElement 'COMMA' numberInnerList
  gotos:
 
 state 29:

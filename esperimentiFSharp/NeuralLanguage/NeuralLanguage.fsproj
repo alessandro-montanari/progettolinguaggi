@@ -49,8 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AST.fs" />
-    <None Include="NeuralLanguageLexer.fsl" />
     <None Include="NeuralLanguageParser.fsy" />
+    <None Include="NeuralLanguageLexer.fsl" />
+    <Compile Include="NeuralLanguageParser.fsi" />
+    <Compile Include="NeuralLanguageParser.fs" />
+    <Compile Include="NeuralLanguageLexer.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <None Include="NeuralLanguageParser.fsyacc.output" />

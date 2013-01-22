@@ -1,58 +1,58 @@
 ﻿{
+module NeuralLanguageLex
 open System
-open Lexing
+open Microsoft.FSharp.Text.Lexing
+
+let lexeme = Lexing.LexBuffer<_>.LexemeString
 
 // Apro il modulo del parser per avere accesso ai token definiti li'
 open NeuralLanguageParser
 
-let keywords =
-	[
-		"PREPROCESSING", PREPROC;
-		"TRAINIG", TRAINING;
-		"VALIDATION", VALIDATION;
-		"WHIT_PLOT", PLOT;
-	] |> Map.ofList
+let keywords = [ 
+    "PREPROCESSING", PREPROC;
+    "TRAINIG", TRAINING;
+    "VALIDATION", VALIDATION;
+    "WHIT_PLOT", PLOT ] |> Map.ofList
 
-let mathOps =
-	[
-		"+", PLUS;
-		"-", MINUS;
-		"*", TIMES;
-		"/", FRAC;
-		"^", POW;
-	] |> Map.ofList
+let mathOps = 
+    [ 
+        "+", PLUS;
+        "-", MINUS;
+        "*", TIMES;
+        "/", FRAC;
+        "^", POW ] |> Map.ofList
 
 let logicOps =
-	[
-		"&&", AND;
-		"||", OR;
-		"!", NOT;
-		"true", TRUE;
-		"false", FALSE;
-	] |> Map.ofList
+    [
+        "&&", AND;
+        "||", OR;
+        "!", NOT;
+        "true", TRUE;
+        "false", FALSE;
+    ] |> Map.ofList
 
 let functions =
-	[
-		"sin", SIN;
-		"cos", COS;
-		"tan", TAN;
-		"atan", ATAN;
-		"log", LOG;
-		"ln", LN;
-		"floor", FLOOR;
-		"ceil", CEIL;
-		"sqrt", SQRT; 
-	] |> Map.ofList
+    [
+        "sin", SIN;
+        "cos", COS;
+        "tan", TAN;
+        "atan", ATAN;
+        "log", LOG;
+        "ln", LN;
+        "floor", FLOOR;
+        "ceil", CEIL;
+        "sqrt", SQRT
+    ] |> Map.ofList
 
-let relOps =
-	[
-		"<", LT;
-		"<=", LTE;
-		">", GT;
-		">=", GTE;
-		"==", EQ;
-		"!=", NOTEQ;
-	] |> Map.ofList
+let relOps = 
+    [
+        "<", LT;
+        "<=", LTE;
+        ">", GT;
+        ">=", GTE;
+        "==", EQ;
+        "!=", NOTEQ
+    ] |> Map.ofList
 
 
 }
@@ -73,10 +73,10 @@ let relOp = '<' | "<=" | '>' | ">=" | "==" | "!="
 rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
 	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
-	| number		{ NUMBER(Converter.ToDouble(lexeme lexbuf)) }
+	| number		{ NUMBER(Convert.ToDouble(lexeme lexbuf)) }
  	| identifier	{ match keywords.TryFind(lexeme lexbuf) with
-						| Some(token)	-> token
-						| None			-> ID(lexeme lexbuf) }
+                        | Some(token) -> token
+                        | None -> ID(lexeme lexbuf) }
 	| attIdentifier	{ ATTID(lexeme lexbuf) }
 	| mathOp		{ mathOps.[lexeme lexbuf] }
 	| logicOp		{ logicOps.[lexeme lexbuf] }
