@@ -41,16 +41,21 @@ let main argv =
                                                  p18 : mean(\"ciao ciao\"); \n\
                                                  p19 : mean(ATT5); \n\
                                                  p20 : [INST1, INST3, INST0..INST6, INST7]; \n\
-                                                 p21 : ![ATT4, ATT6]; \n\
-                                                 PREPROCESSING { \n\
+                                                 p21 : ![ATT4, ATT6] \n\
+                                                 PREPROCESSING \n\
+                                                 { \n\
                                                     ATTRIBUTE \n\
                                                     { \n\
-                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5) \n\ 
+                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5); \n\
+                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5) \n\
                                                     } \n\
+                                                    \n\
                                                     INSTANCE \n\
                                                     { \n\
-                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5) \n\ 
-                                                    } }" 
+                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5); \n\
+                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5) \n\
+                                                    }\n\
+                                                  }" 
     try
         printfn "%A" (NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf)
     with e ->
