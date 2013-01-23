@@ -5,6 +5,10 @@ open Microsoft.FSharp.Text.Lexing
 
 let lexeme = Lexing.LexBuffer<_>.LexemeString
 
+let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
+
+let extractId (text:string) = text.Split([|"ATT"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
+
 // Apro il modulo del parser per avere accesso ai token definiti li'
 open NeuralLanguageParser
 
@@ -53,16 +57,14 @@ let relOps =
         "==", EQ;
         "!=", NOTEQ
     ] |> Map.ofList
-
-
 }
 
 let char		= ['a'-'z' 'A'-'Z']
 let digit		= ['0'-'9']
-let number		= '-'?digit '.' digit+
+let number		= '-'? digit+ ('.' digit*)?
 let whitespace	= [' ' '\t']
 let newline		= "\n\r" | '\n' | '\r'
-let identifier	= char(char|digit|['-' '_'])*
+let identifier	= char(char|digit|'_')*
 let attIdentifier = "ATT"(digit)+
 let mathOp = '+' | '-' | '*' | '/' | '^'
 let logicOp = "&&" | "||" | '!' | "true" | "false"
@@ -72,15 +74,16 @@ let relOp = '<' | "<=" | '>' | ">=" | "==" | "!="
 // rules
 rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
-	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
-	| number		{ NUMBER(Convert.ToDouble(lexeme lexbuf)) }
+	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; NEWLINE }
+	| mathOp		{ mathOps.[lexeme lexbuf] }
+	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
+	| attIdentifier	{ ATTID(extractId (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
+	| function		{ functions.[lexeme lexbuf] }													// stesso discorso di sopra
+	| logicOp		{ logicOps.[lexeme lexbuf] }
+	| "\""			{ ID(string lexbuf.StartPos "" lexbuf) }
  	| identifier	{ match keywords.TryFind(lexeme lexbuf) with
                         | Some(token) -> token
                         | None -> ID(lexeme lexbuf) }
-	| attIdentifier	{ ATTID(lexeme lexbuf) }
-	| mathOp		{ mathOps.[lexeme lexbuf] }
-	| logicOp		{ logicOps.[lexeme lexbuf] }
-	| function		{ functions.[lexeme lexbuf] }
 	| relOp			{ relOps.[lexeme lexbuf] }
 	| ','			{ COMMA }
 	| '('			{ LP }
@@ -92,4 +95,10 @@ rule tokenize = parse
 	| ':'			{ COLON }
 	| ".."			{ DOTS }
 	| eof			{ EOF }
+	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }
+
+and string pos s = parse
+	| "\""		{ s }
+	| eof		{ failwithf "end of file in string string started at or near %A" pos }
+	| _			{ string pos (s + (lexeme lexbuf)) lexbuf }
 

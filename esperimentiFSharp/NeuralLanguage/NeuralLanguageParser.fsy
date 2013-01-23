@@ -1,11 +1,13 @@
 ﻿%{
 open System
 open AST
+
+let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
 %}
 
 // Simboli terminali
 %token <string> ID
-%token <string> ATTID
+%token <string> ATTID			// TIPO GIUSTO???
 %token <string> PATH
 %token <double> NUMBER
 %token PLUS MINUS TIMES FRAC POW NEG
@@ -32,18 +34,23 @@ open AST
 %start start
 
 // Tipo di uscita in caso di parsing corretto
-%type <AST.Network> start
+//%type <AST.Network> start
+
+%type <AST.Parameter list> start
 
 %%
 
 // Produzioni
 
-start:	directives
-		preprocessing
-		network
-		training
-		validation
-		EOF				{ { Directives = $1; Preprocessing = $2; NetworkDefinition = $3; Training = $4; Validation = $5;} }
+//start:	directives
+//		preprocessing
+//		network
+//		training
+//		validation
+//		EOF				{ { Directives = $1; Preprocessing = $2; NetworkDefinition = $3; Training = $4; Validation = $5;} }
+
+start : directives
+		EOF				{ $1 }
 
 parameter : ID COLON parameterValue		{ Parameter ($1, $3) }
 
@@ -59,9 +66,9 @@ attributeInnerList :
 	| attributeInnerList COMMA attributeElement		{ $3 :: $1 }
 
 attributeElement :
-	| ATTID DOTS ATTID					{ AttributeSequence (Convert.ToInt32($1), Convert.ToInt32($3)) }	
+	| ATTID DOTS ATTID					{ AttributeSequence (Convert.ToInt32($1, cultureInfo), Convert.ToInt32($3, cultureInfo)) }	
 	| ID								{ Id $1 }
-	| ATTID								{ AttId (Convert.ToInt32($1)) }
+	| ATTID								{ AttId (Convert.ToInt32($1, cultureInfo)) }
 
 numberList :
 	| LB numberInnerList RB						{ $2 }
@@ -71,8 +78,8 @@ numberInnerList :
 	| numberElement COMMA numberInnerList 		{ $1 :: $3 }
 
 numberElement :
-	| number DOTS number				{ NumberSequence (Convert.ToDouble($1), Convert.ToDouble($3)) }	
-	| number							{ Num (Convert.ToDouble($1)) }
+	| number DOTS number				{ NumberSequence (Convert.ToDouble($1, cultureInfo), Convert.ToDouble($3, cultureInfo)) }	
+	| number							{ Num (Convert.ToDouble($1, cultureInfo)) }
 
 directives :
 	|									{ [] }
@@ -114,16 +121,16 @@ expression :
 	| SUM LP statElement RP				{ Sum $3 }
 	| SUMSQUARED LP statElement RP		{ SumSquared $3 }
 	| ID								{ ExpId $1 }
-	| ATTID								{ ExpAttId (Convert.ToInt32($1)) }
+	| ATTID								{ ExpAttId (Convert.ToInt32($1, cultureInfo)) }
 	| TRUE								{ True }
 	| FALSE								{ False }
 	| number							{ ExpNum $1 }
 
 number:
-    | NUMBER                           { Convert.ToDouble($1) }
-    | MINUS NUMBER %prec UMINUS		   { Convert.ToDouble(-$2) }		// La precedenza di questa REGOLA è pari alla precedenza di UMINUS
+    | NUMBER                           { Convert.ToDouble($1, cultureInfo) }
+    | MINUS NUMBER %prec UMINUS		   { Convert.ToDouble(-$2, cultureInfo) }		// La precedenza di questa REGOLA è pari alla precedenza di UMINUS
 
-statElement :
+statElement :															// DA RIVEDERE
 	| ID							{ $1 }
 	| ATTID							{ $1 }
 
