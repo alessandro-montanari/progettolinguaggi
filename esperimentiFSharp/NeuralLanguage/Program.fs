@@ -4,6 +4,8 @@
 open AST
 open NeuralLanguageParser
 open NeuralLanguageLex
+open System.Windows.Forms
+open System.Drawing
 
 //[<EntryPoint>]
 //let main argv = 
@@ -18,13 +20,63 @@ open NeuralLanguageLex
 
 
 // Note:
-[<EntryPoint>]
-let main argv = 
-    let lexbuf = Lexing.LexBuffer<_>.FromString "p17 : mean(ciao), \n\
+//[<EntryPoint>]
+//let main argv = 
+//    let lexbuf = Lexing.LexBuffer<_>.FromString "p17 : mean(ciao), \n\
+//                                                 p11 : 4.5 + -5 \n\
+//                                                 PREPROCESSING \n\
+//                                                 { TRAINING_SET : \"C:\ciao\ciao\ciao.arff\" \n\
+//                                                    ATTRIBUTE \n\
+//                                                    { } \n\
+//                                                    INSTANCE \n\
+//                                                    { } \n\
+//                                                  } \n\
+//                                                  \n\
+//                                                  MultiLayerNetwork \n\
+//                                                  { \n\
+//                                                    p17 : mean(ciao) \n\
+//                                                    INPUT_LAYER \n\
+//	                                                { \n\
+//                                                        p17 : mean(ciao), \n\
+//                                                        p11 : 4.5 + -5 \n\
+//                                                    } \n\
+//                                                    \n\
+//                                                    HIDDEN_LAYER \n\
+//                                                    { \n\
+//                                                        p17 : mean(ciao), \n\
+//                                                        p11 : 4.5 + -5 \n\
+//                                                    } \n\
+//                                                  } \n\
+//                                                  \n\
+//                                                  TRAINING BackPropagation \n\
+//                                                  { \n\
+//                                                    p17 : mean(ciao), \n\
+//                                                    p11 : 4.5 + -5, \n\
+//                                                    p17 : mean(ciao), \n\
+//                                                    p11 : 4.5 + -5 \n\
+//                                                  } \n\
+//                                                  VALIDATION \n\
+//                                                  { \n\
+//                                                    TEST_SET : \"C:\\test.arrf\" \n\
+//                                                    p11 : 4.5 + -5, \n\
+//                                                    p17 : mean(ciao), \n\
+//                                                    p11 : 4.5 + -5 \n\
+//                                                  }" 
+//    try
+//        printfn "%A" (NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf)
+//    with e ->
+//        let pos = lexbuf.EndPos 
+//        failwithf "Error near line %d, character %d\n" pos.Line pos.Column
+//    System.Console.ReadLine() |> ignore
+//    0
+
+
+let sampleCode = "p17 : mean(ciao), \n\
                                                  p11 : 4.5 + -5 \n\
                                                  PREPROCESSING \n\
-                                                 { TRAINING_SET : \"C:\ciao\ciao\ciao.arff\" \n\
-                                                    ATTRIBUTE \n\
+                                                 { 
+                                                 \t TRAINING_SET : \"C:\ciao\ciao\ciao.arff\" \n\
+                                                    \t ATTRIBUTE \n\
                                                     { } \n\
                                                     INSTANCE \n\
                                                     { } \n\
@@ -60,13 +112,34 @@ let main argv =
                                                     p17 : mean(ciao), \n\
                                                     p11 : 4.5 + -5 \n\
                                                   }" 
-    try
-        printfn "%A" (NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf)
-    with e ->
-        let pos = lexbuf.EndPos 
-        failwithf "Error near line %d, character %d\n" pos.Line pos.Column
-    System.Console.ReadLine() |> ignore
+
+[<EntryPoint>]
+let main argv = 
+    let parser (code:string) =
+        let lexbuf = Lexing.LexBuffer<_>.FromString code
+        NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
+
+    let buildInterface (parser : string -> Network) =
+        let form = new Form(Visible=true, TopMost=true)
+        let text = new RichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
+        text.LoadFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt")
+        let btnParse = new Button(Dock=DockStyle.Bottom, Text="Parse!")
+        btnParse.Font <- new Font(btnParse.Font, btnParse.Font.Style ||| FontStyle.Bold)
+        let btnSave = new Button(Dock=DockStyle.Bottom, Text="Save")
+        btnSave.Click.Add(fun _ ->  text.SaveFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt"))
+        let console = new RichTextBox(Dock=DockStyle.Bottom)
+        btnParse.Click.Add(fun _ -> let network = parser text.Text
+                                    console.Text <- network.ToString() )
+        form.Controls.Add(text)
+        form.Controls.Add(btnParse)
+        form.Controls.Add(btnSave)
+        form.Controls.Add(console)
+        Application.Run(form)
+        Application.EnableVisualStyles()
+    buildInterface parser
     0
+    
+    
  
 
 // let bigTest = "p0 : -0.7 ; \n\
