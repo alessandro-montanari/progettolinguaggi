@@ -30,7 +30,7 @@ let main argv =
                                                     { } \n\
                                                   } \n\
                                                   \n\
-                                                  MultiLayerNetwork WITH_PLOT  \n\
+                                                  MultiLayerNetwork \n\
                                                   { \n\
                                                     p17 : mean(ciao) \n\
                                                     INPUT_LAYER \n\
