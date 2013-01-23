@@ -123,21 +123,33 @@ let main argv =
         let form = new Form(Visible=true)
         let text = new RichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
         text.LoadFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt")
+        text.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
         let btnParse = new Button(Dock=DockStyle.Bottom, Text="Parse!")
         btnParse.Font <- new Font(btnParse.Font, btnParse.Font.Style ||| FontStyle.Bold)
         let btnSave = new Button(Dock=DockStyle.Bottom, Text="Save")
         btnSave.Click.Add(fun _ ->  text.SaveFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt"))
         let console = new RichTextBox(Dock=DockStyle.Fill)
+        console.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
         btnParse.Click.Add(fun _ -> try
                                         console.Text <- sprintf "%A" (parser text.Text)
                                     with e ->
                                         console.Text <- "Error"
                                     )
-
-        let splitContainer = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
-        splitContainer.Panel1.Controls.Add(text)
-        splitContainer.Panel2.Controls.Add(console)
-        form.Controls.Add(splitContainer)
+        let splitContainerVer = new SplitContainer(Dock=DockStyle.Fill)
+        let splitContainerHor = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
+        splitContainerVer.Panel2.Controls.Add(splitContainerHor)
+        let treeView = new TreeView(Dock=DockStyle.Fill)
+        treeView.BeginUpdate()
+        treeView.Nodes.Add("Parent") |> ignore
+        treeView.Nodes.[0].Nodes.Add("Child 1") |> ignore
+        treeView.Nodes.[0].Nodes.Add("Child 2") |> ignore
+        treeView.Nodes.[0].Nodes.[1].Nodes.Add("Grandchild") |> ignore
+        treeView.Nodes.[0].Nodes.[1].Nodes.[0].Nodes.Add("Great Grandchild") |> ignore
+        treeView.EndUpdate()
+        splitContainerVer.Panel1.Controls.Add(treeView)
+        splitContainerHor.Panel1.Controls.Add(text)
+        splitContainerHor.Panel2.Controls.Add(console)
+        form.Controls.Add(splitContainerVer)
         form.Controls.Add(btnParse)
         form.Controls.Add(btnSave)
         Application.Run(form)
