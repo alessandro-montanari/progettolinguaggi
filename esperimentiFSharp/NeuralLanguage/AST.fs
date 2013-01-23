@@ -19,6 +19,7 @@ type Expression =
     | Rel of Expression * Relation * Expression
     | ExpId of string
     | ExpAttId of int
+    | ExpIstId of int
     | Neg of Expression
     | ExpNum of double
     | Add of Expression * Expression
@@ -35,12 +36,16 @@ type Expression =
     | Floor of Expression
     | Ceil of Expression
     | Sqrt of Expression
-    | Mean of string                    // il nome dell'attributo o l'indice
+    | Mean of string                    // il nome dell'attributo o l'indice sotto forma di stringa
     | Sd of string
     | Min of string
     | Max of string
     | Sum of string
     | SumSquared of string
+
+type IstanceListElement = 
+    | IstId of int
+    | IstanceSequence of int * int
 
 type AttributeListElement =
     | Id of string
@@ -52,8 +57,9 @@ type NumberListElement =
     | NumberSequence of double * double
 
 type ParameterValue =
-    | AttList of AttributeListElement list
-    | NumList of NumberListElement list
+    | AttList of bool * AttributeListElement list
+    | NumList of bool * NumberListElement list
+    | IstList of bool * IstanceListElement list
     | Exp of Expression
 
 type Parameter = Parameter of string * ParameterValue
@@ -75,8 +81,8 @@ type Network =
 // match p with
 //    | Parameter(name, value) -> printfn "%s - %A" name value
 
-let p = Parameter("ciao", AttList [Id "ciao"; AttributeSequence(0, 5); AttId 7])   
-let p2 = Parameter("ciao2", NumList [Num 4.0; Num 5.9; NumberSequence(4.5, 5.6)])
+let p = Parameter("ciao", AttList (true, [Id "ciao"; AttributeSequence(0, 5); AttId 7]))   
+let p2 = Parameter("ciao2", NumList(false, [Num 4.0; Num 5.9; NumberSequence(4.5, 5.6)]))
 let p3 = Parameter("ciao3", Exp (Add(ExpNum 4.5, ExpNum 5.6)))
 let ex1 = Add(Prod(ExpId "ciao", ExpId "ciao2"), Sub(ExpNum 4.5, Sin (ExpNum 5.8)))
 let f1 = [Filter("f1",[p; p2; p3])]

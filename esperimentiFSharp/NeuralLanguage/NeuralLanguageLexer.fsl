@@ -5,7 +5,7 @@ open Microsoft.FSharp.Text.Lexing
 
 let lexeme = Lexing.LexBuffer<_>.LexemeString
 let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
-let extractId (text:string) = text.Split([|"ATT"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
+let extractId (text:string) = text.Split([|"ATT"; "IST"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
 
 // Apro il modulo del parser per avere accesso ai token definiti li'
 open NeuralLanguageParser
@@ -63,17 +63,18 @@ let relOps =
     ] |> Map.ofList
 }
 
-let char		= ['a'-'z' 'A'-'Z']
-let digit		= ['0'-'9']
-let number		= digit+ ('.' digit*)?
-let whitespace	= [' ' '\t']
-let newline		= "\n\r" | '\n' | '\r'
-let identifier	= char(char|digit|'_')*
-let attIdentifier = "ATT"(digit)+
-let mathOp = '+' | '-' | '*' | '/' | '^'
-let logicOp = "&&" | "||" | '!' | "true" | "false"
-let function = "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
-let relOp = '<' | "<=" | '>' | ">=" | "==" | "!="
+let char				= ['a'-'z' 'A'-'Z']
+let digit				= ['0'-'9']
+let number				= digit+ ('.' digit*)?
+let whitespace			= [' ' '\t']
+let newline				= "\n\r" | '\n' | '\r'
+let identifier			= char(char|digit|'_')*
+let attIdentifier		= "ATT"(digit)+
+let istIdentifier		= "IST"(digit)+
+let mathOp				= '+' | '-' | '*' | '/' | '^'
+let logicOp				= "&&" | "||" | '!' | "true" | "false"
+let function			= "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
+let relOp				= '<' | "<=" | '>' | ">=" | "==" | "!="
 
 // rules
 rule tokenize = parse
@@ -82,6 +83,7 @@ rule tokenize = parse
 	| mathOp		{ mathOps.[lexeme lexbuf] }
 	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
 	| attIdentifier	{ ATTID(extractId (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
+	| istIdentifier	{ ISTID(extractId (lexeme lexbuf)) }
 	| function		{ functions.[lexeme lexbuf] }													// stesso discorso di sopra
 	| logicOp		{ logicOps.[lexeme lexbuf] }
 	| "\""			{ ID(string lexbuf.StartPos "" lexbuf) }
