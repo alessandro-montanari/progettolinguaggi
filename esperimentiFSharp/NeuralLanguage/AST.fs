@@ -1,6 +1,7 @@
 ﻿module AST
 
 // Pensare se servono dei membri nei vari tipi
+// - membri per accedere alle varie parti in stile OOP (proprietà o metodi)
 
 type Relation =
     | Lt
@@ -64,7 +65,7 @@ type ParameterValue =
 
 type Parameter = Parameter of string * ParameterValue
 type Filter = Filter of string * Parameter list
-type Aspect = Aspect of string * string * Parameter list
+type Aspect = Aspect of string * Parameter list
 
 type Network =
     {
@@ -89,7 +90,7 @@ let f1 = [Filter("f1",[p; p2; p3])]
 let net = { 
             Directives = [p; p3]; 
             Preprocessing = ("data.arff", f1, [Filter("f2", [p2;p3])]);
-            NetworkDefinition = ("net", true, [p3], [Aspect("a", "a2", [p2;p3])])
+            NetworkDefinition = ("net", true, [p3], [Aspect("a2", [p2;p3])])
             Training = ("tra", [p; p2; p3]);
             Validation = Some("ciao",  [p; p3]) 
           }

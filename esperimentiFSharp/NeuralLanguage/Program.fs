@@ -20,7 +20,9 @@ open NeuralLanguageLex
 // Note:
 [<EntryPoint>]
 let main argv = 
-    let lexbuf = Lexing.LexBuffer<_>.FromString "PREPROCESSING \n\
+    let lexbuf = Lexing.LexBuffer<_>.FromString "p17 : mean(ciao), \n\
+                                                 p11 : 4.5 + -5 \n\
+                                                 PREPROCESSING \n\
                                                  { TRAINING_SET : \"C:\ciao\ciao\ciao.arff\" \n\
                                                     ATTRIBUTE \n\
                                                     { } \n\
@@ -28,16 +30,16 @@ let main argv =
                                                     { } \n\
                                                   } \n\
                                                   \n\
-                                                  MultiLayerNetwork  \n\
+                                                  MultiLayerNetwork WITH_PLOT  \n\
                                                   { \n\
                                                     p17 : mean(ciao) \n\
-                                                    INPUT_LAYER in \n\
+                                                    INPUT_LAYER \n\
 	                                                { \n\
                                                         p17 : mean(ciao), \n\
                                                         p11 : 4.5 + -5 \n\
-                                                    }, \n\
+                                                    } \n\
                                                     \n\
-                                                    HIDDEN_LAYER primo \n\
+                                                    HIDDEN_LAYER \n\
                                                     { \n\
                                                         p17 : mean(ciao), \n\
                                                         p11 : 4.5 + -5 \n\
