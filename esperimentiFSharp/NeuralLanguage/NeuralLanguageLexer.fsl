@@ -43,7 +43,13 @@ let functions =
         "ln", LN;
         "floor", FLOOR;
         "ceil", CEIL;
-        "sqrt", SQRT
+        "sqrt", SQRT;
+        "mean", MEAN;
+        "sd", SD;
+        "min", MIN;
+        "max", MAX;
+        "sum", SUM;
+        "sumsquared", SUMSQUARED
     ] |> Map.ofList
 
 let relOps = 
@@ -66,7 +72,7 @@ let identifier	= char(char|digit|'_')*
 let attIdentifier = "ATT"(digit)+
 let mathOp = '+' | '-' | '*' | '/' | '^'
 let logicOp = "&&" | "||" | '!' | "true" | "false"
-let function = "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" 
+let function = "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
 let relOp = '<' | "<=" | '>' | ">=" | "==" | "!="
 
 // rules
@@ -95,7 +101,7 @@ rule tokenize = parse
 	| eof			{ EOF }
 	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }
 
-and string pos s = parse
+and string pos s = parse			// Accumulo la stringa in s fino alla chiusura (") e mi porto avanti la posizione iniziale per il messaggio di errore
 	| "\""		{ s }
 	| eof		{ failwithf "end of file in string started at or near line %d, character %d \n String : '%s'\n" pos.Line pos.Column s }
 	| _			{ string pos (s + (lexeme lexbuf)) lexbuf }
