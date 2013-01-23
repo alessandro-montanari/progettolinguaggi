@@ -120,20 +120,26 @@ let main argv =
         NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
 
     let buildInterface (parser : string -> Network) =
-        let form = new Form(Visible=true, TopMost=true)
+        let form = new Form(Visible=true)
         let text = new RichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
         text.LoadFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt")
         let btnParse = new Button(Dock=DockStyle.Bottom, Text="Parse!")
         btnParse.Font <- new Font(btnParse.Font, btnParse.Font.Style ||| FontStyle.Bold)
         let btnSave = new Button(Dock=DockStyle.Bottom, Text="Save")
         btnSave.Click.Add(fun _ ->  text.SaveFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt"))
-        let console = new RichTextBox(Dock=DockStyle.Bottom)
-        btnParse.Click.Add(fun _ -> let network = parser text.Text
-                                    console.Text <- network.ToString() )
-        form.Controls.Add(text)
+        let console = new RichTextBox(Dock=DockStyle.Fill)
+        btnParse.Click.Add(fun _ -> try
+                                        console.Text <- sprintf "%A" (parser text.Text)
+                                    with e ->
+                                        console.Text <- "Error"
+                                    )
+
+        let splitContainer = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
+        splitContainer.Panel1.Controls.Add(text)
+        splitContainer.Panel2.Controls.Add(console)
+        form.Controls.Add(splitContainer)
         form.Controls.Add(btnParse)
         form.Controls.Add(btnSave)
-        form.Controls.Add(console)
         Application.Run(form)
         Application.EnableVisualStyles()
     buildInterface parser
