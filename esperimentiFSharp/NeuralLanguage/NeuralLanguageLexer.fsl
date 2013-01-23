@@ -5,7 +5,7 @@ open Microsoft.FSharp.Text.Lexing
 
 let lexeme = Lexing.LexBuffer<_>.LexemeString
 let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
-let extractId (text:string) = text.Split([|"ATT"; "IST"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
+let extractId (text:string) = text.Split([|"ATT"; "INST"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
 
 // Apro il modulo del parser per avere accesso ai token definiti li'
 open NeuralLanguageParser
@@ -14,7 +14,9 @@ let keywords = [
     "PREPROCESSING", PREPROC;
     "TRAINIG", TRAINING;
     "VALIDATION", VALIDATION;
-    "WHIT_PLOT", PLOT ] |> Map.ofList
+    "WHIT_PLOT", PLOT; 
+    "ATTRIBUTE", ATTKEY;
+    "INSTANCE", INSTKEY] |> Map.ofList
 
 let mathOps = 
     [ 
@@ -70,7 +72,7 @@ let whitespace			= [' ' '\t']
 let newline				= "\n\r" | '\n' | '\r'
 let identifier			= char(char|digit|'_')*
 let attIdentifier		= "ATT"(digit)+
-let istIdentifier		= "IST"(digit)+
+let instIdentifier		= "INST"(digit)+
 let mathOp				= '+' | '-' | '*' | '/' | '^'
 let logicOp				= "&&" | "||" | '!' | "true" | "false"
 let function			= "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
@@ -79,11 +81,11 @@ let relOp				= '<' | "<=" | '>' | ">=" | "==" | "!="
 // rules
 rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
-	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; NEWLINE }
+	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf }
 	| mathOp		{ mathOps.[lexeme lexbuf] }
 	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
 	| attIdentifier	{ ATTID(extractId (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
-	| istIdentifier	{ ISTID(extractId (lexeme lexbuf)) }
+	| instIdentifier{ INSTID(extractId (lexeme lexbuf)) }
 	| function		{ functions.[lexeme lexbuf] }													// stesso discorso di sopra
 	| logicOp		{ logicOps.[lexeme lexbuf] }
 	| "\""			{ ID(string lexbuf.StartPos "" lexbuf) }
@@ -100,6 +102,7 @@ rule tokenize = parse
 	| ']'			{ RB }
 	| ':'			{ COLON }
 	| ".."			{ DOTS }
+	| ';'			{ SEMICOLON }
 	| eof			{ EOF }
 	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }
 

@@ -43,9 +43,9 @@ type Expression =
     | Sum of string
     | SumSquared of string
 
-type IstanceListElement = 
-    | IstId of int
-    | IstanceSequence of int * int
+type InstanceListElement = 
+    | InstId of int
+    | InstanceSequence of int * int
 
 type AttributeListElement =
     | Id of string
@@ -59,7 +59,7 @@ type NumberListElement =
 type ParameterValue =
     | AttList of bool * AttributeListElement list
     | NumList of bool * NumberListElement list
-    | IstList of bool * IstanceListElement list
+    | InstList of bool * InstanceListElement list
     | Exp of Expression
 
 type Parameter = Parameter of string * ParameterValue

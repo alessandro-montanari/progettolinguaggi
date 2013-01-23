@@ -8,7 +8,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 // Simboli terminali
 %token <string> ID
 %token <string> ATTID
-%token <string> ISTID			
+%token <string> INSTID			
 %token <string> PATH
 %token <double> NUMBER
 %token PLUS MINUS TIMES FRAC POW
@@ -16,8 +16,8 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %token LT LTE GT GTE EQ NOTEQ
 %token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
 %token MEAN SD MIN MAX SUM SUMSQUARED
-%token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS
-%token PREPROC TRAINING VALIDATION PLOT
+%token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS SEMICOLON
+%token PREPROC TRAINING VALIDATION PLOT ATTKEY INSTKEY
 %token EOF
 
 // Associatività operatori e priorità (priorità minore prima)
@@ -37,7 +37,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 // Tipo di uscita in caso di parsing corretto
 //%type <AST.Network> start
 
-%type <AST.Parameter list> start
+%type <AST.Parameter list * (AST.Filter list * AST.Filter list)> start
 
 %%
 
@@ -51,7 +51,8 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 //		EOF				{ { Directives = $1; Preprocessing = $2; NetworkDefinition = $3; Training = $4; Validation = $5;} }
 
 start : directives
-		EOF				{ $1 }
+		preprocessing
+		EOF				{ ($1, $2) }
 
 parameter : ID COLON parameterValue		{ Parameter ($1, $3) }
 
@@ -60,8 +61,8 @@ parameterValue :
 	| NOT attributeList				{ AttList (false, $2) }
 	| numberList					{ NumList (true, $1) }
 	| NOT numberList				{ NumList (false, $2) }
-	| istList						{ IstList (true, $1) }
-	| NOT istList					{ IstList (false, $2) }
+	| instList						{ InstList (true, $1) }
+	| NOT instList					{ InstList (false, $2) }
 	| expression					{ Exp $1 }
 
 attributeList : LB attributeInnerList RB						{ $2 }
@@ -86,21 +87,21 @@ numberElement :
 	| number DOTS number				{ NumberSequence (Convert.ToDouble($1, cultureInfo), Convert.ToDouble($3, cultureInfo)) }	
 	| number							{ Num (Convert.ToDouble($1, cultureInfo)) }
 
-istList :
-	| LB istInnerList RB				{ $2 }
+instList :
+	| LB instInnerList RB				{ $2 }
 	
-istInnerList :
-	| istElement						{ [$1] }
-	| istElement COMMA istInnerList 	{ $1 :: $3 }
+instInnerList :
+	| instElement						{ [$1] }
+	| instElement COMMA instInnerList 	{ $1 :: $3 }
 
-istElement :
-	| ISTID DOTS ISTID					{ IstanceSequence (Convert.ToInt32($1, cultureInfo), Convert.ToInt32($3, cultureInfo)) }	
-	| ISTID								{ IstId (Convert.ToInt32($1, cultureInfo)) }
+instElement :
+	| INSTID DOTS INSTID					{ InstanceSequence (Convert.ToInt32($1, cultureInfo), Convert.ToInt32($3, cultureInfo)) }	
+	| INSTID								{ InstId (Convert.ToInt32($1, cultureInfo)) }
 
 directives :
 	|									{ [] }
 	| parameter							{ [$1] }
-	| parameter NEWLINE directives		{ $1 :: $3 }
+	| parameter SEMICOLON directives	{ $1 :: $3 }
 
 
 // Mettendo l'associatività e la priorità sopra posso definire la grammatica delle espressioni in modo molto più compatto
@@ -150,15 +151,26 @@ statElement :
 	| ID							{ $1 }
 	| ATTID							{ $1 }
 
+parameterList :
+	|									{ [] }
+	| parameter							{ [$1] }
+	| parameter COMMA parameterList		{ $1 :: $3 }
 
+filter : ID LP parameterList RP		{ Filter ($1, $3) }
 
+filterList : 
+	|								{ [] }
+	| filter						{ [$1] }
+	| filter SEMICOLON filterList	{ $1 :: $3 }
 
+attributeFilters : ATTKEY LCB filterList RCB	{ $3 }
+instanceFilters : INSTKEY LCB filterList RCB	{ $3 }
 
-
-
-
-
-preprocessing : PREPROC	{}
+preprocessing : PREPROC
+				LCB
+				attributeFilters								// filtri per gli attributi SEMPRE prima di quelli per le istanze
+				instanceFilters
+				RCB					{ ($3, $4) }
 
 network : ID	{}
 
