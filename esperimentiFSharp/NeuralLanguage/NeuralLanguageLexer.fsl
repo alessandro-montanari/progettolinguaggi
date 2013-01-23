@@ -16,7 +16,8 @@ let keywords = [
     "VALIDATION", VALIDATION;
     "WHIT_PLOT", PLOT; 
     "ATTRIBUTE", ATTKEY;
-    "INSTANCE", INSTKEY] |> Map.ofList
+    "INSTANCE", INSTKEY;
+    "TRAINING_SET", TRAINSETKEY] |> Map.ofList
 
 let mathOps = 
     [ 

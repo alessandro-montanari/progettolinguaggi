@@ -17,7 +17,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
 %token MEAN SD MIN MAX SUM SUMSQUARED
 %token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS SEMICOLON
-%token PREPROC TRAINING VALIDATION PLOT ATTKEY INSTKEY
+%token PREPROC TRAINING VALIDATION PLOT ATTKEY INSTKEY TRAINSETKEY
 %token EOF
 
 // Associatività operatori e priorità (priorità minore prima)
@@ -37,7 +37,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 // Tipo di uscita in caso di parsing corretto
 //%type <AST.Network> start
 
-%type <AST.Parameter list * (AST.Filter list * AST.Filter list)> start
+%type <AST.Parameter list * (string * AST.Filter list * AST.Filter list)> start
 
 %%
 
@@ -168,9 +168,10 @@ instanceFilters : INSTKEY LCB filterList RCB	{ $3 }
 
 preprocessing : PREPROC
 				LCB
+				TRAINSETKEY COLON ID
 				attributeFilters								// filtri per gli attributi SEMPRE prima di quelli per le istanze
 				instanceFilters
-				RCB					{ ($3, $4) }
+				RCB					{ ($5, $6, $7) }
 
 network : ID	{}
 

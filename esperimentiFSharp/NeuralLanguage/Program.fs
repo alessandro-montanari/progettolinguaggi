@@ -44,6 +44,7 @@ let main argv =
                                                  p21 : ![ATT4, ATT6] \n\
                                                  PREPROCESSING \n\
                                                  { \n\
+                                                    TRAINING_SET : \"C:\ciao\ciao\ciao.arff\" \n\
                                                     ATTRIBUTE \n\
                                                     { \n\
                                                         filter1(par:6, par2:x+y, par3:ATT3+ATT5); \n\
@@ -53,7 +54,7 @@ let main argv =
                                                     INSTANCE \n\
                                                     { \n\
                                                         filter1(par:6, par2:x+y, par3:ATT3+ATT5); \n\
-                                                        filter1(par:6, par2:x+y, par3:ATT3+ATT5) \n\
+                                                        filter1() \n\
                                                     }\n\
                                                   }" 
     try
