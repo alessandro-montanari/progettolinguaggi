@@ -4,9 +4,7 @@ open System
 open Microsoft.FSharp.Text.Lexing
 
 let lexeme = Lexing.LexBuffer<_>.LexemeString
-
 let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
-
 let extractId (text:string) = text.Split([|"ATT"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
 
 // Apro il modulo del parser per avere accesso ai token definiti li'
@@ -99,6 +97,6 @@ rule tokenize = parse
 
 and string pos s = parse
 	| "\""		{ s }
-	| eof		{ failwithf "end of file in string string started at or near %A" pos }
+	| eof		{ failwithf "end of file in string started at or near line %d, character %d \n String : '%s'\n" pos.Line pos.Column s }
 	| _			{ string pos (s + (lexeme lexbuf)) lexbuf }
 
