@@ -17,7 +17,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
 %token MEAN SD MIN MAX SUM SUMSQUARED
 %token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS SEMICOLON
-%token PREPROC TRAINING VALIDATION PLOT ATTKEY INSTKEY TRAINSETKEY PLOTKEY
+%token PREPROC TRAININGKEY VALIDATION PLOT ATTKEY INSTKEY TRAINSETKEY PLOTKEY
 %token EOF
 
 // Associatività operatori e priorità (priorità minore prima)
@@ -37,7 +37,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 // Tipo di uscita in caso di parsing corretto
 //%type <AST.Network> start
 
-%type <AST.Parameter list * (string * AST.Filter list * AST.Filter list) * (string * bool * AST.Parameter list * AST.Aspect list)> start
+%type <AST.Parameter list * (string * AST.Filter list * AST.Filter list) * (string * bool * AST.Parameter list * AST.Aspect list) * (string * AST.Parameter list)> start
 
 %%
 
@@ -53,7 +53,8 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 start : directives
 		preprocessing
 		network
-		EOF				{ ($1, $2, $3) }
+		training
+		EOF				{ ($1, $2, $3, $4) }
 
 parameter : ID COLON parameterValue		{ Parameter ($1, $3) }
 
@@ -205,6 +206,9 @@ network :
 		aspectListOpt
 		RCB 				{ ($1, $2, [], $4) }
 
-training : TRAINING ID	{}
+training :	TRAININGKEY ID
+			LCB
+			parameterListOpt								// Non capisco perché a volte va in conflitto e a volte no (vedi network)
+			RCB					{ ($2, $4) }
 
 validation : VALIDATION {}

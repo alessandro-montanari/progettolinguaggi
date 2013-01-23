@@ -12,7 +12,7 @@ open NeuralLanguageParser
 
 let keywords = [ 
     "PREPROCESSING", PREPROC;
-    "TRAINIG", TRAINING;
+    "TRAINING", TRAININGKEY;
     "VALIDATION", VALIDATION;
     "WHIT_PLOT", PLOT; 
     "ATTRIBUTE", ATTKEY;

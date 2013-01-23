@@ -44,7 +44,14 @@ let main argv =
                                                         p17 : mean(ciao), \n\
                                                         p11 : 4.5 + -5 \n\
                                                     } \n\
-                                                    \n\
+                                                  } \n\
+                                                  \n\
+                                                  TRAINING BackPropagation \n\
+                                                  { \n\
+                                                    p17 : mean(ciao), \n\
+                                                    p11 : 4.5 + -5, \n\
+                                                    p17 : mean(ciao), \n\
+                                                    p11 : 4.5 + -5 \n\
                                                   }" 
     try
         printfn "%A" (NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf)
