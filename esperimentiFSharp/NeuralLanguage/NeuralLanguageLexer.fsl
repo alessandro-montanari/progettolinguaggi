@@ -59,7 +59,7 @@ let relOps =
 
 let char		= ['a'-'z' 'A'-'Z']
 let digit		= ['0'-'9']
-let number		= '-'? digit+ ('.' digit*)?
+let number		= digit+ ('.' digit*)?
 let whitespace	= [' ' '\t']
 let newline		= "\n\r" | '\n' | '\r'
 let identifier	= char(char|digit|'_')*
