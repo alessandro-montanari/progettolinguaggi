@@ -13,12 +13,12 @@ open NeuralLanguageParser
 let keywords = [ 
     "PREPROCESSING", PREPROC;
     "TRAINING", TRAININGKEY;
-    "VALIDATION", VALIDATION;
-    "WHIT_PLOT", PLOT; 
+    "VALIDATION", VALIDATIONKEY;
     "ATTRIBUTE", ATTKEY;
     "INSTANCE", INSTKEY;
     "TRAINING_SET", TRAINSETKEY;
-    "WITH_PLOT", PLOTKEY] |> Map.ofList
+    "WITH_PLOT", PLOTKEY
+    "TEST_SET", TESTSETKEY] |> Map.ofList
 
 let mathOps = 
     [ 

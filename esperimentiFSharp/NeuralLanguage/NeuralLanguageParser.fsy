@@ -17,7 +17,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %token SIN COS TAN ATAN LOG LN FLOOR CEIL SQRT
 %token MEAN SD MIN MAX SUM SUMSQUARED
 %token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS SEMICOLON
-%token PREPROC TRAININGKEY VALIDATION PLOT ATTKEY INSTKEY TRAINSETKEY PLOTKEY
+%token PREPROC TRAININGKEY VALIDATIONKEY PLOT ATTKEY INSTKEY TRAINSETKEY PLOTKEY TESTSETKEY
 %token EOF
 
 // Associatività operatori e priorità (priorità minore prima)
@@ -35,26 +35,18 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %start start
 
 // Tipo di uscita in caso di parsing corretto
-//%type <AST.Network> start
-
-%type <AST.Parameter list * (string * AST.Filter list * AST.Filter list) * (string * bool * AST.Parameter list * AST.Aspect list) * (string * AST.Parameter list)> start
+%type <AST.Network> start
 
 %%
 
 // Produzioni
 
-//start:	directives
-//		preprocessing
-//		network
-//		training
-//		validation
-//		EOF				{ { Directives = $1; Preprocessing = $2; NetworkDefinition = $3; Training = $4; Validation = $5;} }
-
-start : directives
+start:	directives
 		preprocessing
 		network
 		training
-		EOF				{ ($1, $2, $3, $4) }
+		validation
+		EOF				{ { Directives = $1; Preprocessing = $2; NetworkDefinition = $3; Training = $4; Validation = $5;} }
 
 parameter : ID COLON parameterValue		{ Parameter ($1, $3) }
 
@@ -211,4 +203,10 @@ training :	TRAININGKEY ID
 			parameterListOpt								// Non capisco perché a volte va in conflitto e a volte no (vedi network)
 			RCB					{ ($2, $4) }
 
-validation : VALIDATION {}
+validation :
+	|							{ None }	
+	|	VALIDATIONKEY
+		LCB
+		TESTSETKEY COLON ID
+		parameterListOpt
+		RCB						{ Some ($5, $6) }

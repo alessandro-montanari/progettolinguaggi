@@ -52,6 +52,13 @@ let main argv =
                                                     p11 : 4.5 + -5, \n\
                                                     p17 : mean(ciao), \n\
                                                     p11 : 4.5 + -5 \n\
+                                                  } \n\
+                                                  VALIDATION \n\
+                                                  { \n\
+                                                    TEST_SET : \"C:\\test.arrf\" \n\
+                                                    p11 : 4.5 + -5, \n\
+                                                    p17 : mean(ciao), \n\
+                                                    p11 : 4.5 + -5 \n\
                                                   }" 
     try
         printfn "%A" (NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf)
