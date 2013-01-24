@@ -3,6 +3,10 @@ open System
 open AST
 
 let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
+
+// Per errori vedi reportParseErrorAt nella grammatica di F#
+
+
 %}
 
 // Simboli terminali
