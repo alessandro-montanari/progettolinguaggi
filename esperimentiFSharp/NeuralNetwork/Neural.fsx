@@ -74,13 +74,7 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         trainingFun nn trainingSet classAtt
 
     member nn.Train(trainingSetPath : string, classAtt : string) =  // costruisce il data table e chiama l'altro metodo
-        let table = new DataTable()
-        let reader = 
-            seq {   use reader = new StreamReader(File.OpenRead(@"D:\Users\alessandro\Dropbox\Magistrale\Sistemi Intelligenti\esRetiNeurali\cars2004.arff"))
-                    while not reader.EndOfStream do
-                        yield reader.ReadLine() }
-        
-              
+        let table = FileUtilities.LoadFile trainingSetPath      
         nn.Train(table, classAtt)
 
     member nn.Validate(testSet : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
