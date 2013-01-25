@@ -50,6 +50,7 @@
     <Compile Include="ArffLanguageParser.fsi" />
     <Compile Include="ArffLanguageParser.fs" />
     <Compile Include="ArffLanguageLexer.fs" />
+    <Compile Include="ArffLanguageUtilities.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>
@@ -57,7 +58,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <PropertyGroup>
-    <PreBuildEvent>fsyacc "$(ProjectDir)ArffLanguageParser.fsy" -v --module ArffLanguageParser
+    <PreBuildEvent>fsyacc "$(ProjectDir)ArffLanguageParser.fsy" --module ArffLanguageParser
 fslex "$(ProjectDir)ArffLanguageLexer.fsl" --unicode</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

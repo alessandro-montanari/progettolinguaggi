@@ -19,24 +19,9 @@ open System.IO
 //    0 
 
 
-
 [<EntryPoint>]
 let main argv = 
-    let lexbuf = Lexing.LexBuffer<_>.FromTextReader (new StreamReader(File.OpenRead(@"D:\Users\alessandro\Dropbox\Magistrale\Sistemi Intelligenti\esRetiNeurali\cars2004.arff")))
-    try
-        printfn "%A" (ArffLanguageParser.start ArffLanguageLex.tokenize lexbuf)
-    with e ->
-        let pos = lexbuf.EndPos 
-        failwithf "Error near line %d, character %d\n" pos.Line pos.Column
+    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Desktop\test.txti")
     System.Console.ReadLine() |> ignore
     0
-
-//let reader = 
-//    seq {   use reader = new StreamReader(File.OpenRead(@"C:\Users\Alessandro\Desktop\test.txt"))
-//            while not reader.EndOfStream do
-//                yield reader.ReadLine() }
-//
-//reader
-//    |> Seq.iter (fun el -> printfn "%s" el)
-
     

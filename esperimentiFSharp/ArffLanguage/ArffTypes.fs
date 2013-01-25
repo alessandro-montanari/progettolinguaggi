@@ -22,8 +22,3 @@ type ArffFile =
         Attributes : ArffAttribute list
         Data : ArffData
     }
-
-
-let sequ = Seq.singleton (ArffInstance([ArffValue.String("ciao")]))
-
-let sequ2 = Seq.append (Seq.singleton (ArffInstance([ArffValue.String("ciao")]))) (Seq.singleton (ArffInstance([ArffValue.String("ciao")])))
