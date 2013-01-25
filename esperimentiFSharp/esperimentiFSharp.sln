@@ -9,6 +9,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeuralLanguage", "NeuralLan
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeuralNetwork", "NeuralNetwork\NeuralNetwork.fsproj", "{AEFB4E87-D837-441A-91D0-0529AA7F8F9B}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ArffLanguage", "ArffLanguage\ArffLanguage.fsproj", "{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,16 @@ Global
 		{AEFB4E87-D837-441A-91D0-0529AA7F8F9B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AEFB4E87-D837-441A-91D0-0529AA7F8F9B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AEFB4E87-D837-441A-91D0-0529AA7F8F9B}.Release|x86.ActiveCfg = Release|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D64FC3C0-83A2-4CCA-A39E-2CF2D4A2F92B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
