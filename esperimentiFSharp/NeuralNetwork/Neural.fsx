@@ -13,7 +13,6 @@ let random = new System.Random()    // deve essre in qualche modo statico
 type ActivationFunType = seq<double * double> -> double   // input * peso
 type OutputFunType = double -> double
 
-
 // Funzioni di uscita
 let sigmoid (t : double) : double = 1.0 / (1.0 + exp(-t))
 let heavisied (t :double) (theta :double) : double =    if t < theta then
@@ -73,8 +72,8 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
     member nn.Train(trainingSet : DataTable, classAtt : string) =
         trainingFun nn trainingSet classAtt
 
-    member nn.Train(trainingSetPath : string, classAtt : string) =  // costruisce il data table e chiama l'altro metodo
-        let table = FileUtilities.LoadFile trainingSetPath      
+    member nn.TrainFromArff(trainingSetPath : string, classAtt : string) =  // costruisce il data table e chiama l'altro metodo
+        let table = TableUtilities.buildTableFromArff trainingSetPath      
         nn.Train(table, classAtt)
 
     member nn.Validate(testSet : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
@@ -134,19 +133,19 @@ form.Controls.Add(grid)
 
    
 
-let layer1 = [ for i in 0 .. 9 -> new Neuron(3, sumOfProducts, sigmoid) ]
-let layer2 = [ for i in 0 .. 4 -> new Neuron(10, sumOfProducts, sigmoid) ]
-let layer3 = [ new Neuron(5, sumOfProducts, sigmoid) ]
-let inputs = [ 0.5; 0.000099; 0.06 ];;
-
-let outputsLayer1 = layer1 
-                        |> List.map (fun n -> n.Activate(inputs))
-
-let outputsLayer2 = layer2
-                        |> List.map (fun n -> n.Activate(outputsLayer1))
-
-let outputLayer3 = layer3
-                    |> List.map (fun n -> n.Activate(outputsLayer2))
+//let layer1 = [ for i in 0 .. 9 -> new Neuron(3, sumOfProducts, sigmoid) ]
+//let layer2 = [ for i in 0 .. 4 -> new Neuron(10, sumOfProducts, sigmoid) ]
+//let layer3 = [ new Neuron(5, sumOfProducts, sigmoid) ]
+//let inputs = [ 0.5; 0.000099; 0.06 ];;
+//
+//let outputsLayer1 = layer1 
+//                        |> List.map (fun n -> n.Activate(inputs))
+//
+//let outputsLayer2 = layer2
+//                        |> List.map (fun n -> n.Activate(outputsLayer1))
+//
+//let outputLayer3 = layer3
+//                    |> List.map (fun n -> n.Activate(outputsLayer2))
 
     
 

@@ -42,13 +42,24 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TableUtilities.fs" />
     <None Include="Neural.fsx" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
-    <None Include="FileUtilities.fsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">
+      <Name>ArffLanguage</Name>
+      <Project>{d64fc3c0-83a2-4cca-a39e-2cf2d4a2f92b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

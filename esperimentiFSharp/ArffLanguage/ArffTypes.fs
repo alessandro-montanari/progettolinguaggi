@@ -22,3 +22,12 @@ type ArffFile =
         Attributes : ArffAttribute list
         Data : ArffData
     }
+
+
+// per il testing
+let arffFile =
+    {
+        Relation = "cars";
+        Attributes = [ArffAttribute("att1", ArffType.String); ArffAttribute("att2", ArffType.Numeric); ArffAttribute("att3", Nominal(["a";"b";"c"]))];
+        Data = Seq.init 5 (fun _ -> ArffInstance[ArffValue.String("val1"); ArffValue.Missing; ArffValue.Numeric(4.5)])
+    }
