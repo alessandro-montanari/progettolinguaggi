@@ -57,23 +57,44 @@ type ValidationStatistics() =
 [<AbstractClass>]
 type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
     
+    let mutable _classAtt = ""
+
+    member nn.TrainedAttribute = _classAtt
     member val TrainingFunction = trainingFun with get, set
     
     member nn.Train(trainingSet : DataTable, classAtt : string) =
+        _classAtt <- classAtt
         trainingFun nn trainingSet classAtt
 
-    member nn.TrainFromArff(trainingSetPath : string, classAtt : string) =  // costruisce il data table e chiama l'altro metodo
+    member nn.TrainFromArff(trainingSetPath : string, classAtt : string) = 
         let table = TableUtilities.buildTableFromArff trainingSetPath      
         nn.Train(table, classAtt)
 
-    member nn.Validate(testSet : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
-        new ValidationStatistics()
+    member nn.Validate(testTable : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
+        let stat = new ValidationStatistics()
+        let cols = seq{ for colName in testTable.Columns -> colName.ColumnName }    // costruisco l'array di colonne che mi servono (non c'è quella del classAtt)
+                    |> Seq.filter (fun name -> name <> _classAtt)
+                    |> Array.ofSeq
+        let testTable = testTable.DefaultView.ToTable("testTable", false, cols)
+        let expectedTable = testTable.DefaultView.ToTable("expectedTable", false, [| _classAtt |])
+        testTable.Select()
+            |> Seq.iter2 (fun testRow expRow -> 
+                                            let outputValue = nn.Classify testRow
+                                            let output : 'T = match outputValue with 
+                                                                | Numeric(v) -> v
+                                                                | Nominal(v) -> v
+                                            if output = expRow.[0] then
+                                                stat.NumberOfCorrectlyClassifiedExamples <- stat.NumberOfCorrectlyClassifiedExamples+1
+                                                stat.CorrectlyClassifiedExamples <- Seq.append seq[(testRow, outputValue)] stat.CorrectlyClassifiedExamples ) expectedTable.Select() 
+        stat
 
-    member nn.Validate(testSetPath : string) : ValidationStatistics =
-        new ValidationStatistics()
+    member nn.ValidateFromArff(testSetPath : string) : ValidationStatistics =
+        let table = TableUtilities.buildTableFromArff testSetPath 
+        new ValidationStatistics(table)
 
     // Classifica in base all'attributo specificato in fase di training
     // Ritorna Numeric o Nominal in base all'attributo scelto per il training
+    // La DataRow in ingresso ovviamente non deve contenere l'attributo da classificare
     abstract member Classify : DataRow -> OutputValue
 
 and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
