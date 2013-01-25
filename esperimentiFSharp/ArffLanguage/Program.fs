@@ -21,7 +21,7 @@ open System.IO
 
 [<EntryPoint>]
 let main argv = 
-    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Desktop\test.txti")
+    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Desktop\test.txt")
     System.Console.ReadLine() |> ignore
     0
     

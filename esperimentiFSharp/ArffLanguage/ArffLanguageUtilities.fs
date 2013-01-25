@@ -3,7 +3,8 @@
 open System.IO
 
 let parseFile filePath =
-    let lexbuf = Lexing.LexBuffer<_>.FromTextReader (new StreamReader(File.OpenRead(filePath)))
+    use reader = new StreamReader(File.OpenRead(filePath))
+    let lexbuf = Lexing.LexBuffer<_>.FromTextReader (reader)
     try
         ArffLanguageParser.start ArffLanguageLex.tokenize lexbuf
     with e ->

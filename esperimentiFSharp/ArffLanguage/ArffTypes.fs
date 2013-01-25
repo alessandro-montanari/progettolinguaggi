@@ -1,5 +1,8 @@
 ﻿module ArffTypes
 
+// Non unifico questi tipi con quelli della rete neurale (ad esempio OutputValue)
+// perché tanto le due cose sono distinte e possono rimanere tali
+
 type ArffType =
     | String
     | Numeric

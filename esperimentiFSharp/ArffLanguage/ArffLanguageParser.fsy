@@ -38,13 +38,13 @@ attributeList :
 	| attribute attributeList	{ $1 :: $2 }
 
 attribute : 
-	| ATTKEY ID NUMKEY			{ ArffAttribute($2, ArffType.Numeric) }
-	| ATTKEY ID STRKEY			{ ArffAttribute($2, ArffType.String) }
-	| ATTKEY ID LCB idList RCB	{ ArffAttribute($2, ArffType.Nominal $4) }
+	| ATTKEY ID NUMKEY					{ ArffAttribute($2, ArffType.Numeric) }
+	| ATTKEY ID STRKEY					{ ArffAttribute($2, ArffType.String) }
+	| ATTKEY ID LCB nominalList RCB		{ ArffAttribute($2, ArffType.Nominal $4) }
 
-idList :
+nominalList :
 	| ID				{ [$1] }
-	| ID COMMA idList	{ $1 :: $3 }
+	| ID COMMA nominalList	{ $1 :: $3 }
 
 data : DATAKEY instanceList		{ $2 }
 

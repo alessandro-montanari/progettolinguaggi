@@ -1,12 +1,8 @@
 ﻿open System.Data
 open System.IO
-open System.Text.RegularExpressions
+open System.Collections.Generic
 
 // In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
-
-// - Applicare la memoizzazione sulle funzioni come Mean, ...
-// - Usare un DataSet per rappresentare le tabelle (forse conviene)
-// - Usare le sequence (con using) per leggere il file
 
 let random = new System.Random()    // deve essre in qualche modo statico
 
@@ -23,17 +19,10 @@ let heavisied (t :double) (theta :double) : double =    if t < theta then
 // Funzioni di attivazione
 let sumOfProducts (input : seq<double * double> ) : double = input 
                                                                 |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0 
-                             
-
-//NOTE
-// - così non riesco a specificare le connessioni tra i singoli neuroni (solo livelli completamente connessi)
-// - come rappresento la rete da passare agli algoritmi di training??
-// Le due cose sono legate -> c'è poca struttura
-
-open System.Collections.Generic
+                        
 
 // Con questa modellazione di neurone posso creare qualsiasi struttura
-// Comunque mi limito a supportare principlamente addestramento di tipo supervisionato in cui si ha sempre un trainig set d'ingresso
+// Comunque mi limito a supportare principlamente l'addestramento di tipo supervisionato in cui si ha sempre un trainig set d'ingresso
 // con gli esempi e l'uscita desiderata
 type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outFun : OutputFunType) =
 
@@ -51,6 +40,7 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
                         |> n.OutputFunction
         _output <- newOutput
         newOutput
+
 
 type  OutputValue =
         | Numeric of double
@@ -89,49 +79,9 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
 and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
 
 
-    
 
 
-// Come rappresento le istanze??    -> DataRow (fornire all'esterno il metodo DataTable.NewRow())
-// Come rappresento un dataset??    -> DataTable
 
-// vedere i metodi DataTable.Select() e Compute() e adeguare la grammatica
-
-let table = new DataTable("MyTable")
-table.Columns.Add("col a1")
-table.Columns.Add("col2")
-let data = seq{ for i in 0 .. 1000000 -> (i, i*i) } 
-            |> Seq.map (fun (e1, e2) -> (box e1, box e2)) 
-            |> Seq.map (fun (e1, e2) -> [| e1; e2 |] ) 
-            |> Seq.iter (fun arr -> table.LoadDataRow(arr, false) |> ignore)
-
-open System.Windows.Forms
-let grid = new DataGrid(Dock=DockStyle.Fill, DataSource=table)
-grid.ReadOnly <- true
-let form = new Form(Visible=true)
-form.Controls.Add(grid)
-
-//string CSVFilePathName = @"C:\test.csv";
-//string[] Lines = File.ReadAllLines(CSVFilePathName);
-//string[] Fields;
-//Fields = Lines[0].Split(new char[] { ',' });
-//int Cols = Fields.GetLength(0);
-//DataTable dt = new DataTable();
-////1st row must be column names; force lower case to ensure matching later on.
-//for (int i = 0; i < Cols; i++)
-//    dt.Columns.Add(Fields[i].ToLower(), typeof(string));
-//DataRow Row;
-//for (int i = 1; i < Lines.GetLength(0); i++)
-//{
-//    Fields = Lines[i].Split(new char[] { ',' });
-//    Row = dt.NewRow();
-//    for (int f = 0; f < Cols; f++)
-//        Row[f] = Fields[f];
-//    dt.Rows.Add(Row);
-//}
-
-
-   
 
 //let layer1 = [ for i in 0 .. 9 -> new Neuron(3, sumOfProducts, sigmoid) ]
 //let layer2 = [ for i in 0 .. 4 -> new Neuron(10, sumOfProducts, sigmoid) ]
