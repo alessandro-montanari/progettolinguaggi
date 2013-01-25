@@ -1,0 +1,63 @@
+﻿%{
+open System
+open ArffTypes
+
+let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
+
+// Per errori vedi reportParseErrorAt nella grammatica di F#
+
+
+%}
+
+// Simboli terminali
+%token <string> ID
+%token <double> NUMBER
+%token LCB RCB COMMA NEWLINE
+%token RELKEY ATTKEY DATAKEY NUMKEY STRKEY MISSKEY MINUS
+%token EOF
+
+// Scopo della grammatica
+%start start
+
+// Tipo di uscita in caso di parsing corretto
+%type <ArffTypes.ArffFile> start
+
+%%
+
+// Produzioni
+
+start:	relation
+		attributeList
+		data
+		EOF				{ { Relation = $1; Attributes = $2; Data = $3;} }
+
+relation : RELKEY ID	{ $2 }
+
+attributeList : 
+	| attribute					{ [$1] }
+	| attribute attributeList	{ $1 :: $2 }
+
+attribute : 
+	| ATTKEY ID NUMKEY			{ ArffAttribute($2, ArffType.Numeric) }
+	| ATTKEY ID STRKEY			{ ArffAttribute($2, ArffType.String) }
+	| ATTKEY ID LCB idList RCB	{ ArffAttribute($2, ArffType.Nominal $4) }
+
+idList :
+	| ID				{ [$1] }
+	| ID COMMA idList	{ $1 :: $3 }
+
+data : DATAKEY instanceList		{ $2 }
+
+instanceList :
+	| instance					{ Seq.singleton (ArffInstance($1)) }
+	| instance instanceList		{ Seq.append (Seq.singleton (ArffInstance($1))) $2  }
+
+instance :
+	| instanceElement							{ [$1] }
+	| instanceElement COMMA instance			{ $1 :: $3 }
+
+instanceElement : 
+	| ID						{ ArffValue.String $1 } 
+	| NUMBER					{ ArffValue.Numeric $1  }
+	| MINUS NUMBER				{ ArffValue.Numeric(Convert.ToDouble(-$2, cultureInfo)) }
+	| MISSKEY					{ ArffValue.Missing }

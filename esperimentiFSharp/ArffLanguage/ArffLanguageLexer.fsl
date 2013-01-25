@@ -1,0 +1,64 @@
+﻿{
+module ArffLanguageLex
+open System
+open Microsoft.FSharp.Text.Lexing
+
+let lexeme = Lexing.LexBuffer<_>.LexemeString
+let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
+
+// Apro il modulo del parser per avere accesso ai token definiti li'
+open ArffLanguageParser
+
+let keywords = [ 
+    "@relation", RELKEY;
+    "@attribute", ATTKEY;
+    "@data", DATAKEY;
+    "numeric", NUMKEY;
+    "real", NUMKEY;
+    "string", STRKEY ] |> Map.ofList
+}
+
+let char				= ['a'-'z' 'A'-'Z']
+let digit				= ['0'-'9']
+let number				= digit+ ('.' digit*)?
+let whitespace			= [' ' '\t']
+let newline				= "\n\r" | '\n' | '\r'
+let identifier			= char(char|digit|'_')*
+let keys				= '@'identifier
+
+// rules
+rule tokenize = parse
+	| whitespace	{ tokenize lexbuf }
+	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf }
+	| '%'			{ comment lexbuf; tokenize lexbuf }												// Skippo i commenti
+	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
+	| "'"			{ ID(stringSingleQuoted lexbuf.StartPos "" lexbuf) }						// Inizio di una stringa
+	| "\""			{ ID(stringDoubleQuoted lexbuf.StartPos "" lexbuf) }
+	| keys			{ match keywords.TryFind(lexeme lexbuf) with
+                        | Some(token) -> token
+                        | None -> ID(lexeme lexbuf) }
+ 	| identifier	{ match keywords.TryFind(lexeme lexbuf) with
+                        | Some(token) -> token
+                        | None -> ID(lexeme lexbuf) }
+	| ','			{ COMMA }
+	| '{'			{ LCB }
+	| '}'			{ RCB }
+	| '?'			{ MISSKEY }
+	| '-'			{ MINUS }
+	| eof			{ EOF }
+	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }
+
+and stringSingleQuoted pos s = parse			// Accumulo la stringa in s fino alla chiusura (') e mi porto avanti la posizione iniziale per il messaggio di errore
+	| "'"		{ s }
+	| eof		{ failwithf "end of file in string started at or near line %d, character %d \n String : '%s'\n" pos.Line pos.Column s }
+	| _			{ stringSingleQuoted pos (s + (lexeme lexbuf)) lexbuf }
+
+and stringDoubleQuoted pos s = parse			
+	| "\""		{ s }
+	| eof		{ failwithf "end of file in string started at or near line %d, character %d \n String : '%s'\n" pos.Line pos.Column s }
+	| _			{ stringDoubleQuoted pos (s + (lexeme lexbuf)) lexbuf }
+
+and comment = parse
+	| "\n"		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine }
+	| _			{ comment lexbuf }
+

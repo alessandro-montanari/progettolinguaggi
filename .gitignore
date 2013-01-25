@@ -5,3 +5,8 @@ esperimentiFSharp/NeuralLanguage/bin/*
 esperimentiFSharp/NeuralLanguage/NeuralLanguageParser.fs
 esperimentiFSharp/NeuralLanguage/NeuralLanguageParser.fsi
 esperimentiFSharp/NeuralLanguage/NeuralLanguageLexer.fs
+esperimentiFSharp/ArffLanguage/obj/*
+esperimentiFSharp/ArffLanguage/bin/*
+esperimentiFSharp/ArffLanguage/ArfflLanguageParser.fs
+esperimentiFSharp/ArffLanguage/ArffLanguageParser.fsi
+esperimentiFSharp/ArffLanguage/ArffLanguageLexer.fs
