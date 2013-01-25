@@ -585,6 +585,8 @@ let reader =
                 yield reader.ReadLine() }
 
 
+
+
 //---- Cap 5 ---- MASTERING TYPES AND GENERICS
 
 // Generic Comparison
@@ -680,7 +682,7 @@ type Tree<'T> =
         
 // Come scegliere se usare le funzioni o i membri?
 // Di solito si utilizzano i membri per le proprietà e le operazioni che sono strettamente correlate con il tipo che si sta definendo, mentre si utilizzano funzioni 
-// statiche agginte ad un modulo per le funzionalità addizionali
+// statiche aggiunte ad un modulo per le funzionalità addizionali
 
 // CLASSI
 type Vector2DClass(dx : float, dy : float) =     // dx e dy sono visibili per tutti i membri non statici della definizione. Qui stiamo anche definendo un construttore implicito 

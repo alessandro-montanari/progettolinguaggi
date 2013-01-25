@@ -1,4 +1,6 @@
 ﻿open System.Data
+open System.IO
+open System.Text.RegularExpressions
 
 // In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
 
@@ -31,6 +33,9 @@ let sumOfProducts (input : seq<double * double> ) : double = input
 
 open System.Collections.Generic
 
+// Con questa modellazione di neurone posso creare qualsiasi struttura
+// Comunque mi limito a supportare principlamente addestramento di tipo supervisionato in cui si ha sempre un trainig set d'ingresso
+// con gli esempi e l'uscita desiderata
 type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outFun : OutputFunType) =
 
     let mutable _output : double = 0.0
@@ -48,29 +53,50 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
         _output <- newOutput
         newOutput
 
+type  OutputValue =
+        | Numeric of double
+        | Nominal of string
 
-// Sottoclassi
-type NeuralNetwork(neurons : ResizeArray<Neuron>, trainingFun : TrainigFunctionType) =
+type ValidationStatistics() =
     
-    member nn.Neurons = neurons
+    member val NumberOfExamples = 0 with get, set
+    member val NumberOfMissclassifiedExamples = 0 with get, set
+    member val NumberOfCorrectlyClassifiedExamples = 0 with get, set
+    member val MissclassifiedExamples = seq<(DataRow * OutputValue)> with get, set
+    member val CorrectlyClassifiedExamples = seq<(DataRow * OutputValue)> with get, set
+
+[<AbstractClass>]
+type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
+    
     member val TrainingFunction = trainingFun with get, set
     
     member nn.Train(trainingSet : DataTable, classAtt : string) =
         trainingFun nn trainingSet classAtt
 
-    member nn.Train(trainingSetPath : string, classAtt : string) =
-        0
+    member nn.Train(trainingSetPath : string, classAtt : string) =  // costruisce il data table e chiama l'altro metodo
+        let table = new DataTable()
+        let reader = 
+            seq {   use reader = new StreamReader(File.OpenRead(@"D:\Users\alessandro\Dropbox\Magistrale\Sistemi Intelligenti\esRetiNeurali\cars2004.arff"))
+                    while not reader.EndOfStream do
+                        yield reader.ReadLine() }
+        
+              
+        nn.Train(table, classAtt)
 
-    member nn.Validate(testSet : DataTable) =
-        0
+    member nn.Validate(testSet : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
+        new ValidationStatistics()
 
-    member nn.Validate(testSetPath : string) =
-        0
+    member nn.Validate(testSetPath : string) : ValidationStatistics =
+        new ValidationStatistics()
 
-    member nn.Classify(instance : DataRow) =
-        0
+    // Classifica in base all'attributo specificato in fase di training
+    // Ritorna Numeric o Nominal in base all'attributo scelto per il training
+    abstract member Classify : DataRow -> OutputValue
 
-and TrainigFunctionType = NeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
+and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
+
+
+    
 
 
 // Come rappresento le istanze??    -> DataRow (fornire all'esterno il metodo DataTable.NewRow())
