@@ -57,7 +57,7 @@ type  OutputValue =
         if valueType = typeof<double> then
             Numeric(Convert.ToDouble(value))
         elif valueType = typeof<string> then
-            Nominal(value.ToString()
+            Nominal(value.ToString())
         else
             failwithf "The type '%A' is not supported as OutputValue" valueType 
 
@@ -110,19 +110,14 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
                     |> Seq.filter (fun name -> name <> _classAtt)
                     |> Array.ofSeq
         let testTable = testTable.DefaultView.ToTable("testTable", false, cols)
-        let expectedTable = testTable.DefaultView.ToTable("expectedTable", false, [| _classAtt |])
+        let expectedTable = testTable.DefaultView.ToTable("expectedTable", false, [| _classAtt |])  //TODO E se dentro il datatable ho già oggetti di tipo OutputValue (o qualcosa tipo ArffValue)
         for testRow in testTable.Select() do
             for expRow in expectedTable.Select() do
                 let outputValue = nn.Classify testRow
-                match outputValue with 
-                | Numeric(v) -> if v = Convert.ToDouble(expRow.[0]) then
-                                    stat.CollectStatistics(true, (expRow, outputValue)) 
-                                else 
-                                    stat.CollectStatistics(false, (expRow, outputValue)) 
-                | Nominal(v) -> if v = expRow.[0].ToString() then 
-                                    stat.CollectStatistics(true, (expRow, outputValue)) 
-                                else 
-                                    stat.CollectStatistics(false, (expRow, outputValue)) 
+                if outputValue = OutputValue.Create(expRow.[0]) then        // L'operatore '=' funziona anche sulle Discriminated Unions
+                    stat.CollectStatistics(true, (testRow, outputValue))
+                else
+                     stat.CollectStatistics(false, (testRow, outputValue))
         stat
 
     member nn.ValidateFromArff(testSetPath : string) : ValidationStatistics =
