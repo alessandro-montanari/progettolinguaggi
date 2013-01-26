@@ -50,8 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TableUtilities.fs" />
-    <None Include="Neural.fsx" />
-    <Compile Include="Program.fs" />
+    <Compile Include="Neural.fs" />
+    <Compile Include="Iterpreter.fs" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

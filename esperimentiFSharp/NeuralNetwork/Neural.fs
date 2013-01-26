@@ -43,28 +43,48 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
                         |> n.OutputFunction
         _output <- newOutput
         newOutput
+    //TODO: MANCA LA FUNZIONE PER L'HASH (forse)
 
 
 type  OutputValue =
-        | Numeric of double
-        | Nominal of string
+    | Numeric of double
+    | Nominal of string
+    
+    static member Create(value : double) = Numeric(value)
+    static member Create(value : string) = Nominal(value)
+    static member Create(value : obj) =
+        let valueType = value.GetType()
+        if valueType = typeof<double> then
+            Numeric(Convert.ToDouble(value))
+        elif valueType = typeof<string> then
+            Nominal(value.ToString()
+        else
+            failwithf "The type '%A' is not supported as OutputValue" valueType 
 
 type ValidationStatistics() =
     
-    member val NumberOfExamples = 0 with get, set
-    member val NumberOfMissclassifiedExamples = 0 with get, set
-    member val NumberOfCorrectlyClassifiedExamples = 0 with get, set
-    member val MissclassifiedExamples = new ResizeArray<DataRow * OutputValue>() with get, set
-    member val CorrectlyClassifiedExamples = new ResizeArray<DataRow * OutputValue>() with get, set
+    let mutable _nExps = 0
+    let mutable _nMiss = 0
+    let mutable _nCorr = 0
+    let mutable _missExps = new ResizeArray<DataRow * OutputValue>()
+    let mutable _corrExps = new ResizeArray<DataRow * OutputValue>()
 
-let collectStatistics positive example (stat : ValidationStatistics) =
-    stat.NumberOfExamples <- stat.NumberOfExamples+1
-    if positive = true then
-        stat.NumberOfCorrectlyClassifiedExamples <- stat.NumberOfCorrectlyClassifiedExamples+1
-        stat.CorrectlyClassifiedExamples.Add(example)
-    else
-        stat.NumberOfMissclassifiedExamples <- stat.NumberOfMissclassifiedExamples+1
-        stat.MissclassifiedExamples.Add(example)
+    member stat.NumberOfExamples = _nExps
+    member stat.NumberOfMissclassifiedExamples = _nMiss
+    member stat.NumberOfCorrectlyClassifiedExamples = _nCorr
+    member stat.MissclassifiedExamples = _missExps.AsReadOnly()
+    member stat.CorrectlyClassifiedExamples = _corrExps.AsReadOnly()
+
+    member stat.CollectStatistics(positive, example) =
+        _nExps <- stat.NumberOfExamples+1
+        if positive = true then
+            _nCorr <- stat.NumberOfCorrectlyClassifiedExamples+1
+            _corrExps.Add(example)
+        else
+            _nMiss <- stat.NumberOfMissclassifiedExamples+1
+            _missExps.Add(example)
+
+let inline equal a b = a=b
 
 [<AbstractClass>]
 type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
@@ -82,7 +102,7 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         let table = TableUtilities.buildTableFromArff trainingSetPath      
         nn.Train(table, classAtt)
 
-    // SERVE UNA FUNZIONE PER CONFRONTARE DUE OUTPUT VALUEù
+    // SERVE UNA FUNZIONE PER CONFRONTARE DUE OUTPUT VALUE
     // Come fare per i parametri -> ci sarà un sorta di builder che genera il testSet in base ai parametri
     member nn.Validate(testTable : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
         let stat = new ValidationStatistics()
@@ -96,13 +116,13 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
                 let outputValue = nn.Classify testRow
                 match outputValue with 
                 | Numeric(v) -> if v = Convert.ToDouble(expRow.[0]) then
-                                    collectStatistics true (expRow, outputValue) stat 
+                                    stat.CollectStatistics(true, (expRow, outputValue)) 
                                 else 
-                                    collectStatistics false (expRow, outputValue) stat
+                                    stat.CollectStatistics(false, (expRow, outputValue)) 
                 | Nominal(v) -> if v = expRow.[0].ToString() then 
-                                    collectStatistics true (expRow, outputValue) stat 
+                                    stat.CollectStatistics(true, (expRow, outputValue)) 
                                 else 
-                                    collectStatistics false (expRow, outputValue) stat 
+                                    stat.CollectStatistics(false, (expRow, outputValue)) 
         stat
 
     member nn.ValidateFromArff(testSetPath : string) : ValidationStatistics =
@@ -117,6 +137,8 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
 and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
 
 
+// Per il preprocessing ci sarà "qualcosa" che prende i filtri e man mano li applica e alla fine sputa fuori una
+// nuova DataTable (quella originale si perde, per efficienza)
 
 
 //let layer1 = [ for i in 0 .. 9 -> new Neuron(3, sumOfProducts, sigmoid) ]
