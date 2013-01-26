@@ -7,8 +7,9 @@ open System.Collections.Generic
 
 // In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
 
-let private getUniqueId : (unit -> int) =
-    let random = new System.Random()    // deve essre in qualche modo statico
+//TODO DEVE ESSERE PRIVATO
+let getUniqueId : (unit -> int) =
+    let random = new System.Random()   
     let id = ref 0
     (function _ ->  id := !id+1
                     !id )
@@ -48,8 +49,24 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
                         |> n.OutputFunction
         _output <- newOutput
         newOutput
-    //TODO: MANCA LA FUNZIONE PER L'HASH (forse)
 
+    override n.Equals(aNeuron) =  
+        match aNeuron with
+        | :? Neuron as yN -> n.Id = yN.Id
+        | _ -> false
+
+    override n.GetHashCode() = hash n.Id
+
+    interface System.IComparable with
+        member n.CompareTo(aNeuron) =
+            match aNeuron with
+            | :? Neuron as yN -> compare n.Id yN.Id
+            | _ -> invalidArg "aNeuron" "cannot compare values of different types"
+
+let inline equalsOn f x (yobj : obj) =
+    match yobj with
+    | :? 'T as y -> (f x = f y)
+    | _ -> false
 
 type  OutputValue =
     | Numeric of double
@@ -106,13 +123,13 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         nn.Train(table, classAtt)
 
     // Come fare per i parametri -> ci sarà un sorta di builder che genera il testSet in base ai parametri
-    member nn.Validate(testTable : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
+    member nn.Validate(testTable : DataTable) : ValidationStatistics =       
         let stat = new ValidationStatistics()
         let cols = seq{ for colName in testTable.Columns -> colName.ColumnName }    // costruisco l'array di colonne che mi servono (non c'è quella del classAtt)
                     |> Seq.filter (fun name -> name <> _classAtt)
                     |> Array.ofSeq
         let testTable = testTable.DefaultView.ToTable("testTable", false, cols)
-        let expectedTable = testTable.DefaultView.ToTable("expectedTable", false, [| _classAtt |])  //TODO E se dentro il datatable ho già oggetti di tipo OutputValue (o qualcosa tipo ArffValue)
+        let expectedTable = testTable.DefaultView.ToTable("expectedTable", false, [| _classAtt |]) 
         for testRow in testTable.Select() do
             for expRow in expectedTable.Select() do
                 let outputValue = nn.Classify testRow
