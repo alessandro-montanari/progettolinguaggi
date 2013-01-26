@@ -7,7 +7,11 @@ open System.Collections.Generic
 
 // In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
 
-let random = new System.Random()    // deve essre in qualche modo statico
+let private getUniqueId : (unit -> int) =
+    let random = new System.Random()    // deve essre in qualche modo statico
+    let id = ref 0
+    (function _ ->  id := !id+1
+                    !id )
 
 type ActivationFunType = seq<double * double> -> double   // input * peso
 type OutputFunType = double -> double
@@ -31,6 +35,7 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
 
     let mutable _output : double = 0.0
     
+    member val Id = getUniqueId() with get
     member val ActivationFunction = actFun with get, set            // Possibilità di cambiare a runtime le funzioni
     member val OutputFunction = outFun with get, set
     member n.Output = _output
@@ -84,8 +89,6 @@ type ValidationStatistics() =
             _nMiss <- stat.NumberOfMissclassifiedExamples+1
             _missExps.Add(example)
 
-let inline equal a b = a=b
-
 [<AbstractClass>]
 type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
     
@@ -102,7 +105,6 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         let table = TableUtilities.buildTableFromArff trainingSetPath      
         nn.Train(table, classAtt)
 
-    // SERVE UNA FUNZIONE PER CONFRONTARE DUE OUTPUT VALUE
     // Come fare per i parametri -> ci sarà un sorta di builder che genera il testSet in base ai parametri
     member nn.Validate(testTable : DataTable) : ValidationStatistics =       // Li posso già implementare invocando Classify
         let stat = new ValidationStatistics()
