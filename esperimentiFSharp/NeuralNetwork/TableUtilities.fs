@@ -1,7 +1,10 @@
 ﻿module TableUtilities
 
+
 open System.Data
 open ArffTypes
+
+
 
 let buildTableFromArff filePath =
     let table = new DataTable()
