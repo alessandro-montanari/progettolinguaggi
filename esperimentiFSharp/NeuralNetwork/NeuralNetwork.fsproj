@@ -53,6 +53,7 @@
     <Compile Include="Neural.fs" />
     <Compile Include="Iterpreter.fs" />
     <None Include="App.config" />
+    <Compile Include="Builder.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">

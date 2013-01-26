@@ -32,6 +32,8 @@ let sumOfProducts (input : seq<double * double> ) : double = input
 // Con questa modellazione di neurone posso creare qualsiasi struttura
 // Comunque mi limito a supportare principlamente l'addestramento di tipo supervisionato in cui si ha sempre un trainig set d'ingresso
 // con gli esempi e l'uscita desiderata
+
+//TODO Come gestire gli input diretti (non da altri neuroni)
 type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outFun : OutputFunType) =
 
     let mutable _output : double = 0.0
@@ -144,9 +146,9 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         nn.Validate(table)
 
     // Classifica in base all'attributo specificato in fase di training
-    // Ritorna Numeric o Nominal in base all'attributo scelto per il training
     // La DataRow in ingresso ovviamente non deve contenere l'attributo da classificare
-    abstract member Classify : DataRow -> OutputValue
+    // Astratto perché solo le reti concrete sanno come classificare un'istanza
+    abstract member Classify : DataRow -> OutputValue   //TODO nome diverso da Classify (Pulse o qualcosa di simile)
 
 and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
 
