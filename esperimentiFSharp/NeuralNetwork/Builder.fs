@@ -18,13 +18,10 @@ type ParameterValue =
     | Number of double
     | Logic of bool
 
-[<AbstractClass>]
-type ParameterStore() as this =
+type ParameterStore(typeDic : Dictionary<string, Type>) as this =
 
     let _paramsDict = new Dictionary<string, ParameterValue>(HashIdentity.Structural)
-    let _paramsTypeDict = new Dictionary<string, Type>(HashIdentity.Structural)
-
-    do this.InitParameterTypes(_paramsTypeDict)
+    let _paramsTypeDict : Dictionary<string, Type> = typeDic
 
     member this.ParameterNames = _paramsTypeDict.Keys |> Seq.readonly
     member this.ParameterValues = _paramsDict.Values |> Seq.readonly
@@ -40,37 +37,40 @@ type ParameterStore() as this =
     member this.GetValue(paramName) =
         _paramsDict.[paramName]
 
-    abstract member InitParameterTypes : Dictionary<string, Type> -> unit                         // Viene invocato automaticamente dal costruttore e serve ad inizializzare il dizionario       
-    
  
-type BasicValidationBuilder() =
-    inherit ParameterStore()            // Può usarlo invece che ereditare
+type BasicValidationBuilder() as this =
     
-    let createTestFromFile path =
+    let createTestFromFile path =                                           // funzione privata
         TableUtilities.buildTableFromArff path
 
-    let createTestFromSplit (trainingTable : DataTable) perc =
+    let createTestFromSplit (trainingTable : DataTable) perc =              // funzione privata
         let random = new Random()
         let table = new DataTable()    
         let maxRows = trainingTable.Rows.Count
         let numRows = Convert.ToInt32(float trainingTable.Rows.Count * (float perc/100.0))
         for i in 0 .. numRows do
             let index = random.Next(0, maxRows)
-            table.rows
+            table.Rows.Add(trainingTable.Rows.[index])
         table   
 
-    override vb.InitParameterTypes(dict) =
-        dict.Add("TEST_SET", String("").GetType())          // Per indicare che "TEST_SET" può accettare solo stringhe
-        dict.Add("PERCENTAGE_SPLIT", Number(0.0).GetType())   
+    let initParameterTypes() =                                               // funzione privata
+        let dic = new Dictionary<string, Type>(HashIdentity.Structural)
+        dic.Add("TEST_SET", String("").GetType())          // Per indicare che "TEST_SET" può accettare solo stringhe
+        dic.Add("PERCENTAGE_SPLIT", Number(0.0).GetType())   
+        dic
 
-    member vb.BuildTestTable(trainingTable : DataTable) =
-        if Seq.isEmpty vb.ParameterValues then              // Se non sono stati settati parametri utilizzo la training table
+    let _paramStore = new ParameterStore(initParameterTypes())
+
+    member this.ParameterStore = _paramStore
+
+    member this.BuildTestTable(trainingTable : DataTable) =
+        if Seq.isEmpty this.ParameterStore.ParameterValues then              // Se non sono stati settati parametri utilizzo la training table
             trainingTable
         else
-            if Seq.length vb.ParameterValues = 2 then
+            if Seq.length this.ParameterStore.ParameterValues = 2 then
                 failwith "It's not possible to have more than one parameter setted in BasicValidationBuilder"
             else
-                match Seq.exactlyOne vb.ParameterValues with        // Sono sicuro che ci sia un solo elemento
+                match Seq.exactlyOne this.ParameterStore.ParameterValues with        // Sono sicuro che ci sia un solo elemento
                     | String(path) -> createTestFromFile path
                     | Number(perc) -> createTestFromSplit trainingTable perc
                     | _ -> failwith "never here!!"
