@@ -53,8 +53,10 @@
     <Compile Include="Neural.fs" />
     <Compile Include="Iterpreter.fs" />
     <None Include="App.config" />
-    <Compile Include="Builder.fs" />
+    <Compile Include="Parameter.fs" />
+    <Compile Include="ValidationBuilder.fs" />
     <Compile Include="Program.fs" />
+    <Compile Include="TrainigAlgorithmBuilder.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">

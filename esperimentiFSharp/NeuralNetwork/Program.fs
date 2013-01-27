@@ -3,7 +3,8 @@
 open System
 open System.Data
 open System.Windows.Forms
-open BuilderModule
+open Parameter
+open ValidationBuilder
 
 
 [<EntryPoint>]
@@ -23,12 +24,26 @@ let main argv =
 
     valBuilder.ParameterStore.SetValue("TEST_SET", String(@"C:\Users\Alessandro\Desktop\cars2004.arff"))
     let testTable2 = valBuilder.BuildTestTable(table)
+//    let form = new Form()
+//    let grid = new DataGridView(DataSource=testTable2, Dock=DockStyle.Fill)
+//    form.Text <- table.TableName
+//    form.Controls.Add(grid)
+//    form.Visible <- true
+//    Application.Run(form)
+
+    valBuilder.ParameterStore.ClearParameters()
+    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(10.0))
+    let testTableSplit = valBuilder.BuildTestTable(table)
     let form = new Form()
-    let grid = new DataGridView(DataSource=testTable2, Dock=DockStyle.Fill)
+    let grid = new DataGridView(DataSource=testTableSplit, Dock=DockStyle.Fill)
     form.Text <- table.TableName
     form.Controls.Add(grid)
     form.Visible <- true
     Application.Run(form)
+
+//    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(30.0))        // Settati due parametri -> eccezione
+//    let testTable3 = valBuilder.BuildTestTable(table)
+
     System.Console.ReadLine() |> ignore
     0
     
