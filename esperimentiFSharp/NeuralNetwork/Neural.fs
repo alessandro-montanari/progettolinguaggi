@@ -32,8 +32,6 @@ let sumOfProducts (input : seq<double * double> ) : double = input
 // Con questa modellazione di neurone posso creare qualsiasi struttura
 // Comunque mi limito a supportare principlamente l'addestramento di tipo supervisionato in cui si ha sempre un trainig set d'ingresso
 // con gli esempi e l'uscita desiderata
-
-//TODO Come gestire gli input diretti (non da altri neuroni)
 type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outFun : OutputFunType) =
 
     let mutable _output : double = 0.0
@@ -41,16 +39,16 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
     member val Id = getUniqueId() with get
     member val ActivationFunction = actFun with get, set            // Possibilità di cambiare a runtime le funzioni
     member val OutputFunction = outFun with get, set
-    member n.Output = _output
+    abstract Output : double with get
+    default n.Output = _output
     member n.InputMap = inMap
 
     member n.Activate() =
-        let newOutput = inMap
-                        |> Seq.map (fun el -> (el.Key.Output, el.Value))
+        _output <- inMap
+                        |> Seq.map (fun el -> (el.Key.Output, el.Value))    // Creo una sequence di tuple di double con l'uscita di neuroni a monte e i pesi sulle connessioni
                         |> n.ActivationFunction
                         |> n.OutputFunction
-        _output <- newOutput
-        newOutput
+        _output
 
     override n.Equals(aNeuron) =  
         match aNeuron with
@@ -65,10 +63,19 @@ type Neuron(inMap : Dictionary<Neuron, double>, actFun : ActivationFunType, outF
             | :? Neuron as yN -> compare n.Id yN.Id
             | _ -> invalidArg "aNeuron" "cannot compare values of different types"
 
-let inline equalsOn f x (yobj : obj) =
-    match yobj with
-    | :? 'T as y -> (f x = f y)
-    | _ -> false
+    new() = Neuron(new Dictionary<Neuron, double>(), sumOfProducts, (fun x -> x))       // Costruisce un neurone non collegato a nessuno con funzione di uscita pari all'identità
+
+// Rappresenta un neurone con uscita fissa e modificabile. Fissa nel senso che non dipende da altri neuroni.
+// Di solito utilizzato per i neuroni di input
+type ConstantNeuron() =
+    inherit Neuron()
+
+    let mutable _output = 0.0
+
+    override n.Output = _output
+
+    member n.SetOutput(out) =
+        _output <- out
 
 type  OutputValue =
     | Numeric of double
@@ -124,7 +131,6 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         let table = TableUtilities.buildTableFromArff trainingSetPath      
         nn.Train(table, classAtt)
 
-    // Come fare per i parametri -> ci sarà un sorta di builder che genera il testSet in base ai parametri
     member nn.Validate(testTable : DataTable) : ValidationStatistics =       
         let stat = new ValidationStatistics()
         let cols = seq{ for colName in testTable.Columns -> colName.ColumnName }    // costruisco l'array di colonne che mi servono (non c'è quella del classAtt)
@@ -148,7 +154,7 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
     // Classifica in base all'attributo specificato in fase di training
     // La DataRow in ingresso ovviamente non deve contenere l'attributo da classificare
     // Astratto perché solo le reti concrete sanno come classificare un'istanza
-    abstract member Classify : DataRow -> OutputValue   //TODO nome diverso da Classify (Pulse o qualcosa di simile)
+    abstract member Classify : DataRow -> OutputValue 
 
 and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
 
