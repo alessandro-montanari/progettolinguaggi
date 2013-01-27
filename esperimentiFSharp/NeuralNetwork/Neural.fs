@@ -74,8 +74,21 @@ type ConstantNeuron() =
 
     override n.Output = _output
 
-    member n.SetOutput(out) =
+    member n.SetOutput(out : double) =
         _output <- out
+
+type InputValue =
+    | Numeric of double
+    | String of string
+    | Nominal of string * int       // L'intero rappresenta l'indice (in base 1) del valore all'interno della lista di valori ammessi
+    | Missing
+
+    override this.ToString() =      // Così ho una visualizzazione decente nelle DataGridView
+        match this with
+        | Numeric(n) -> Convert.ToString(n)
+        | String(s) -> s
+        | Nominal(s,_) -> s
+        | Missing -> "MISS"
 
 type  OutputValue =
     | Numeric of double
@@ -158,26 +171,85 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
 
 and TrainigFunctionType = SupervisedNeuralNetwork -> DataTable -> string -> unit      // Modifica la rete passata come primo parametro
 
+ type NeuralLayer() =   
+   inherit ResizeArray<Neuron>()  
+   member this.Activate() =   
+     this  
+     |> Seq.iter (fun n->n.Activate() |> ignore) 
 
-// Per il preprocessing ci sarà "qualcosa" che prende i filtri e man mano li applica e alla fine sputa fuori una
-// nuova DataTable (quella originale si perde, per efficienza)
+type MultiLayerNetowrk(trainingFun : TrainigFunctionType) =
+    inherit SupervisedNeuralNetwork(trainingFun)
+
+    let _inputLayer = new Dictionary<string, ConstantNeuron>(HashIdentity.Structural)   // Per ogni ingresso devo sapere il neurone associato
+    let _hiddenLayers = new ResizeArray<NeuralLayer>()                                  //TODO forse meglio una coda (in cui ci sia più il concetto di sequenza (non modificabile))
+    let _outputLayer = new Dictionary<string, Neuron>(HashIdentity.Structural)  // Per ogni valore di un attributo nominal devo sapere il neurone associato
+                                                                                        // Se l'attributo da predire è numeric, la chiave è il nome dell'attributo
+    member nn.HiddenLayers = _hiddenLayers
+    member nn.InputLayer = _inputLayer.Values
+    member nn.OutputLayer = _outputLayer.Values
+
+    member nn.CreateNetworkAndTrain(trainingSet : DataTable, classAtt : string) =
+        nn.CreateNetork(trainingSet, classAtt)
+        nn.Train(trainingSet, classAtt)
+
+    member nn.CreateNetork(trainingSet : DataTable, classAtt : string) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
+        ()
+
+    override nn.Classify(row) =
+        // Imposto gli ingressi nei neuroni dell'inputLayer
+        for col in row.Table.Columns do
+            let element = row.[col.ColumnName] :?> InputValue
+            let inVal = match element with
+            | InputValue.Numeric(n) -> n
+            | String(_) -> 0.0
+            | InputValue.Nominal(_, i) -> Convert.ToDouble(i)
+            | Missing -> 0.0 
+
+            _inputLayer.[col.ColumnName].SetOutput(inVal)
+
+        _hiddenLayers
+        |> Seq.iter (fun layer -> layer.Activate())         // Attivo i layer in sequenza, a questo punto tutti i neuroni hanno la loro uscita calcolata
+
+        _outputLayer.Values
+        |> Seq.iter (fun neur -> neur.Activate() |> ignore) // Uscita calcolata
+        
+        if _outputLayer.Keys.Count = 1 then                         // L'attributo da classificare è numerico
+            Numeric(_outputLayer.[nn.TrainedAttribute].Output)
+        else                                                        // L'attributo da classificare è nominale
+            let outputs = _outputLayer.Keys                                     // Costruisco una sequenza di tuple con nome del valore e uscita del relativo neurone
+                            |> Seq.map (fun s -> (s, _outputLayer.[s].Output))
+            let max = outputs                                                   // Ottengo una tupla con il nome del valore con l'uscita massima e la relativa uscita
+                        |> Seq.maxBy (fun (_, value) -> value) 
+            Nominal(match max with |(str, _) -> str)
 
 
-//let layer1 = [ for i in 0 .. 9 -> new Neuron(3, sumOfProducts, sigmoid) ]
-//let layer2 = [ for i in 0 .. 4 -> new Neuron(10, sumOfProducts, sigmoid) ]
-//let layer3 = [ new Neuron(5, sumOfProducts, sigmoid) ]
-//let inputs = [ 0.5; 0.000099; 0.06 ];;
+
 //
-//let outputsLayer1 = layer1 
-//                        |> List.map (fun n -> n.Activate(inputs))
+//open System.Windows.Forms
+//    
+//type MyType =
+//    | Num of double
+//    | String of string * int
 //
-//let outputsLayer2 = layer2
-//                        |> List.map (fun n -> n.Activate(outputsLayer1))
+//    override this.ToString() =
+//        match this with
+//        | Num(n) -> Convert.ToString(n)
+//        | String(s,_) -> s
 //
-//let outputLayer3 = layer3
-//                    |> List.map (fun n -> n.Activate(outputsLayer2))
-
-    
-
-
-
+//let num = String("ciao", 7)
+//let list = [| Num(6.8); String("ciao", 5)|]
+//
+//let table = new DataTable()
+//table.Columns.Add("col1", num.GetType())
+//let row = table.NewRow()
+//row.[0] <- num
+//table.Rows.Add(row)
+//
+//let form = new Form()
+//let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
+//form.Controls.Add(grid)
+//form.Visible <- true
+//
+//let num2 = table.Rows.[0].[0] :?> MyType
+//match num2 with
+//| String(s,i) -> printfn "%s - %d" s i

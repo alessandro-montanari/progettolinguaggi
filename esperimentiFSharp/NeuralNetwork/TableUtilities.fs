@@ -1,5 +1,8 @@
 ﻿module TableUtilities
 
+//TODO potrebbe essere nel modulo di Arff
+
+//TODO USARE INPUTVALUE CHE C'è IN NEURAL.FS
 
 open System.Data
 open ArffTypes
