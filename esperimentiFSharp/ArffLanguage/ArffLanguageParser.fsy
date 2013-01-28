@@ -1,11 +1,20 @@
 ﻿%{
 open System
-open ArffTypes
+open System.Collections.Generic
+open NeuralTypes
+
 
 let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
-
-// Per errori vedi reportParseErrorAt nella grammatica di F#
-
+let nominalDict = new Dictionary<int, string list>(HashIdentity.Structural)
+let mutable elementIndex = 1
+let extractValue str =
+    let result = match nominalDict.TryGetValue(elementIndex) with 
+                 | (true, strList) -> match List.tryFindIndex (fun el -> el = str) strList with
+                                      | Some(index) -> AttributeValue.Nominal(str, (index+1)) 
+                                      | None -> failwith "never here!!"
+                 | _ -> AttributeValue.String str;
+    elementIndex <- elementIndex+1
+    result
 
 %}
 
@@ -20,7 +29,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %start start
 
 // Tipo di uscita in caso di parsing corretto
-%type <ArffTypes.ArffFile> start
+%type <NeuralTypes.DataSet> start
 
 %%
 
@@ -29,35 +38,35 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 start:	relation
 		attributeList
 		data
-		EOF				{ { Relation = $1; Attributes = $2; Data = $3;} }
+		EOF				{ { Relation = $1; Attributes = $2; Data = $3 } }
 
 relation : RELKEY ID	{ $2 }
 
 attributeList : 
-	| attribute					{ [$1] }
-	| attribute attributeList	{ $1 :: $2 }
+	| attribute					{ elementIndex <- 1; [$1] }					// quando "chiudo" la lista degli attributi riporto elementIndex a 1
+	| attribute attributeList	{ elementIndex <- 1; $1 :: $2 }
 
 attribute : 
-	| ATTKEY ID NUMKEY					{ ArffAttribute($2, ArffType.Numeric) }
-	| ATTKEY ID STRKEY					{ ArffAttribute($2, ArffType.String) }
-	| ATTKEY ID LCB nominalList RCB		{ ArffAttribute($2, ArffType.Nominal $4) }
+	| ATTKEY ID NUMKEY					{ elementIndex <- elementIndex+1; Attribute($2, AttributeType.Numeric) }
+	| ATTKEY ID STRKEY					{ elementIndex <- elementIndex+1; Attribute($2, AttributeType.String) }
+	| ATTKEY ID LCB nominalList RCB		{ nominalDict.Add(elementIndex, $4); elementIndex <- elementIndex+1; Attribute($2, AttributeType.Nominal $4) }		
 
 nominalList :
-	| ID				{ [$1] }
+	| ID				    { [$1] }
 	| ID COMMA nominalList	{ $1 :: $3 }
 
 data : DATAKEY instanceList		{ $2 }
 
 instanceList :
-	| instance					{ Seq.singleton (ArffInstance($1)) }
-	| instance instanceList		{ Seq.append (Seq.singleton (ArffInstance($1))) $2  }
+	| instance					{ Seq.singleton (Instance($1)) }
+	| instance instanceList		{ Seq.append (Seq.singleton (Instance($1))) $2  }
 
 instance :
-	| instanceElement							{ [$1] }
-	| instanceElement COMMA instance			{ $1 :: $3 }
+	| instanceElement							{ elementIndex <- 1; [$1] }			// quando "chiudo" una istanza riporto elementIndex a 1
+	| instanceElement COMMA instance			{ elementIndex <- 1; $1 :: $3 }
 
 instanceElement : 
-	| ID						{ ArffValue.String $1 } 
-	| NUMBER					{ ArffValue.Numeric $1  }
-	| MINUS NUMBER				{ ArffValue.Numeric(Convert.ToDouble(-$2, cultureInfo)) }
-	| MISSKEY					{ ArffValue.Missing }
+	| ID						{ extractValue $1 }
+	| NUMBER					{ elementIndex <- elementIndex+1; AttributeValue.Numeric $1 }
+	| MINUS NUMBER				{ elementIndex <- elementIndex+1; AttributeValue.Numeric(Convert.ToDouble(-$2, cultureInfo)) }
+	| MISSKEY					{ elementIndex <- elementIndex+1; AttributeValue.Missing }

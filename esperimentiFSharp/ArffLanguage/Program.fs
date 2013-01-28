@@ -1,5 +1,4 @@
-﻿// Learn more about F# at http://fsharp.net. See the 'F# Tutorial' project
-// for more guidance on F# programming.
+﻿module Program
 
 open ArffTypes
 open ArffLanguageParser
@@ -9,7 +8,7 @@ open System.IO
 // Define your library scripting code here
 //[<EntryPoint>]
 //let main argv = 
-//    let lexbuf = Lexing.LexBuffer<_>.FromTextReader (new StreamReader(File.OpenRead(@"C:\Users\Alessandro\Desktop\test.arff")))
+//    let lexbuf = Lexing.LexBuffer<_>.FromString ("\"Chevrolet Aveo 4dr\",0,0,0,0,0,0,0, 11690, 10965,1.6, 4,103,28,34,2370, 98,167,66")
 //    let rec loop token =
 //        printfn "%A" token
 //        if token <> ArffLanguageParser.EOF then
@@ -21,7 +20,7 @@ open System.IO
 
 [<EntryPoint>]
 let main argv = 
-    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Desktop\test.txt")
+    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.nominal.arff")
     System.Console.ReadLine() |> ignore
     0
     

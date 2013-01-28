@@ -1,5 +1,6 @@
 ﻿{
 module ArffLanguageLex
+
 open System
 open Microsoft.FSharp.Text.Lexing
 
@@ -23,7 +24,7 @@ let digit				= ['0'-'9']
 let number				= digit+ ('.' digit*)?
 let whitespace			= [' ' '\t']
 let newline				= "\n\r" | '\n' | '\r'
-let identifier			= char(char|digit|'_')*
+let identifier			= char(char|digit|'_'|'-')*
 let keys				= '@'identifier
 
 // rules
@@ -31,9 +32,9 @@ rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
 	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf }
 	| '%'			{ comment lexbuf; tokenize lexbuf }												// Skippo i commenti
-	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
 	| "'"			{ ID(stringSingleQuoted lexbuf.StartPos "" lexbuf) }						// Inizio di una stringa
 	| "\""			{ ID(stringDoubleQuoted lexbuf.StartPos "" lexbuf) }
+	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
 	| keys			{ match keywords.TryFind(lexeme lexbuf) with
                         | Some(token) -> token
                         | None -> ID(lexeme lexbuf) }
