@@ -49,19 +49,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TableUtilities.fs" />
     <Compile Include="Neural.fs" />
     <Compile Include="Iterpreter.fs" />
-    <None Include="App.config" />
     <Compile Include="Parameter.fs" />
     <Compile Include="ValidationBuilder.fs" />
-    <Compile Include="Program.fs" />
     <Compile Include="TrainigAlgorithmBuilder.fs" />
+    <Compile Include="Preprocessing.fs" />
+    <Compile Include="NetworkBuilder.fs" />
+    <Compile Include="TableUtilities.fs" />
+    <None Include="App.config" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">
       <Name>ArffLanguage</Name>
       <Project>{d64fc3c0-83a2-4cca-a39e-2cf2d4a2f92b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\NeuralTypes\NeuralTypes.fsproj">
+      <Name>NeuralTypes</Name>
+      <Project>{79aa9006-bd70-4d2f-9e3d-21f6aedcc4d3}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

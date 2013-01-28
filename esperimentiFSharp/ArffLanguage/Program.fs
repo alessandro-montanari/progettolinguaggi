@@ -1,6 +1,5 @@
 ﻿module Program
 
-open ArffTypes
 open ArffLanguageParser
 open ArffLanguageLex
 open System.IO

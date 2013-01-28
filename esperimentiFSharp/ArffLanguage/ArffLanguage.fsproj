@@ -44,14 +44,12 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArffTypes.fs" />
     <None Include="ArffLanguageParser.fsy" />
     <None Include="ArffLanguageLexer.fsl" />
     <Compile Include="ArffLanguageParser.fsi" />
     <Compile Include="ArffLanguageParser.fs" />
     <Compile Include="ArffLanguageLexer.fs" />
     <Compile Include="ArffLanguageUtilities.fs" />
-    <Compile Include="TableUtilities.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
