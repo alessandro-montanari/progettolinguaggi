@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TableUtilities.fs" />
     <Compile Include="Neural.fs" />
     <Compile Include="Iterpreter.fs" />
     <Compile Include="Parameter.fs" />
@@ -56,7 +57,6 @@
     <Compile Include="TrainigAlgorithmBuilder.fs" />
     <Compile Include="Preprocessing.fs" />
     <Compile Include="NetworkBuilder.fs" />
-    <Compile Include="TableUtilities.fs" />
     <None Include="App.config" />
     <Compile Include="Program.fs" />
   </ItemGroup>
