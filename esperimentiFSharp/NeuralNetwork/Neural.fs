@@ -8,8 +8,7 @@ open NeuralTypes
 
 // In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
 
-//TODO DEVE ESSERE PRIVATO
-let getUniqueId : (unit -> int) =
+let private getUniqueId : (unit -> int) =
     let random = new System.Random()   
     let id = ref 0
     (function _ ->  id := !id+1
@@ -177,8 +176,8 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
     let _outputLayer = new Dictionary<string, Neuron>(HashIdentity.Structural)          // Per ogni valore di un attributo nominal devo sapere il neurone associato (da dove li recupero -> ricavo la colonna dell'attributo (AttributeDataColumn))
                                                                                         // Se l'attributo da predire è numeric, la chiave è il nome dell'attributo
     member nn.HiddenLayers = _hiddenLayers
-    member nn.InputLayer = _inputLayer.Values
-    member nn.OutputLayer = _outputLayer.Values
+    member nn.InputLayer = _inputLayer
+    member nn.OutputLayer = _outputLayer
 
     member nn.CreateNetworkAndTrain(trainingSet : DataTable, classAtt : string) =
         nn.CreateNetork(trainingSet, classAtt)
@@ -212,7 +211,7 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
                             |> Seq.map (fun s -> (s, _outputLayer.[s].Output))
             let max = outputs                                                   // Ottengo una tupla con il nome del valore con l'uscita massima e la relativa uscita
                         |> Seq.maxBy (fun (_, value) -> value) 
-            Nominal(match max with |(str, _) -> (str,-1) )
+            Nominal(match max with |(str, _) -> (str,-1) )                      //TODO il secondo parametro non può essere -1, altrimenti non funziona l'uguale in Validation()
 
 //TODO Come fa la funzione di train che è esterna ad accedere alle cose interne alla MultiLayerNetwork -> proprietà pubbliche
 
