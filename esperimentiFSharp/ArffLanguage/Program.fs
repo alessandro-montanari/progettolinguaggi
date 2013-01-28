@@ -19,7 +19,9 @@ open System.IO
 
 [<EntryPoint>]
 let main argv = 
-    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.nominal.arff")
+    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff")
+    System.Console.ReadLine() |> ignore
+    printfn "%A" (ArffLanguageUtilities.parseFile @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff")
     System.Console.ReadLine() |> ignore
     0
     

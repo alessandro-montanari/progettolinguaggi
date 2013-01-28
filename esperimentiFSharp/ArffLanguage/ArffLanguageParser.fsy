@@ -38,7 +38,7 @@ let extractValue str =
 start:	relation
 		attributeList
 		data
-		EOF				{ { Relation = $1; Attributes = $2; Data = $3 } }
+		EOF				{ nominalDict.Clear(); elementIndex <- 1; { Relation = $1; Attributes = $2; Data = $3 } }		// Quando ho finito svuoto il dizionario e inizializzo elementIndex
 
 relation : RELKEY ID	{ $2 }
 

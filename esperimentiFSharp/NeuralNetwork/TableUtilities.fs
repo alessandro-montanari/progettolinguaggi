@@ -4,14 +4,22 @@ open System.Data
 open NeuralTypes
 open System.Collections.Generic
 
-type AttributeDataColumn(attType : AttributeType) =
-    inherit DataColumn()
+type AttributeDataColumn =
+    inherit DataColumn
 
-    member c.AttributeType = attType
-                             
+    val mutable AttributeType : AttributeType
+    new () = { inherit DataColumn(); AttributeType = AttributeType.String }
+    new (attType) = { inherit DataColumn(); AttributeType = attType }
 
 let buildTableFromArff filePath =
-    let table = new DataTable()
+    let table = { new DataTable() with override d.Clone() =                                 // Object Expression - Sono costretto a sovrascrivere il Clone() per copiare anche l'AttributeType
+                                            let tableClone = base.Clone()
+                                            for col in d.Columns do
+                                                if col.GetType() = typeof<AttributeDataColumn> then
+                                                    let typ = (col :?> AttributeDataColumn).AttributeType
+                                                    let newCol = tableClone.Columns.[col.ColumnName] :?> AttributeDataColumn
+                                                    newCol.AttributeType <- typ   
+                                            tableClone }
     let dataSet = ArffLanguageUtilities.parseFile filePath
     table.TableName <- dataSet.Relation
     dataSet.Attributes    
@@ -27,4 +35,6 @@ let buildTableFromArff filePath =
                                                             row.[i] <- value
                                                             i <- i+1
                                                         table.Rows.Add(row) )
-    table             
+    table         
+    
+    
