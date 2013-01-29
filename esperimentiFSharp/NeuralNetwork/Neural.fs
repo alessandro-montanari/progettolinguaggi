@@ -185,11 +185,52 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
     member nn.InputLayer = _inputLayer
     member nn.OutputLayer = _outputLayer
 
-    member nn.CreateNetworkAndTrain(trainingSet : DataTable, classAtt : string) =
-        nn.CreateNetork(trainingSet, classAtt)
-        nn.Train(trainingSet, classAtt)
-
     member nn.CreateNetork(trainingSet : DataTable, classAtt : string) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
+        let attType = (trainingSet.Columns.[classAtt] :?> AttributeDataColumn).AttributeType
+        let numClasses,nomList = match attType with
+                                 | AttributeType.Nominal nomList -> List.length nomList, nomList
+                                 | AttributeType.Numeric -> 1,[classAtt]
+                                 | _ -> failwithf "Is not possible to create a neural network for an output type of '%A'" attType
+        let numAttributes = trainingSet.Columns.Count
+
+//        let NN  = new MultiLayerNetwork(TrainigAlgorithmBuilder.backPropagation)
+        let hiddenLayersNeurons = [(numClasses + numAttributes)/2] |> List.mapi (fun i el -> (i, el))
+        let random = new Random()
+        let actFunHid = sumOfProducts
+        let outFunHid = sigmoid
+        let actFunOut = sumOfProducts
+        let outFunOut = sigmoid
+
+        // Costruisco i neuroni di input
+        for col in trainingSet.Columns do
+            if col.ColumnName <> classAtt then
+                let neuron = new ConstantNeuron()
+                nn.InputLayer.Add(col.ColumnName, neuron)
+
+        // Costruisco i neuroni e i livelli nascosti
+        for layerIndex, layerCount in hiddenLayersNeurons do
+            let hidLayer = new NeuralLayer()
+            let prevLayer : Neuron list =   if layerIndex = 0 then
+                                                    nn.InputLayer.Values |> Seq.map (fun el -> el :> Neuron) |> Seq.toList
+                                                else 
+                                                    nn.HiddenLayers.[layerIndex] |> Seq.toList
+            for i in 1..layerCount do
+                let hid = new Neuron()
+                hid.ActivationFunction <- actFunHid
+                hid.OutputFunction <- outFunHid
+                for prevNeur in prevLayer do
+                    hid.InputMap.Add(prevNeur, (random.NextDouble()-0.5))
+                hidLayer.Add(hid)
+            nn.HiddenLayers.Add(hidLayer) 
+
+        // Costruisco i neuroni di output
+        for i in 1..numClasses do
+            let out = new Neuron()
+            out.ActivationFunction <- actFunOut
+            out.OutputFunction <- outFunOut
+            for prevNeur in nn.HiddenLayers.[nn.HiddenLayers.Count-1] do
+                out.InputMap.Add(prevNeur, (random.NextDouble()-0.5))
+            nn.OutputLayer.Add(nomList.[i-1], out)
         ()
 
     member nn.Activate(row : DataRow) = 

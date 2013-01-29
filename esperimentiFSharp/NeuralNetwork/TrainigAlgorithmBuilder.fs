@@ -37,6 +37,7 @@ let derSigmoid x  = (exp(x)) / (exp(x)+1.0)**2.0
 
 let learningRate = 0.3
 let epsilon = 0.1
+let ephocs = 500
 
 // nomVal è uno dei valori nominali a cui è associato il neurone passato come primo argomento TODO DA FARE OPZIONALE
 let diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue) =
@@ -67,7 +68,7 @@ let backPropagation (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string)
                 failwithf "the back propagation algorithm cannot be applied to a network of type %A" (nn.GetType())
      
     let mutable continueLooping = true
-    for _ in 0..500 do                // SARA' EPOCHS
+    for _ in 0..ephocs do                // SARA' EPOCHS
         let mutable globalError = 0.0
         for row in dt.Rows do
             let expectedValue = row.[attName] :?> AttributeValue
@@ -105,22 +106,6 @@ let backPropagation (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string)
                                     |> Seq.sumBy (fun el -> el.Value*el.Key.InputMap.[neur])
                         deltaDictionaryHidden.Add(neur, ((der neur.OutputFunction net)*sum))
                     deltaDictionaryHiddenLayers.Add(layer, deltaDictionaryHidden)
-                        
-
-//                for layer in nn.HiddenLayers do
-//                    layer
-//                    |> Seq.iter (fun neur -> let deltaDictionaryHidden = new Dictionary<Neuron, double>(HashIdentity.Structural)
-//                                             let net = neur.InputMap
-//                                                        |> Seq.map (fun el -> (el.Key.Output, el.Value))
-//                                                        |> neur.ActivationFunction
-//                                             let previousDict = if nn.HiddenLayers.IndexOf(layer) = 0 then
-//                                                                    deltaDictionaryOutput
-//                                                                else
-//                                                                    deltaDictionaryHiddenLayers.[layer]
-//                                             let sum = previousDict
-//                                                        |> Seq.sumBy (fun el -> el.Value*el.Key.InputMap.[neur])    // Assumo la rete completamente connessa tra livelli adiacenti
-//                                             deltaDictionaryHidden.Add(neur, ((der neur.OutputFunction net)*sum))
-//                                             deltaDictionaryHiddenLayers.Add(layer, deltaDictionaryHidden) )
 
                 // Aggiornameto pesi layer di uscita
                 for neur in deltaDictionaryOutput.Keys do
@@ -134,8 +119,4 @@ let backPropagation (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string)
                             neur.InputMap.[precNeur] <- (neur.InputMap.[precNeur]+(learningRate*dic.[neur]*precNeur.Output))
                
                 globalError <- globalError+currentError
-//        if globalError > epsilon then
-//            continueLooping <- true
-//        else
-//            continueLooping <- false
 
