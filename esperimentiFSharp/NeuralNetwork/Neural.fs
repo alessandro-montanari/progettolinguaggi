@@ -139,20 +139,22 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         let table = TableUtilities.buildTableFromArff trainingSetPath      
         nn.Train(table, classAtt)
 
-    member nn.Validate(testTable : DataTable) : ValidationStatistics =       
+    member nn.Validate(testTableIn : DataTable) : ValidationStatistics =       
         let stat = new ValidationStatistics()
-        let colNames = seq{ for col in testTable.Columns -> col.ColumnName }    // costruisco l'array di colonne che mi servono (non c'è quella del classAtt)
+        let colNames = seq{ for col in testTableIn.Columns -> col.ColumnName }    // costruisco l'array di colonne che mi servono (non c'è quella del classAtt)
                     |> Seq.filter (fun name -> name <> _classAtt)
                     |> Array.ofSeq
-        let testTable = testTable.DefaultView.ToTable("testTable", false, colNames)
-        let expectedTable = testTable.DefaultView.ToTable("expectedTable", false, [| _classAtt |]) 
-        for testRow in testTable.Select() do
-            for expRow in expectedTable.Select() do
-                let outputValue = nn.Classify testRow
-                if outputValue = (expRow.[0] :?> AttributeValue) then        // L'operatore '=' funziona anche sulle Discriminated Unions
-                    stat.CollectStatistics(true, (testRow, outputValue))
-                else
-                     stat.CollectStatistics(false, (testRow, outputValue))
+        let testTable = testTableIn.DefaultView.ToTable("testTable", false, colNames)
+        let expectedTable = testTableIn.DefaultView.ToTable("expectedTable", false, [| _classAtt |])
+        
+        for i in 0..(testTable.Rows.Count-1) do
+            let expRow = expectedTable.Rows.[i]
+            let testRow = testTable.Rows.[i]
+            let outputValue = nn.Classify testRow
+            if outputValue = (expRow.[0] :?> AttributeValue) then        // L'operatore '=' funziona anche sulle Discriminated Unions
+                stat.CollectStatistics(true, (testRow, outputValue))
+            else
+                stat.CollectStatistics(false, (testRow, outputValue)) 
         stat
 
     member nn.ValidateFromArff(testSetPath : string) : ValidationStatistics =
@@ -192,15 +194,17 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
 
     member nn.Activate(row : DataRow) = 
         // Imposto gli ingressi nei neuroni dell'inputLayer
+        // Devo skippare l'attributo da classificare
         for col in nn.TrainingTable.Columns do
-            let element = row.[col.ColumnName] :?> AttributeValue
-            let inVal = match element with
-            | Numeric(n) -> n
-            | String(_) -> 0.0
-            | Nominal(_, i) -> Convert.ToDouble(i)
-            | Missing -> 0.0 
+            if col.ColumnName <> nn.TrainedAttribute then
+                let element = row.[col.ColumnName] :?> AttributeValue
+                let inVal = match element with
+                | Numeric(n) -> n
+                | String(_) -> 0.0
+                | Nominal(_, i) -> Convert.ToDouble(i)
+                | Missing -> 0.0 
 
-            _inputLayer.[col.ColumnName].SetOutput(inVal)
+                _inputLayer.[col.ColumnName].SetOutput(inVal)
 
         _hiddenLayers
         |> Seq.iter (fun layer -> layer.Activate())         // Attivo i layer in sequenza
