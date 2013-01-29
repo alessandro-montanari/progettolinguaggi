@@ -14,6 +14,11 @@ type AttributeValue =
     | Numeric of double
     | Missing
 
+    member self.IsNumber =
+        match self with 
+        | Numeric _ -> true
+        | _ -> false
+
     override this.ToString() =      // Così ho una visualizzazione decente nelle DataGridView
         match this with
         | Numeric(n) -> Convert.ToString(n)
