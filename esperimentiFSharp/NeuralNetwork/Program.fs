@@ -50,54 +50,54 @@ open Neural
 
 [<EntryPoint>]
 let main argv = 
-     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff"
-     let rows = table.Compute("Sum(temperature)","")
-     0
+//     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff"
+//     let rows = table.Compute("Sum(temperature)","")
+//     0
 
 
 
 
-//    let NN  = new MultiLayerNetwork((fun n t s -> () ))
-//    let const1 = new ConstantNeuron()
-//    let const2 = new ConstantNeuron()
-//    let const3 = new ConstantNeuron()
-//    let const4 = new ConstantNeuron()
-//    let const5 = new ConstantNeuron()
-//    NN.InputLayer.Add("outlook", const1)
-//    NN.InputLayer.Add("temperature", const2)
-//    NN.InputLayer.Add("humidity", const3)
-//    NN.InputLayer.Add("windy", const4) 
-//    NN.InputLayer.Add("play", const5)
-//    
-//    let hid1 = new Neuron()
-//    hid1.ActivationFunction <- sumOfProducts
-//    hid1.OutputFunction <- sigmoid
-//    hid1.InputMap.Add(const1, 0.005) 
-//    hid1.InputMap.Add(const2, 0.0005) 
-//    hid1.InputMap.Add(const3, 0.6666) 
-//    hid1.InputMap.Add(const4, 0.1116) 
-//    hid1.InputMap.Add(const5, 0.1000) 
-//
-//    let hidLayer = new NeuralLayer()
-//    hidLayer.Add(hid1)
-//    NN.HiddenLayers.Add(hidLayer)
-//
-//    let out1 = new Neuron()
-//    out1.ActivationFunction <- sumOfProducts
-//    out1.OutputFunction <- sigmoid
-//    out1.InputMap.Add(hid1, 0.09) 
-//    let out2 = new Neuron()
-//    out2.ActivationFunction <- sumOfProducts
-//    out2.OutputFunction <- sigmoid
-//    out2.InputMap.Add(hid1, 1.51) 
-//    NN.OutputLayer.Add("no", out1)
-//    NN.OutputLayer.Add("yes", out2)
-//
-//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff"
-//    NN.Train(table, "play")
-//    let out = NN.Classify(table.Rows.[0])
-//    printfn "---- OUT: %A" out
-//    System.Console.ReadLine() |> ignore
-//    0
+    let NN  = new MultiLayerNetwork((fun n t s -> () ))
+    let const1 = new ConstantNeuron()
+    let const2 = new ConstantNeuron()
+    let const3 = new ConstantNeuron()
+    let const4 = new ConstantNeuron()
+    let const5 = new ConstantNeuron()
+    NN.InputLayer.Add("outlook", const1)
+    NN.InputLayer.Add("temperature", const2)
+    NN.InputLayer.Add("humidity", const3)
+    NN.InputLayer.Add("windy", const4) 
+    NN.InputLayer.Add("play", const5)
+    
+    let hid1 = new Neuron()
+    hid1.ActivationFunction <- sumOfProducts
+    hid1.OutputFunction <- sigmoid
+    hid1.InputMap.Add(const1, 0.005) 
+    hid1.InputMap.Add(const2, 0.0005) 
+    hid1.InputMap.Add(const3, 0.6666) 
+    hid1.InputMap.Add(const4, 0.1116) 
+    hid1.InputMap.Add(const5, 0.1000) 
+
+    let hidLayer = new NeuralLayer()
+    hidLayer.Add(hid1)
+    NN.HiddenLayers.Add(hidLayer)
+
+    let out1 = new Neuron()
+    out1.ActivationFunction <- sumOfProducts
+    out1.OutputFunction <- sigmoid
+    out1.InputMap.Add(hid1, 0.09) 
+    let out2 = new Neuron()
+    out2.ActivationFunction <- sumOfProducts
+    out2.OutputFunction <- sigmoid
+    out2.InputMap.Add(hid1, 1.51) 
+    NN.OutputLayer.Add("no", out1)
+    NN.OutputLayer.Add("yes", out2)
+
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff"
+    NN.Train(table, "play")
+    let out = NN.Classify(table.Rows.[0])
+    printfn "---- OUT: %A" out
+    System.Console.ReadLine() |> ignore
+    0
 
    

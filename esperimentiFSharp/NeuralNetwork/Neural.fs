@@ -5,6 +5,7 @@ open System.Data
 open System.IO
 open System.Collections.Generic
 open NeuralTypes
+open TableUtilities
 
 // In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
 
@@ -123,12 +124,15 @@ type ValidationStatistics() =
 type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
     
     let mutable _classAtt = ""
+    let mutable _trainingTable = null
 
     member nn.TrainedAttribute = _classAtt
     member val TrainingFunction = trainingFun with get, set
+    member nn.TrainingTable = _trainingTable
     
     member nn.Train(trainingSet : DataTable, classAtt : string) =
         _classAtt <- classAtt
+        _trainingTable <- trainingSet
         trainingFun nn trainingSet classAtt
 
     member nn.TrainFromArff(trainingSetPath : string, classAtt : string) = 
@@ -186,9 +190,9 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
     member nn.CreateNetork(trainingSet : DataTable, classAtt : string) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
         ()
 
-    override nn.Classify(row) =
+    member nn.Activate(row : DataRow) = 
         // Imposto gli ingressi nei neuroni dell'inputLayer
-        for col in row.Table.Columns do
+        for col in nn.TrainingTable.Columns do
             let element = row.[col.ColumnName] :?> AttributeValue
             let inVal = match element with
             | Numeric(n) -> n
@@ -203,6 +207,9 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
 
         _outputLayer.Values
         |> Seq.iter (fun neur -> neur.Activate() |> ignore)
+
+    override nn.Classify(row) =
+        nn.Activate(row)
         
         if _outputLayer.Keys.Count = 1 then                         // L'attributo da classificare è numerico
             Numeric(_outputLayer.[nn.TrainedAttribute].Output)
@@ -211,7 +218,13 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
                             |> Seq.map (fun s -> (s, _outputLayer.[s].Output))
             let max = outputs                                                   // Ottengo una tupla con il nome del valore con l'uscita massima e la relativa uscita
                         |> Seq.maxBy (fun (_, value) -> value) 
-            Nominal(match max with |(str, _) -> (str,-1) )                      //TODO il secondo parametro non può essere -1, altrimenti non funziona l'uguale in Validation()
+            let attType = (nn.TrainingTable.Columns.[nn.TrainedAttribute] :?> AttributeDataColumn).AttributeType
+            let nomList = match attType with
+                            | AttributeType.Nominal(list) -> list
+                            | _ -> failwith "never here!!!"
+            let attVal = fst max
+            let index = (List.findIndex (fun el -> el = attVal) nomList) + 1
+            Nominal(attVal, index)                     
 
 //TODO Come fa la funzione di train che è esterna ad accedere alle cose interne alla MultiLayerNetwork -> proprietà pubbliche
 
