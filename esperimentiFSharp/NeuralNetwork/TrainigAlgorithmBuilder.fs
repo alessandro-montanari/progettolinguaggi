@@ -7,13 +7,15 @@ open Parameter
 open Neural
 open NeuralTypes
 
+let der (f:double->double) (x:double) =
+    (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
+
 type BackPropagationBuilder() =
     
     let initParameterTypes() =                                               
-        let dic = new Dictionary<string, Type>(HashIdentity.Structural)
-        dic.Add("MOMENTUM", Number(0.0).GetType())          
-        dic.Add("LEARNIING_RATE", Number(0.0).GetType())
-        dic.Add("EPOCHS", Number(0.0).GetType())   
+        let dic = new Dictionary<string, (Type*(ParameterValue -> bool))>(HashIdentity.Structural)     
+        dic.Add("LEARNIING_RATE", (Number(0.0).GetType(), (fun value -> (value.NumberOf>=0.0) && (value.NumberOf<=1.0))))
+        dic.Add("EPOCHS", (Number(0.0).GetType(), (fun value -> value.NumberOf>=1.0)))
         dic
 
     let _paramStore = new ParameterStore(initParameterTypes())
@@ -24,19 +26,8 @@ type BackPropagationBuilder() =
        
         (fun a b c -> ())
 
-let der (f:double->double) (x:double) =
-    (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
-
-//let der2 (f:double->double) (x:double) =
-//    let dx = sqrt epsilon_float
-//    (f(x+dx) - f(x-dx)) / (2.0*dx)
-
-let func2 x = x**3.0-x-1.0
-
-let derSigmoid x  = (exp(x)) / (exp(x)+1.0)**2.0
-
-let learningRate = 0.3
-let epsilon = 0.1
+let learningRate = 0.1
+let epsilon = 0.3
 let ephocs = 500
 
 // nomVal è uno dei valori nominali a cui è associato il neurone passato come primo argomento TODO DA FARE OPZIONALE
@@ -61,21 +52,19 @@ let currentError (attName:string) (expValue:AttributeValue) (outputLayer:Diction
             |> Seq.sum
 
 let backPropagation (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string) =
-    //TODO skippare le righe che hanno l'attName Missing
     let nn = if nn.GetType() = typeof<MultiLayerNetwork> then
                 nn :?> MultiLayerNetwork
              else 
                 failwithf "the back propagation algorithm cannot be applied to a network of type %A" (nn.GetType())
      
-    let mutable continueLooping = true
-    for _ in 0..ephocs do                // SARA' EPOCHS
+    for _ in 0..ephocs do                
         let mutable globalError = 0.0
         for row in dt.Rows do
             let expectedValue = row.[attName] :?> AttributeValue
             let missing = match expectedValue with 
                             | Missing -> true
                             | _ -> false
-            if missing = false then
+            if missing = false then                 // skippo le righe che hanno l'attName Missing
                 nn.Activate(row)
 
                 let currentError = currentError attName expectedValue nn.OutputLayer

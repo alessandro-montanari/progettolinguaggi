@@ -21,9 +21,9 @@ type BasicValidationBuilder() =
         table   
 
     let initParameterTypes() =                                               // funzione privata
-        let dic = new Dictionary<string, Type>(HashIdentity.Structural)
-        dic.Add("TEST_SET", String("").GetType())          // Per indicare che "TEST_SET" può accettare solo stringhe
-        dic.Add("PERCENTAGE_SPLIT", Number(0.0).GetType())   
+        let dic = new Dictionary<string, (Type*(ParameterValue -> bool))>(HashIdentity.Structural)     
+        dic.Add("TEST_SET",  (String("").GetType(), (fun _ -> true)))          // Per indicare che "TEST_SET" può accettare solo stringhe
+        dic.Add("PERCENTAGE_SPLIT", (Number(0.0).GetType(), (fun el -> el.NumberOf>=1.0)))   
         dic
 
     let _paramStore = new ParameterStore(initParameterTypes())

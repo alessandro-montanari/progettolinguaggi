@@ -312,9 +312,9 @@ let main argv =
 //    NN.OutputLayer.Add("republican", out2)
 
     let NN  = new MultiLayerNetwork(TrainigAlgorithmBuilder.backPropagation)
-    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
-    NN.CreateNetork(table, "Type")
-    NN.Train(table, "Type")
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\zoo.arff"
+    NN.CreateNetork(table, "type")
+    NN.Train(table, "type")
     let out = NN.Classify(table.Rows.[0])
     printfn "---- OUT: %A" out
     let out = NN.Classify(table.Rows.[1])
@@ -328,11 +328,12 @@ let main argv =
 
 
     let valBuilder = new BasicValidationBuilder()
-    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(100.0))
+    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(10.0))
     let stat = NN.Validate(valBuilder.BuildTestTable(table))
     printfn "NumberOfExamples: %d" stat.NumberOfExamples
-    printfn "NumberOfCorrectlyClassifiedExamples: %d" stat.NumberOfCorrectlyClassifiedExamples
-    printfn "NumberOfMissclassifiedExamples: %d" stat.NumberOfMissclassifiedExamples
+    printfn "Number Of Correctly Classified Examples: %d" stat.NumberOfCorrectlyClassifiedExamples
+    printfn "Percentage of Correctly Classified Examples: %f" ((Convert.ToDouble(stat.NumberOfCorrectlyClassifiedExamples)/Convert.ToDouble(stat.NumberOfExamples))*100.0)
+    printfn "Number Of Missclassified Examples: %d" stat.NumberOfMissclassifiedExamples
 
 
     System.Console.ReadLine() |> ignore
