@@ -6,6 +6,7 @@ open System.Collections.Generic
 open Parameter
 open Neural
 open NeuralTypes
+open TableUtilities
 
 let private der (f:double->double) (x:double) =
     (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
@@ -40,7 +41,8 @@ let private backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt
     for _ in 0..ephocs do                
         let mutable globalError = 0.0
         for row in dt.Rows do
-            let expectedValue = row.[attName] :?> AttributeValue
+            let index = dt.Columns.IndexOf(attName)
+            let expectedValue = toAttributeValue row index
             let missing = match expectedValue with 
                             | Missing -> true
                             | _ -> false

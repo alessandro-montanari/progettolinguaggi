@@ -341,6 +341,25 @@ let main argv =
     printfn "Number Of Missclassified Examples: %d" stat.NumberOfMissclassifiedExamples
 
 
+
+
+//    let table = TableUtilities.buildTablePrimitovesFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\iris.arff"
+//    let rows = table.Select("sepallength < 5 And sepalwidth > 3 and class = 'Iris-setosa'")
+//    let table2 = table.Clone()
+//    for row in rows do
+//        table2.LoadDataRow(row.ItemArray, false)
+////    table2.Columns.Add("Count", typeof<double>, "sepallength+1")
+//    table2.Columns.Add("sepallength2").Expression <- "sepallength+100"
+//    table2.Columns.Remove("sepallength")
+//    table2.Columns.["sepallength2"].ColumnName <- "sepallength"
+//    let form = new Form()
+//    let grid = new DataGridView(DataSource=table2, Dock=DockStyle.Fill)
+//    form.Controls.Add(grid)
+//    form.Visible <- true
+//    Application.Run(form)
+
+
+
     System.Console.ReadLine() |> ignore
     0
 

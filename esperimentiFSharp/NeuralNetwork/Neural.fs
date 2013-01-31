@@ -82,20 +82,6 @@ type ConstantNeuron() =
 // ==================================================================================================================================================
 
 
-//type  OutputValue =             // La SupervisedNeuralNetwork ritorna un risultato solo di uno di questi due tipi
-//    | Numeric of double
-//    | Nominal of string
-//    
-//    static member Create(value : double) = Numeric(value)
-//    static member Create(value : string) = Nominal(value)
-//    static member Create(value : obj) =
-//        let valueType = value.GetType()
-//        if valueType = typeof<double> then
-//            Numeric(Convert.ToDouble(value))
-//        elif valueType = typeof<string> then
-//            Nominal(value.ToString())
-//        else
-//            failwithf "The type '%A' is not supported as OutputValue" valueType 
 
 type ValidationStatistics() =
     
@@ -150,8 +136,8 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         for i in 0..(testTable.Rows.Count-1) do
             let expRow = expectedTable.Rows.[i]
             let testRow = testTable.Rows.[i]
-            let outputValue = nn.Classify testRow
-            if outputValue = (expRow.[0] :?> AttributeValue) then        // L'operatore '=' funziona anche sulle Discriminated Unions
+            let outputValue = nn.Classify testRow  
+            if outputValue = toAttributeValue expRow 0 then        // L'operatore '=' funziona anche sulle Discriminated Unions
                 stat.CollectStatistics(true, (testRow, outputValue))
             else
                 stat.CollectStatistics(false, (testRow, outputValue)) 
@@ -238,7 +224,7 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
         // Devo skippare l'attributo da classificare
         for col in nn.TrainingTable.Columns do
             if col.ColumnName <> nn.TrainedAttribute then
-                let element = row.[col.ColumnName] :?> AttributeValue
+                let element = toAttributeValue row col.Ordinal
                 let inVal = match element with
                 | Numeric(n) -> n
                 | String(_) -> 0.0
