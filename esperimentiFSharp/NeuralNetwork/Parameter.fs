@@ -22,7 +22,6 @@ type ParameterValue =
         | Number(n) -> n
         | _ -> failwith "Not a number"
 
-//TODO Possibilita di impostare insieme al tipo valore anche una funzione che controlli che il valore settato sia corretto (ParameterValue -> bool)
 type ParameterStore(typeDic : Dictionary<string, (Type*(ParameterValue -> bool))>) =
     
     let _paramsDict = new Dictionary<string, ParameterValue>(HashIdentity.Structural)

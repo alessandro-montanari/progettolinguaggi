@@ -318,7 +318,7 @@ let main argv =
 
     let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\zoo.arff"
-    NN.CreateNetork(table, "type")
+    NN.CreateNetork(table, "type")          // TODO forse un po' da migliorare l'interfaccia qui
     NN.Train(table, "type")
     let out = NN.Classify(table.Rows.[0])
     printfn "---- OUT: %A" out

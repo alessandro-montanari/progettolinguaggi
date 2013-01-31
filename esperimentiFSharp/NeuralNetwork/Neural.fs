@@ -271,8 +271,6 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
             let index = (List.findIndex (fun el -> el = attVal) nomList) + 1
             Nominal(attVal, index)                     
 
-//TODO Come fa la funzione di train che è esterna ad accedere alle cose interne alla MultiLayerNetwork -> proprietà pubbliche
-
 
 //
 //open System.Windows.Forms

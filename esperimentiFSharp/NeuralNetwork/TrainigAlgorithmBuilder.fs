@@ -10,7 +10,7 @@ open NeuralTypes
 let private der (f:double->double) (x:double) =
     (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
 
-// nomVal è uno dei valori nominali a cui è associato il neurone passato come primo argomento TODO DA FARE OPZIONALE
+// nomVal è uno dei valori nominali a cui è associato il neurone passato come primo argomento
 let private diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue) =
     if expValue.IsNumber then
         let expectedOutput = match expValue with | Numeric(value) -> value
