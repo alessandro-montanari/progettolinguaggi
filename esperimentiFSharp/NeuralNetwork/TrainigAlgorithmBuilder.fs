@@ -7,31 +7,11 @@ open Parameter
 open Neural
 open NeuralTypes
 
-let der (f:double->double) (x:double) =
+let private der (f:double->double) (x:double) =
     (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
 
-type BackPropagationBuilder() =
-    
-    let initParameterTypes() =                                               
-        let dic = new Dictionary<string, (Type*(ParameterValue -> bool))>(HashIdentity.Structural)     
-        dic.Add("LEARNIING_RATE", (Number(0.0).GetType(), (fun value -> (value.NumberOf>=0.0) && (value.NumberOf<=1.0))))
-        dic.Add("EPOCHS", (Number(0.0).GetType(), (fun value -> value.NumberOf>=1.0)))
-        dic
-
-    let _paramStore = new ParameterStore(initParameterTypes())
-
-    member this.ParameterStore = _paramStore
-
-    member this.BuildTrainingFunction() : SupervisedNeuralNetwork -> DataTable -> string -> unit =
-       
-        (fun a b c -> ())
-
-let learningRate = 0.1
-let epsilon = 0.3
-let ephocs = 500
-
 // nomVal è uno dei valori nominali a cui è associato il neurone passato come primo argomento TODO DA FARE OPZIONALE
-let diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue) =
+let private diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue) =
     if expValue.IsNumber then
         let expectedOutput = match expValue with | Numeric(value) -> value
         (expectedOutput - neuron.Output)
@@ -42,7 +22,7 @@ let diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue) =
         else
             0.0 - neuron.Output
 
-let currentError (attName:string) (expValue:AttributeValue) (outputLayer:Dictionary<string, Neuron>) =
+let private currentError (attName:string) (expValue:AttributeValue) (outputLayer:Dictionary<string, Neuron>) =
     if outputLayer.Keys.Count = 1 then                         // L'attributo da classificare è numerico
         let expectedOutput = match expValue with | Numeric(value) -> value
         (diffOutputs outputLayer.[attName] "" expValue)**2.0
@@ -51,7 +31,7 @@ let currentError (attName:string) (expValue:AttributeValue) (outputLayer:Diction
             |> Seq.map (fun el -> (diffOutputs el.Value el.Key expValue)**2.0 )
             |> Seq.sum
 
-let backPropagation (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string) =
+let private backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string) =
     let nn = if nn.GetType() = typeof<MultiLayerNetwork> then
                 nn :?> MultiLayerNetwork
              else 
@@ -108,4 +88,22 @@ let backPropagation (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string)
                             neur.InputMap.[precNeur] <- (neur.InputMap.[precNeur]+(learningRate*dic.[neur]*precNeur.Output))
                
                 globalError <- globalError+currentError
+
+
+type BackPropagationBuilder() =
+    
+    let initParameterTypes() =                                               
+        let dic = new Dictionary<string, (Type*(ParameterValue -> bool))>(HashIdentity.Structural)     
+        dic.Add("LEARNING_RATE", (Number(0.0).GetType(), (fun value -> (value.NumberOf>=0.0) && (value.NumberOf<=1.0))))
+        dic.Add("EPOCHS", (Number(0.0).GetType(), (fun value -> value.NumberOf>=1.0)))
+        dic
+
+    let _paramStore = new ParameterStore(initParameterTypes())
+
+    member this.ParameterStore = _paramStore
+
+    member this.BuildTrainingFunction() : SupervisedNeuralNetwork -> DataTable -> string -> unit =
+        let rate = this.ParameterStore.GetValue("LEARNING_RATE").NumberOf
+        let epochs = int (this.ParameterStore.GetValue("EPOCHS").NumberOf)
+        backPropagation rate epochs
 

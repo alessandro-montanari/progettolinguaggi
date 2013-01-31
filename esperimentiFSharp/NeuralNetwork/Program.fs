@@ -311,7 +311,12 @@ let main argv =
 //    NN.OutputLayer.Add("democrat", out1)
 //    NN.OutputLayer.Add("republican", out2)
 
-    let NN  = new MultiLayerNetwork(TrainigAlgorithmBuilder.backPropagation)
+
+    let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
+    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.7))
+    algBuilder.ParameterStore.SetValue("EPOCHS", Number(700.0))
+
+    let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\zoo.arff"
     NN.CreateNetork(table, "type")
     NN.Train(table, "type")
@@ -328,7 +333,7 @@ let main argv =
 
 
     let valBuilder = new BasicValidationBuilder()
-    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(10.0))
+    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(50.0))
     let stat = NN.Validate(valBuilder.BuildTestTable(table))
     printfn "NumberOfExamples: %d" stat.NumberOfExamples
     printfn "Number Of Correctly Classified Examples: %d" stat.NumberOfCorrectlyClassifiedExamples
