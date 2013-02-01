@@ -24,6 +24,7 @@ let heavisied (t :double) (theta :double) : double =    if t < theta then
                                                             0.0
                                                         else
                                                             1.0
+let linear (t : double) : double = t
 
 // Funzioni di attivazione
 let sumOfProducts (input : seq<double * double> ) : double = input 
@@ -181,7 +182,7 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
         let actFunHid = sumOfProducts
         let outFunHid = sigmoid
         let actFunOut = sumOfProducts
-        let outFunOut = sigmoid
+        let outFunOut = linear
 
         // Costruisco i neuroni di input
         for col in trainingSet.Columns do
