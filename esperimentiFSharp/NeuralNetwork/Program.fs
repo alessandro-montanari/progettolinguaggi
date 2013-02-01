@@ -7,6 +7,7 @@ open Parameter
 open ValidationBuilder
 open Neural
 open Preprocessing
+open NeuralTypes
 
 //[<EntryPoint>]
 //let main argv = 
@@ -325,10 +326,18 @@ let main argv =
     printfn "mathExpression FINISHED"
 
     let start = System.DateTime.Now
-    normalize 1.0 -1.0 table
+    normalize 1.0 0.0 table
     printfn "Time elapsed WITH PRECOMPUTATION: %A" (System.DateTime.Now - start)
     printfn "normalize FINISHED"
 
+    standardize table
+    printfn "standardize FINISHED"
+
+    removeByName ["Fe";"Ba";"newAtt";"Na"] table
+    printfn "remove FINISHED"
+
+    ReplaceMissingValues table
+    printfn "ReplaceMissingValues FINISHED"
 
     NN.CreateNetork(table, "Type")          // TODO forse un po' da migliorare l'interfaccia qui
     NN.Train(table, "Type")
