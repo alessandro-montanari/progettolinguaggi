@@ -58,7 +58,8 @@
     <Compile Include="TrainigAlgorithmBuilder.fs" />
     <Compile Include="Iterpreter.fs" />
     <Compile Include="ValidationBuilder.fs" />
-    <Compile Include="Preprocessing.fs" />
+    <Compile Include="AttributePreprocessing.fs" />
+    <Compile Include="InstancePreprocessing.fs" />
     <Compile Include="NetworkBuilder.fs" />
     <None Include="App.config" />
     <Compile Include="Program.fs" />

@@ -6,7 +6,8 @@ open System.Windows.Forms
 open Parameter
 open ValidationBuilder
 open Neural
-open Preprocessing
+open AttributePreprocessing
+open InstancePreprocessing
 open NeuralTypes
 
 //[<EntryPoint>]
@@ -340,8 +341,12 @@ let main argv =
 //    nominalToBinary ["Type"] table
 //    printfn "nominalToBinary FINISHED"
 
-    discretize ["RI"] 10 table
-    printfn "discretize FINISHED"
+//    discretize ["RI"] 10 table
+//    printfn "discretize FINISHED"
+
+    removeRange [0;1;2;3;4] table
+//    removePercentage 55.6 table
+//    subsetByExpression "Na>12.0" table
 
     NN.CreateNetork(table, "RI")          // TODO forse un po' da migliorare l'interfaccia qui
     NN.Train(table, "RI")
