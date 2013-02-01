@@ -6,6 +6,7 @@ open System.Windows.Forms
 open Parameter
 open ValidationBuilder
 open Neural
+open Preprocessing
 
 //[<EntryPoint>]
 //let main argv = 
@@ -313,13 +314,24 @@ let main argv =
 
 
     let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
-    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.7))
-    algBuilder.ParameterStore.SetValue("EPOCHS", Number(700.0))
+    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.1))
+    algBuilder.ParameterStore.SetValue("EPOCHS", Number(50.0))
 
     let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
-    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\zoo.arff"
-    NN.CreateNetork(table, "type")          // TODO forse un po' da migliorare l'interfaccia qui
-    NN.Train(table, "type")
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
+    addExpression "newAtt" "RI+100+sum(Na)" table
+    printfn "addExpression FINISHED"
+    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
+    printfn "mathExpression FINISHED"
+
+    let start = System.DateTime.Now
+    normalize 1.0 -1.0 table
+    printfn "Time elapsed WITH PRECOMPUTATION: %A" (System.DateTime.Now - start)
+    printfn "normalize FINISHED"
+
+
+    NN.CreateNetork(table, "Type")          // TODO forse un po' da migliorare l'interfaccia qui
+    NN.Train(table, "Type")
     let out = NN.Classify(table.Rows.[0])
     printfn "---- OUT: %A" out
     let out = NN.Classify(table.Rows.[1])
@@ -340,18 +352,20 @@ let main argv =
     printfn "Percentage of Correctly Classified Examples: %f" ((Convert.ToDouble(stat.NumberOfCorrectlyClassifiedExamples)/Convert.ToDouble(stat.NumberOfExamples))*100.0)
     printfn "Number Of Missclassified Examples: %d" stat.NumberOfMissclassifiedExamples
 
+    let form = new Form()
+    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
+    form.Controls.Add(grid)
+    form.Visible <- true
+    Application.Run(form)
 
 
-
-//    let table = TableUtilities.buildTablePrimitovesFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\iris.arff"
+//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\iris.arff"
 //    let rows = table.Select("sepallength < 5 And sepalwidth > 3 and class = 'Iris-setosa'")
 //    let table2 = table.Clone()
 //    for row in rows do
 //        table2.LoadDataRow(row.ItemArray, false)
 ////    table2.Columns.Add("Count", typeof<double>, "sepallength+1")
 //    table2.Columns.Add("sepallength2").Expression <- "sepallength+100"
-//    table2.Columns.Remove("sepallength")
-//    table2.Columns.["sepallength2"].ColumnName <- "sepallength"
 //    let form = new Form()
 //    let grid = new DataGridView(DataSource=table2, Dock=DockStyle.Fill)
 //    form.Controls.Add(grid)
