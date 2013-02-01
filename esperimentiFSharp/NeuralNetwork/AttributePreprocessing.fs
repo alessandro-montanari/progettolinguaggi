@@ -1,4 +1,4 @@
-﻿module Preprocessing
+﻿module AttributePreprocessing
 
 open System
 open System.Data
@@ -7,11 +7,6 @@ open TableUtilities
 open NeuralTypes
 
 let private cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
-
-// Per il preprocessing ci sarà "qualcosa" che prende i filtri e man mano li applica e alla fine sputa fuori una
-// nuova DataTable (quella originale si perde, per efficienza)
-
-//TODO dividere in moduli per i filtri su attributi e su istanze
 
 // Controllare che gli attributi a cui si applica siano numerici
 let mathExpression (attsExpressions : (string*string) list) (dt:DataTable) =
