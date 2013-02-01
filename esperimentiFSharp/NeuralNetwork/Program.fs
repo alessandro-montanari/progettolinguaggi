@@ -315,42 +315,46 @@ let main argv =
 
 
     let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
-    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.1))
+    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.3))
     algBuilder.ParameterStore.SetValue("EPOCHS", Number(50.0))
 
     let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
-    addExpression "newAtt" "RI+100+sum(Na)" table
-    printfn "addExpression FINISHED"
-    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
-    printfn "mathExpression FINISHED"
+//    addExpression "newAtt" "RI+100+sum(Na)" table
+//    printfn "addExpression FINISHED"
+//    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
+//    printfn "mathExpression FINISHED"
 
-    let start = System.DateTime.Now
-    normalize 1.0 0.0 table
-    printfn "Time elapsed WITH PRECOMPUTATION: %A" (System.DateTime.Now - start)
-    printfn "normalize FINISHED"
+//    normalize 1.0 0.0 table
+//    printfn "normalize FINISHED"
 
-    standardize table
-    printfn "standardize FINISHED"
+//    standardize table
+//    printfn "standardize FINISHED"
+//
+//    removeByName ["Fe";"Ba";"newAtt";"Na"] table
+//    printfn "remove FINISHED"
+//
+//    replaceMissingValues table
+//    printfn "ReplaceMissingValues FINISHED"
 
-    removeByName ["Fe";"Ba";"newAtt";"Na"] table
-    printfn "remove FINISHED"
+//    nominalToBinary ["Type"] table
+//    printfn "nominalToBinary FINISHED"
 
-    ReplaceMissingValues table
-    printfn "ReplaceMissingValues FINISHED"
+    discretize ["RI"] 10 table
+    printfn "discretize FINISHED"
 
-    NN.CreateNetork(table, "Type")          // TODO forse un po' da migliorare l'interfaccia qui
-    NN.Train(table, "Type")
+    NN.CreateNetork(table, "RI")          // TODO forse un po' da migliorare l'interfaccia qui
+    NN.Train(table, "RI")
     let out = NN.Classify(table.Rows.[0])
-    printfn "---- OUT: %A" out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["RI"])) out
     let out = NN.Classify(table.Rows.[1])
-    printfn "---- OUT: %A" out
-    let out = NN.Classify(table.Rows.[2])
-    printfn "---- OUT: %A" out
-    let out = NN.Classify(table.Rows.[3])
-    printfn "---- OUT: %A" out
-    let out = NN.Classify(table.Rows.[4])
-    printfn "---- OUT: %A" out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[1].["RI"])) out
+    let out = NN.Classify(table.Rows.[2])                                
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[2].["RI"])) out
+    let out = NN.Classify(table.Rows.[3])                                
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[3].["RI"])) out
+    let out = NN.Classify(table.Rows.[4])                                
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[4].["RI"])) out
 
 
     let valBuilder = new BasicValidationBuilder()

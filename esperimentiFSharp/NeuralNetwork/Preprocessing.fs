@@ -2,6 +2,7 @@
 
 open System
 open System.Data
+open System.Collections.Generic
 open TableUtilities
 open NeuralTypes
 
@@ -33,7 +34,7 @@ let addExpression (attName:string) expression (dt:DataTable) =
     dt.Columns.Add(col)
     mathExpression [(attName, expression)] dt
 
-// Individuo tutti gli attributi numerici
+// Individuo tutti gli attributi di un certo tipo
 let private getAttributesByType (attType:AttributeType) (dt:DataTable) =
     let colNames = new ResizeArray<string>()
     for col in dt.Columns do
@@ -69,7 +70,7 @@ let removeByType (attType:AttributeType) (dt:DataTable) =
     getAttributesByType attType dt
     |> List.iter(fun name -> dt.Columns.Remove(name) )
 
-let ReplaceMissingValues (dt:DataTable) = 
+let replaceMissingValues (dt:DataTable) = 
     // Prima gli attributi numerici
     let means = getAttributesByType AttributeType.Numeric dt
                 |> List.map (fun name ->    let mean = Convert.ToDouble(dt.Compute("Avg("+name+")",""))
@@ -92,4 +93,67 @@ let ReplaceMissingValues (dt:DataTable) =
     |> Seq.iter (fun row -> colNameAndMode
                             |> List.iter (fun (colName, value) ->   if row.IsNull(colName) then 
                                                                         row.[colName] <- value ) )
+
+let nominalToBinary (atts:string list) (dt:DataTable) = 
+    let attNamesAndElements = getAttributesByType (AttributeType.Nominal([])) dt
+                                |> List.filter (fun name -> List.exists (fun attName -> attName = name) atts )
+                                |> List.map (fun name ->   let nomList = match (dt.Columns.[name] :?> AttributeDataColumn).AttributeType with
+                                                                                                            | AttributeType.Nominal list -> list 
+                                                           nomList
+                                                           |> List.iter (fun nomEl ->  let column = new AttributeDataColumn(AttributeType.Numeric)
+                                                                                       column.ColumnName <- name+"="+nomEl 
+                                                                                       column.DataType <- typeof<double>
+                                                                                       dt.Columns.Add(column) )
+                                                           (name, nomList) )
+    for row in dt.Rows do
+        for attName, elList in attNamesAndElements do
+            for el in elList do
+                let newName = attName+"="+el
+                if row.[attName].ToString() = el then
+                    row.[newName] <- 1.0
+                else
+                    row.[newName] <- 0.0
+
+    attNamesAndElements
+    |> List.iter (fun (attName,_) -> dt.Columns.Remove(attName) )
+
+let discretize (atts:string list) (bins:int) (dt:DataTable) = 
+    let minAndMax = getAttributesByType AttributeType.Numeric dt
+                        |> List.filter (fun name -> List.exists (fun attName -> attName = name) atts )
+                        |> List.map (fun name ->    let min = Convert.ToDouble(dt.Compute("min("+name+")",""))
+                                                    let max = Convert.ToDouble(dt.Compute("max("+name+")",""))
+                                                    (name, min, max) )
+
+    for (name,min,max) in minAndMax do
+        let step = (max-min)/double bins
+        let mutable prec = min
+        let nomElements = new Dictionary<string,DataRow[]>(HashIdentity.Structural)
+        for i in 1..bins do
+            if i = 1 then
+                nomElements.Add("(-inf-"+min.ToString()+"]", dt.Select(name+"<="+min.ToString(cultureInfo)))           // Primo estremo
+            elif i = bins then
+                nomElements.Add("("+max.ToString()+"-inf)", dt.Select(name+">"+max.ToString(cultureInfo)))             // Ultimo estremo
+            else
+                let filter = String.Format(cultureInfo, "({0}>{1})and({0}<={2})", name, prec, prec+step)
+                nomElements.Add("("+prec.ToString()+"-"+Convert.ToString((prec+step))+"]", dt.Select(filter))
+                prec <-(prec+step)
+        
+        let colIndex = dt.Columns.[name].Ordinal
+        dt.Columns.Remove(name)
+
+        let column = new AttributeDataColumn(AttributeType.Nominal(nomElements.Keys |> Seq.toList))
+        column.ColumnName <- name
+        column.DataType <- typeof<string>
+        dt.Columns.Add(column)
+        column.SetOrdinal(colIndex)
+        
+        nomElements
+        |> Seq.iter(fun el -> el.Value
+                                |> Array.iter(fun row -> row.[name] <- el.Key) )
+
+        
+
+               
+
+
 

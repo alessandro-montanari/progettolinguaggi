@@ -60,8 +60,8 @@
     <Compile Include="ValidationBuilder.fs" />
     <Compile Include="Preprocessing.fs" />
     <Compile Include="NetworkBuilder.fs" />
-    <Compile Include="Program.fs" />
     <None Include="App.config" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">
