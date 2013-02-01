@@ -127,17 +127,13 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
 
     member nn.Validate(testTableIn : DataTable) : ValidationStatistics =       
         let stat = new ValidationStatistics()
-        let colNames = seq{ for col in testTableIn.Columns -> col.ColumnName }    // costruisco l'array di colonne che mi servono (non c'è quella del classAtt)
-                    |> Seq.filter (fun name -> name <> _classAtt)
-                    |> Array.ofSeq
-        let testTable = testTableIn.DefaultView.ToTable("testTable", false, colNames)
-        let expectedTable = testTableIn.DefaultView.ToTable("expectedTable", false, [| _classAtt |])
         
-        for i in 0..(testTable.Rows.Count-1) do
-            let expRow = expectedTable.Rows.[i]
-            let testRow = testTable.Rows.[i]
+        for i in 0..(testTableIn.Rows.Count-1) do
+            let testRow = testTableIn.Rows.[i]
+            let index = testTableIn.Columns.IndexOf(_classAtt)
+            let expectedValue = toAttributeValue testRow index
             let outputValue = nn.Classify testRow  
-            if outputValue = toAttributeValue expRow 0 then        // L'operatore '=' funziona anche sulle Discriminated Unions
+            if outputValue = expectedValue then        // L'operatore '=' funziona anche sulle Discriminated Unions
                 stat.CollectStatistics(true, (testRow, outputValue))
             else
                 stat.CollectStatistics(false, (testRow, outputValue)) 
@@ -226,10 +222,10 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
             if col.ColumnName <> nn.TrainedAttribute then
                 let element = toAttributeValue row col.Ordinal
                 let inVal = match element with
-                | Numeric(n) -> n
-                | String(_) -> 0.0
-                | Nominal(_, i) -> Convert.ToDouble(i)
-                | Missing -> 0.0 
+                            | Numeric(n) -> n
+                            | String(_) -> 0.0
+                            | Nominal(_, i) -> Convert.ToDouble(i)
+                            | Missing -> 0.0 
 
                 _inputLayer.[col.ColumnName].SetOutput(inVal)
 

@@ -25,7 +25,6 @@ let private diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue
 
 let private currentError (attName:string) (expValue:AttributeValue) (outputLayer:Dictionary<string, Neuron>) =
     if outputLayer.Keys.Count = 1 then                         // L'attributo da classificare è numerico
-        let expectedOutput = match expValue with | Numeric(value) -> value
         (diffOutputs outputLayer.[attName] "" expValue)**2.0
     else                                                        // L'attributo da classificare è nominale
         outputLayer
