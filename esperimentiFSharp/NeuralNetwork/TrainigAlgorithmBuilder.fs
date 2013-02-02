@@ -31,7 +31,7 @@ let private currentError (attName:string) (expValue:AttributeValue) (outputLayer
             |> Seq.map (fun el -> (diffOutputs el.Value el.Key expValue)**2.0 )
             |> Seq.sum
 
-let private backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string) =
+let backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt:DataTable) (attName:string) =
     let nn = if nn.GetType() = typeof<MultiLayerNetwork> then
                 nn :?> MultiLayerNetwork
              else 
@@ -61,20 +61,23 @@ let private backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt
                                                      deltaDictionaryOutput.Add(neur, (diff*(der neur.OutputFunction netj)) ) )
         
                 // Calcolo i delta degli strati nascosti
+                
+                // Per ogni layer salvo il delta associato ad ogni neurone
                 let deltaDictionaryHiddenLayers = new Dictionary<NeuralLayer, Dictionary<Neuron, double>>(HashIdentity.Structural)
-                for layer in nn.HiddenLayers do
+                let hiddenLayers = nn.HiddenLayers
+                                    |> Seq.toList
+                                    |> List.rev
+                let mutable previousDict = deltaDictionaryOutput    // sto analizzando l'ultimo hidden layer quindi lui davanti a se ha l'output layer
+                for layer in hiddenLayers do
                     let deltaDictionaryHidden = new Dictionary<Neuron, double>(HashIdentity.Structural)
                     for neur in layer do
                         let net = neur.InputMap
                                         |> Seq.map (fun el -> (el.Key.Output, el.Value))
                                         |> neur.ActivationFunction
-                        let previousDict = if nn.HiddenLayers.IndexOf(layer) = 0 then
-                                            deltaDictionaryOutput
-                                           else
-                                            deltaDictionaryHiddenLayers.[layer]
                         let sum = previousDict
                                     |> Seq.sumBy (fun el -> el.Value*el.Key.InputMap.[neur])
                         deltaDictionaryHidden.Add(neur, ((der neur.OutputFunction net)*sum))
+                    previousDict <- deltaDictionaryHidden
                     deltaDictionaryHiddenLayers.Add(layer, deltaDictionaryHidden)
 
                 // Aggiornameto pesi layer di uscita

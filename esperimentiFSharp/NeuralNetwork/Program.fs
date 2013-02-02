@@ -314,10 +314,9 @@ let main argv =
 //    NN.OutputLayer.Add("democrat", out1)
 //    NN.OutputLayer.Add("republican", out2)
 
-
     let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
     algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.3))
-    algBuilder.ParameterStore.SetValue("EPOCHS", Number(50.0))
+    algBuilder.ParameterStore.SetValue("EPOCHS", Number(500.0))
 
     let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
@@ -326,8 +325,8 @@ let main argv =
 //    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
 //    printfn "mathExpression FINISHED"
 
-//    normalize 1.0 0.0 table
-//    printfn "normalize FINISHED"
+    normalize 1.0 0.0 table
+    printfn "normalize FINISHED"
 
 //    standardize table
 //    printfn "standardize FINISHED"
@@ -344,26 +343,29 @@ let main argv =
 //    discretize ["RI"] 10 table
 //    printfn "discretize FINISHED"
 
-    removeRange [0;1;2;3;4] table
+//    removeRange [0;1;2;3;4] table
 //    removePercentage 55.6 table
 //    subsetByExpression "Na>12.0" table
 
-    NN.CreateNetork(table, "RI")          // TODO forse un po' da migliorare l'interfaccia qui
-    NN.Train(table, "RI")
+    // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
+    // per predire valori nominal serve una funzione di uscita sigmoid
+    NN.CreateNetork(table, "Na", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
+//    NN.CreateNetork(table, "Na", outputLayer=(sumOfProducts, linear))
+    NN.Train(table, "Na")
     let out = NN.Classify(table.Rows.[0])
-    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["RI"])) out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["Na"])) out
     let out = NN.Classify(table.Rows.[1])
-    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[1].["RI"])) out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[1].["Na"])) out
     let out = NN.Classify(table.Rows.[2])                                
-    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[2].["RI"])) out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[2].["Na"])) out
     let out = NN.Classify(table.Rows.[3])                                
-    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[3].["RI"])) out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[3].["Na"])) out
     let out = NN.Classify(table.Rows.[4])                                
-    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[4].["RI"])) out
+    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[4].["Na"])) out
 
 
     let valBuilder = new BasicValidationBuilder()
-    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(50.0))
+    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(100.0))
     let stat = NN.Validate(valBuilder.BuildTestTable(table))
     printfn "NumberOfExamples: %d" stat.NumberOfExamples
     printfn "Number Of Correctly Classified Examples: %d" stat.NumberOfCorrectlyClassifiedExamples

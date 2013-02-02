@@ -7,7 +7,7 @@ open System.Collections.Generic
 open NeuralTypes
 open TableUtilities
 
-// In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
+//TODO In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
 
 let private getUniqueId : (unit -> int) =
     let random = new System.Random()   
@@ -24,7 +24,7 @@ let heavisied (t :double) (theta :double) : double =    if t < theta then
                                                             0.0
                                                         else
                                                             1.0
-let linear (t : double) : double = t
+let linear (t : double) : double = t                    // utile per predire valori numerici
 
 // Funzioni di attivazione
 let sumOfProducts (input : seq<double * double> ) : double = input 
@@ -168,7 +168,13 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
     member nn.InputLayer = _inputLayer
     member nn.OutputLayer = _outputLayer
 
-    member nn.CreateNetork(trainingSet : DataTable, classAtt : string) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
+//    member nn.CreatNetwork(seed:int, hiddenLayers:(int*ActivationFunType*OutputFunType) list, outputLayer:(ActivationFunType*OutputFunType), trainingSet : DataTable, classAtt : string) =
+        
+
+    member nn.CreateNetork(trainingSet : DataTable, classAtt : string, ?seed:int, ?hiddenLayers:(int*ActivationFunType*OutputFunType) list, ?outputLayer:(ActivationFunType*OutputFunType)) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
+        let seed = defaultArg seed DateTime.Now.Second
+        let actFunOut, outFunOut  = defaultArg outputLayer (sumOfProducts, linear)
+
         let attType = (trainingSet.Columns.[classAtt] :?> AttributeDataColumn).AttributeType
         let numClasses,nomList = match attType with
                                  | AttributeType.Nominal nomList -> List.length nomList, nomList
@@ -176,13 +182,8 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
                                  | _ -> failwithf "Is not possible to create a neural network for an output type of '%A'" attType
         let numAttributes = trainingSet.Columns.Count
 
-//        let NN  = new MultiLayerNetwork(TrainigAlgorithmBuilder.backPropagation)
-        let hiddenLayersNeurons = [(numClasses + numAttributes)/2] |> List.mapi (fun i el -> (i, el))
-        let random = new Random()
-        let actFunHid = sumOfProducts
-        let outFunHid = sigmoid
-        let actFunOut = sumOfProducts
-        let outFunOut = linear
+        let hiddenLayers = defaultArg hiddenLayers [(numClasses + numAttributes)/2, sumOfProducts, sigmoid] |> List.mapi (fun i el -> (i, el))
+        let random = new Random(seed)
 
         // Costruisco i neuroni di input
         for col in trainingSet.Columns do
@@ -191,16 +192,16 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
                 nn.InputLayer.Add(col.ColumnName, neuron)
 
         // Costruisco i neuroni e i livelli nascosti
-        for layerIndex, layerCount in hiddenLayersNeurons do
+        for layerIndex, (layerCount, actFun, outFun) in hiddenLayers do
             let hidLayer = new NeuralLayer()
-            let prevLayer : Neuron list =   if layerIndex = 0 then
-                                                    nn.InputLayer.Values |> Seq.map (fun el -> el :> Neuron) |> Seq.toList
-                                                else 
-                                                    nn.HiddenLayers.[layerIndex] |> Seq.toList
+            let prevLayer = if layerIndex = 0 then
+                                nn.InputLayer.Values |> Seq.map (fun el -> el :> Neuron) |> Seq.toList
+                            else 
+                                nn.HiddenLayers.[layerIndex-1] |> Seq.toList
             for i in 1..layerCount do
                 let hid = new Neuron()
-                hid.ActivationFunction <- actFunHid
-                hid.OutputFunction <- outFunHid
+                hid.ActivationFunction <- actFun
+                hid.OutputFunction <- outFun
                 for prevNeur in prevLayer do
                     hid.InputMap.Add(prevNeur, (random.NextDouble()-0.5))
                 hidLayer.Add(hid)
@@ -253,34 +254,3 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
             let attVal = fst max
             let index = (List.findIndex (fun el -> el = attVal) nomList) + 1
             Nominal(attVal, index)                     
-
-
-//
-//open System.Windows.Forms
-//    
-//type MyType =
-//    | Num of double
-//    | String of string * int
-//
-//    override this.ToString() =
-//        match this with
-//        | Num(n) -> Convert.ToString(n)
-//        | String(s,_) -> s
-//
-//let num = String("ciao", 7)
-//let list = [| Num(6.8); String("ciao", 5)|]
-//
-//let table = new DataTable()
-//table.Columns.Add("col1", num.GetType())
-//let row = table.NewRow()
-//row.[0] <- num
-//table.Rows.Add(row)
-//
-//let form = new Form()
-//let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
-//form.Controls.Add(grid)
-//form.Visible <- true
-//
-//let num2 = table.Rows.[0].[0] :?> MyType
-//match num2 with
-//| String(s,i) -> printfn "%s - %d" s i
