@@ -316,7 +316,7 @@ let main argv =
 
     let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
     algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.3))
-    algBuilder.ParameterStore.SetValue("EPOCHS", Number(500.0))
+    algBuilder.ParameterStore.SetValue("EPOCHS", Number(200.0))
 
     let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
@@ -325,8 +325,8 @@ let main argv =
 //    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
 //    printfn "mathExpression FINISHED"
 
-    normalize 1.0 0.0 table
-    printfn "normalize FINISHED"
+//    normalize 1.0 0.0 table
+//    printfn "normalize FINISHED"
 
 //    standardize table
 //    printfn "standardize FINISHED"
@@ -349,8 +349,8 @@ let main argv =
 
     // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
     // per predire valori nominal serve una funzione di uscita sigmoid
-    NN.CreateNetork(table, "Na", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
-//    NN.CreateNetork(table, "Na", outputLayer=(sumOfProducts, linear))
+//    NN.CreateNetork(table, "Na", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
+    NN.CreateNetork(table, "Na", outputLayer=(sumOfProducts, linear))
     NN.Train(table, "Na")
     let out = NN.Classify(table.Rows.[0])
     printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["Na"])) out
@@ -367,10 +367,7 @@ let main argv =
     let valBuilder = new BasicValidationBuilder()
     valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(100.0))
     let stat = NN.Validate(valBuilder.BuildTestTable(table))
-    printfn "NumberOfExamples: %d" stat.NumberOfExamples
-    printfn "Number Of Correctly Classified Examples: %d" stat.NumberOfCorrectlyClassifiedExamples
-    printfn "Percentage of Correctly Classified Examples: %f" ((Convert.ToDouble(stat.NumberOfCorrectlyClassifiedExamples)/Convert.ToDouble(stat.NumberOfExamples))*100.0)
-    printfn "Number Of Missclassified Examples: %d" stat.NumberOfMissclassifiedExamples
+    stat.PrintStatistcs()
 
     let form = new Form()
     let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)

@@ -84,29 +84,103 @@ type ConstantNeuron() =
 
 
 
-type ValidationStatistics() =
+type ValidationStatistics(dict : Dictionary<string,obj>) =
     
+    let _statDict = dict
+
+    member vs.StatisticNames = _statDict.Keys |> Seq.readonly
+    member vs.StatisticValues = _statDict.Values |> Seq.readonly
+    member vs.Statistics = _statDict |> Seq.readonly
+
+    member vs.PrintStatistcs() =
+        vs.PrintStatistcs(_statDict.Keys |> Seq.toList)
+
+     member vs.PrintStatistcs(stats:string list) =
+        _statDict
+        |> Seq.filter (fun el -> List.exists (fun stat -> el.Key = stat) stats)
+        |> Seq.iter (fun el -> printfn "%s : %A" el.Key el.Value)
+
+type private StatisticsCollector =
+    abstract member Init : string -> unit
+    abstract member CollectStatistics : AttributeValue*AttributeValue -> unit
+    abstract member BuildValidationStatistics : unit -> ValidationStatistics
+ 
+type private NumericStatisticsCollector() =
+
+    let predictions = new ResizeArray<double*double*double>()  // Esempio, valore predetto, errore
+    let mutable attName = ""
+    let mutable _nExps = 0
+
+    interface StatisticsCollector with
+        member nc.Init(att:string) =
+            attName <- att
+        
+        member nc.CollectStatistics(predicted:AttributeValue, actual:AttributeValue) =
+            _nExps <- _nExps+1
+            let actualValue = actual.NumberOf
+            let predictedValue = predicted.NumberOf
+            let error = actualValue-predictedValue
+            predictions.Add(actualValue, predictedValue, error)
+
+        member nc.BuildValidationStatistics() =
+            let dict = new Dictionary<string,obj>(HashIdentity.Structural)
+
+            dict.Add("Number of Examples", _nExps)
+
+            let MeanAbsoluteError = (predictions |> Seq.sumBy (fun (_,_,error) -> abs(error))) / double predictions.Count
+            dict.Add("Mean Absolute Error", MeanAbsoluteError)
+
+            let SumSquaredError = predictions |> Seq.sumBy (fun (_,_,error) -> error*error) 
+            let MeanSquaredError = SumSquaredError / double predictions.Count
+            dict.Add("Mean Squared Error", MeanSquaredError)
+
+            let RootMeanSquaredError = sqrt(MeanSquaredError)
+            dict.Add("Root Mean Squared Error", RootMeanSquaredError)
+            
+//            dict.Add("Examples (actual, predicted, error)", predictions |> Seq.readonly |> Seq.toList)
+                
+            new ValidationStatistics(dict)
+
+type private NominalStatisticsCollector() =
+
+    let predictions = new ResizeArray<string*string>()  // Esempio, valore predetto, errore
+    let mutable attName = ""
     let mutable _nExps = 0
     let mutable _nMiss = 0
     let mutable _nCorr = 0
     let mutable _missExps = new ResizeArray<DataRow * AttributeValue>()
     let mutable _corrExps = new ResizeArray<DataRow * AttributeValue>()
+        
+    interface StatisticsCollector with
+        member nc.Init(att:string) =
+            attName <- att
+        
+        member nc.CollectStatistics(predicted:AttributeValue, actual:AttributeValue) =
+            _nExps <- _nExps+1
+            let actualValue = match actual with
+                                | Nominal (s,_) -> s
+            let predictedValue = match predicted with
+                                | Nominal (s,_) -> s
 
-    member stat.NumberOfExamples = _nExps
-    member stat.NumberOfMissclassifiedExamples = _nMiss
-    member stat.NumberOfCorrectlyClassifiedExamples = _nCorr
-    member stat.MissclassifiedExamples = _missExps.AsReadOnly()
-    member stat.CorrectlyClassifiedExamples = _corrExps.AsReadOnly()
+            predictions.Add(actualValue, predictedValue)
+            if actualValue = predictedValue then
+                _nCorr <- _nCorr+1
+            else
+                _nMiss <- _nMiss+1
 
-    member stat.CollectStatistics(positive, example) =
-        _nExps <- stat.NumberOfExamples+1
-        if positive = true then
-            _nCorr <- stat.NumberOfCorrectlyClassifiedExamples+1
-            _corrExps.Add(example)
-        else
-            _nMiss <- stat.NumberOfMissclassifiedExamples+1
-            _missExps.Add(example)
+        member nc.BuildValidationStatistics() =
+            let dict = new Dictionary<string,obj>(HashIdentity.Structural)
+           
+            dict.Add("Number of Examples", _nExps)
 
+            dict.Add("Number of Correctly Classified Instances", _nCorr)
+            dict.Add("Number of Incorrectly Classified Instances", _nMiss)
+            dict.Add("Percentage of Correctly Classified Examples", ((Convert.ToDouble(_nCorr)/Convert.ToDouble(_nExps))*100.0))
+            dict.Add("Percentage of Incorrectly Classified Examples", ((Convert.ToDouble(_nMiss)/Convert.ToDouble(_nExps))*100.0))
+//            dict.Add("Examples (actual, predicted)", predictions |> Seq.readonly |> Seq.toList)
+                
+            new ValidationStatistics(dict)
+            
 [<AbstractClass>]
 type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
     
@@ -127,18 +201,20 @@ type SupervisedNeuralNetwork(trainingFun : TrainigFunctionType) =
         nn.Train(table, classAtt)
 
     member nn.Validate(testTableIn : DataTable) : ValidationStatistics =       
-        let stat = new ValidationStatistics()
+        let stat : StatisticsCollector  = match (_trainingTable.Columns.[_classAtt] :?> AttributeDataColumn).AttributeType with
+                                            | AttributeType.Numeric -> new NumericStatisticsCollector() :> StatisticsCollector
+                                            | AttributeType.Nominal _ -> new NominalStatisticsCollector() :> StatisticsCollector
+                                            | _ -> failwith "The multilayer network can only be used for predict numeric or nominal attributes"
+        stat.Init(_classAtt)
         
         for i in 0..(testTableIn.Rows.Count-1) do
             let testRow = testTableIn.Rows.[i]
             let index = testTableIn.Columns.IndexOf(_classAtt)
             let expectedValue = toAttributeValue testRow index
-            let outputValue = nn.Classify testRow  
-            if outputValue = expectedValue then        // L'operatore '=' funziona anche sulle Discriminated Unions
-                stat.CollectStatistics(true, (testRow, outputValue))
-            else
-                stat.CollectStatistics(false, (testRow, outputValue)) 
-        stat
+            let predictedValue = nn.Classify testRow  
+            stat.CollectStatistics(predictedValue, expectedValue)
+
+        stat.BuildValidationStatistics()
 
     member nn.ValidateFromArff(testSetPath : string) : ValidationStatistics =
         let table = TableUtilities.buildTableFromArff testSetPath 
@@ -168,10 +244,13 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
     member nn.InputLayer = _inputLayer
     member nn.OutputLayer = _outputLayer
 
-//    member nn.CreatNetwork(seed:int, hiddenLayers:(int*ActivationFunType*OutputFunType) list, outputLayer:(ActivationFunType*OutputFunType), trainingSet : DataTable, classAtt : string) =
-        
-
     member nn.CreateNetork(trainingSet : DataTable, classAtt : string, ?seed:int, ?hiddenLayers:(int*ActivationFunType*OutputFunType) list, ?outputLayer:(ActivationFunType*OutputFunType)) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
+        nn.OutputLayer.Clear()                      // Elimino la rete precedente
+        nn.HiddenLayers
+        |> Seq.iter(fun el -> el.Clear())
+        nn.HiddenLayers.Clear()
+        nn.InputLayer.Clear()
+
         let seed = defaultArg seed DateTime.Now.Second
         let actFunOut, outFunOut  = defaultArg outputLayer (sumOfProducts, linear)
 
@@ -239,7 +318,7 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
 
     override nn.Classify(row) =
         nn.Activate(row)
-        
+         
         if _outputLayer.Keys.Count = 1 then                         // L'attributo da classificare è numerico
             Numeric(_outputLayer.[nn.TrainedAttribute].Output)
         else                                                        // L'attributo da classificare è nominale

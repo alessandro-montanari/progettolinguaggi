@@ -19,7 +19,12 @@ type AttributeValue =
         | Numeric _ -> true
         | _ -> false
 
-    override this.ToString() =      // Così ho una visualizzazione decente nelle DataGridView
+    member self.NumberOf =
+        match self with
+        | Numeric v -> v
+        | _ -> failwith "Not a number"
+
+    override this.ToString() =     
         match this with
         | Numeric(n) -> Convert.ToString(n)
         | String(s) -> s
