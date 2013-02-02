@@ -39,6 +39,15 @@
     <Reference Include="FSharp.PowerPack">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\FSharpPowerPack-4.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.GLEE">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Research\GLEE\bin\Microsoft.GLEE.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.GLEE.Drawing">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Research\GLEE\bin\Microsoft.GLEE.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Glee.GraphViewerGDI">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Research\GLEE\bin\Microsoft.GLEE.GraphViewerGDI.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
@@ -60,6 +69,7 @@
     <Compile Include="ValidationBuilder.fs" />
     <Compile Include="AttributePreprocessing.fs" />
     <Compile Include="InstancePreprocessing.fs" />
+    <Compile Include="Graph.fs" />
     <Compile Include="NetworkBuilder.fs" />
     <None Include="App.config" />
     <Compile Include="Program.fs" />

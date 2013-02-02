@@ -14,7 +14,7 @@ let private der (f:double->double) (x:double) =
 // nomVal è uno dei valori nominali a cui è associato il neurone passato come primo argomento
 let private diffOutputs (neuron:Neuron) (nomVal:string) (expValue:AttributeValue) =
     if expValue.IsNumber then
-        let expectedOutput = match expValue with | Numeric(value) -> value
+        let expectedOutput = expValue.NumberOf
         (expectedOutput - neuron.Output)
     else
         let expectedOutput = match expValue with | Nominal(value,_) -> value
