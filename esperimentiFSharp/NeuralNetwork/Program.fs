@@ -319,7 +319,7 @@ let main argv =
     algBuilder.ParameterStore.SetValue("EPOCHS", Number(200.0))
 //
     let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
-    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
 //    addExpression "newAtt" "RI+100+sum(Na)" table
 //    printfn "addExpression FINISHED"
 //    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
@@ -349,8 +349,8 @@ let main argv =
 
     // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
     // per predire valori nominal serve una funzione di uscita sigmoid
-    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
-//    NN.CreateNetork(table, "Na", outputLayer=(sumOfProducts, linear))
+//    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
+    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, linear))
 //    NN.Train(table, "Na")
 //    let out = NN.Classify(table.Rows.[0])
 //    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["Na"])) out

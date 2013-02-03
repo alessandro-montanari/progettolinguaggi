@@ -115,46 +115,72 @@ let sampleCode = "p17 : mean(ciao), \n\
 
 [<EntryPoint>]
 let main argv = 
-    let parser (code:string) =
-        let lexbuf = Lexing.LexBuffer<_>.FromString code
-        NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
+//    let parser (code:string) =
+//        let lexbuf = Lexing.LexBuffer<_>.FromString code
+//        NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
+//
+//    let buildInterface (parser : string -> Network) =
+//        let form = new Form(Visible=true)
+//        let text = new RichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
+//        text.LoadFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt")
+//        text.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
+//        let btnParse = new Button(Dock=DockStyle.Bottom, Text="Parse!")
+//        btnParse.Font <- new Font(btnParse.Font, btnParse.Font.Style ||| FontStyle.Bold)
+//        let btnSave = new Button(Dock=DockStyle.Bottom, Text="Save")
+//        btnSave.Click.Add(fun _ ->  text.SaveFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt"))
+//        let console = new RichTextBox(Dock=DockStyle.Fill)
+//        console.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
+//        btnParse.Click.Add(fun _ -> try
+//                                        console.Text <- sprintf "%A" (parser text.Text)
+//                                    with e ->
+//                                        console.Text <- "Error"
+//                                    )
+//        let splitContainerVer = new SplitContainer(Dock=DockStyle.Fill)
+//        let splitContainerHor = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
+//        splitContainerVer.Panel2.Controls.Add(splitContainerHor)
+//        let treeView = new TreeView(Dock=DockStyle.Fill)
+//        treeView.BeginUpdate()
+//        treeView.Nodes.Add("Parent") |> ignore
+//        treeView.Nodes.[0].Nodes.Add("Child 1") |> ignore
+//        treeView.Nodes.[0].Nodes.Add("Child 2") |> ignore
+//        treeView.Nodes.[0].Nodes.[1].Nodes.Add("Grandchild") |> ignore
+//        treeView.Nodes.[0].Nodes.[1].Nodes.[0].Nodes.Add("Great Grandchild") |> ignore
+//        treeView.EndUpdate()
+//        splitContainerVer.Panel1.Controls.Add(treeView)
+//        splitContainerHor.Panel1.Controls.Add(text)
+//        splitContainerHor.Panel2.Controls.Add(console)
+//        form.Controls.Add(splitContainerVer)
+//        form.Controls.Add(btnParse)
+//        form.Controls.Add(btnSave)
+//        Application.Run(form)
+//        Application.EnableVisualStyles()
+//    buildInterface parser
 
-    let buildInterface (parser : string -> Network) =
-        let form = new Form(Visible=true)
-        let text = new RichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
-        text.LoadFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt")
-        text.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
-        let btnParse = new Button(Dock=DockStyle.Bottom, Text="Parse!")
-        btnParse.Font <- new Font(btnParse.Font, btnParse.Font.Style ||| FontStyle.Bold)
-        let btnSave = new Button(Dock=DockStyle.Bottom, Text="Save")
-        btnSave.Click.Add(fun _ ->  text.SaveFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt"))
-        let console = new RichTextBox(Dock=DockStyle.Fill)
-        console.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
-        btnParse.Click.Add(fun _ -> try
-                                        console.Text <- sprintf "%A" (parser text.Text)
-                                    with e ->
-                                        console.Text <- "Error"
-                                    )
-        let splitContainerVer = new SplitContainer(Dock=DockStyle.Fill)
-        let splitContainerHor = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
-        splitContainerVer.Panel2.Controls.Add(splitContainerHor)
-        let treeView = new TreeView(Dock=DockStyle.Fill)
-        treeView.BeginUpdate()
-        treeView.Nodes.Add("Parent") |> ignore
-        treeView.Nodes.[0].Nodes.Add("Child 1") |> ignore
-        treeView.Nodes.[0].Nodes.Add("Child 2") |> ignore
-        treeView.Nodes.[0].Nodes.[1].Nodes.Add("Grandchild") |> ignore
-        treeView.Nodes.[0].Nodes.[1].Nodes.[0].Nodes.Add("Great Grandchild") |> ignore
-        treeView.EndUpdate()
-        splitContainerVer.Panel1.Controls.Add(treeView)
-        splitContainerHor.Panel1.Controls.Add(text)
-        splitContainerHor.Panel2.Controls.Add(console)
-        form.Controls.Add(splitContainerVer)
-        form.Controls.Add(btnParse)
-        form.Controls.Add(btnSave)
-        Application.Run(form)
-        Application.EnableVisualStyles()
-    buildInterface parser
+    let text = new SyntaxHighlighter.SyntaxRichTextBox()
+    text.Settings.Keywords.Add("INSTANCE")
+    text.Settings.Keywords.Add("ATTRIBUTE")
+    text.Settings.Keywords.Add("PREPROCESSING")
+    text.Settings.Keywords.Add("VALIDATION")
+    text.Settings.Keywords.Add("TRAINING")
+
+    text.Settings.Comment <- "//"
+
+    text.Settings.KeywordColor <- Color.Blue;
+    text.Settings.CommentColor <- Color.Green;
+    text.Settings.StringColor <- Color.Gray;
+    text.Settings.IntegerColor <- Color.Red;
+
+    text.CompileKeywords()
+
+//    text.LoadFile()
+    text.ProcessAllLines()
+
+    let form = new Form()
+    text.Dock <- DockStyle.Fill
+    form.Controls.Add(text)
+    Application.Run(form)
+      
+
     0
     
     
