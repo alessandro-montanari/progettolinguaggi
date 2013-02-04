@@ -3,55 +3,50 @@
 open System
 open System.Collections.Generic
 
-// Idea:
-// - il framework è indipendente dal linguaggio
-// - i tipi dei parametri che possono essere settati nel framework sono ovviamente simili a quelli del linguaggio ma sono molto meno dettagliati di quelli dell'AST
-// - TODO per le espressioni, non si setta l'espressione in se (stringa) ma il suo risultato, quindi double o boolean. In pratica l'interprete del linguaggio quando incontra 
-// un'espressione la valuta e setta il valore nel builder
-
-type ParameterValue =
-    | AttributeList of string list
-    | NumberList of double list
-    | InstanceList of int list
-    | String of string
-    | Number of double
-    | Logic of bool
-
-    member self.NumberOf =
-        match self with
-        | Number(n) -> n
-        | _ -> failwith "Not a number"
-
-type ParameterStore(typeDic : Dictionary<string, (Type*(ParameterValue -> bool))>) =
+type ParameterStore(rules : Dictionary<string, (string -> obj -> unit)>) =
     
-    let _paramsDict = new Dictionary<string, ParameterValue>(HashIdentity.Structural)
-    let _paramsTypeDict : Dictionary<string, (Type*(ParameterValue -> bool))> = typeDic
+    let _params = new Dictionary<string, ResizeArray<obj>>()
+    let _rules = rules
 
-    let checkType expected actual =                                                         // Fare un controllo sul tipo così è limitante, non si tiene conto dell'ereditarietà
-        if expected <> actual then                                                          // Quindi lasceremo liberi gli utilizzatori di controllare tutto quello che vogliono
-            invalidArg "newValue" "Invalid argument type"
-        else 
-            true
-    
-    let checkConstraint constraintFunction actualValue =
-        if constraintFunction actualValue then
-            true
-        else
-            invalidArg "newValue" "The value does not satisfy the constraint on this parameter"
+    /// Names of the parameters that can be setted in this store
+    member this.ParameterNames = _rules.Keys |> Seq.readonly
 
-    member this.ParameterNames = _paramsTypeDict.Keys |> Seq.readonly
-    member this.ParameterValues = _paramsDict.Values |> Seq.readonly
-    member this.Parameters = _paramsDict |> Seq.readonly
+    /// Returns the list of values for each parameter in the store
+    member this.ParameterValues = _params |> Seq.map (fun el -> el.Key,el.Value|>Seq.readonly)
 
-    member this.SetValue(paramName, newValue) =
-        let attType, constraintFun = _paramsTypeDict.[paramName]
-        let actualType = newValue.GetType()
+    /// Add a new value for the specified parameter. An exception is raised if it is not possible to set the specified parameter 
+    /// or if the constraint on the value is not satisfied
+    member this.AddValue(paramName, newValue) =
+        let checkFun = match _rules.TryGetValue(paramName) with
+                        | res,checkFun when res=true -> checkFun
+                        | _ -> failwithf "The parameter %s cannot be set in the parameterstore" paramName
+        checkFun paramName newValue                               // Se passa questo punto, il check è andato a buon fine, posso inserire il valore
+        match _params.TryGetValue(paramName) with
+        | res, objList when res=true -> objList.Add(newValue)
+        | res, _ when res=false-> let list = new ResizeArray<obj>()
+                                  list.Add(newValue)
+                                  _params.Add(paramName, list)
 
-        if (checkType attType actualType) && (checkConstraint constraintFun newValue) then
-            _paramsDict.[paramName] <- newValue        
+    /// Returns the list of values for the specified parameter
+    member this.GetValues(paramName) =
+        match _params.TryGetValue(paramName) with
+        | res, objlist when res=true -> objlist |> Seq.readonly
+        | _,_ -> Seq.empty
 
-    member this.GetValue(paramName) =
-        _paramsDict.[paramName]
+    /// Clear all the values for all the parameters
+    member this.Clear() =
+        _params.Clear()
 
-    member this.ClearParameters() =
-        _paramsDict.Clear() 
+// TEST
+//let rules = new Dictionary<string, (string->obj->unit)>(HashIdentity.Structural)
+//rules.Add("param1", (fun name input -> ()))
+//rules.Add("param2", (fun name input -> (if input.GetType() <> typeof<double> then invalidArg name "wrong type")))
+//let paramStore = new ParameterStore(rules)
+//paramStore.GetValues("param1")
+//paramStore.ParameterValues
+//paramStore.ParameterNames
+//paramStore.AddValue("param1", new Dictionary<string, (obj->unit)>(HashIdentity.Structural))
+//paramStore.AddValue("param2", 5.7)
+//paramStore.AddValue("param2", 5)
+//paramStore.AddValue("param3", 5.9)
+//paramStore.Clear()

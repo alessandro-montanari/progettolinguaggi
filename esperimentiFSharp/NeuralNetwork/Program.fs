@@ -421,6 +421,7 @@ let main argv =
         let synthAssembly = result.CompiledAssembly
         let synthMethod  = synthAssembly.GetType("Custom.Code").GetMethod("activationFunction") 
         let input = [(1.0,2.0);(1.0,2.0);(1.0,2.0)] |> List.toSeq
+        // Fare qualcosa di simile per la funzione di uscita
         let actFunction (theMethod:Reflection.MethodInfo) (input:seq<double*double>) =
             if theMethod.ReturnType <> typeof<double> then
                 failwithf "%s : The return type of the function is not correct, it is '%A' but should be 'double'" theMethod.Name theMethod.ReturnType
