@@ -319,14 +319,12 @@ let main argv =
 //    NN.OutputLayer.Add("republican", out2)
 
     let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
-    algBuilder.GlobalParameters.AddValue("EPOCHS",0)
+    algBuilder.GlobalParameters.AddValue("EPOCHS",50)
     algBuilder.GlobalParameters.AddValue("LEARNING_RATE",0.3)
-    algBuilder.GlobalParameters.AddValue("LEARNING_RATE",0.3)
-    algBuilder.Build()
 
-////
-//    let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
-//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
+    let NN  = new MultiLayerNetwork(algBuilder.Build())
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
+
 //    addExpression "newAtt" "RI+100+sum(Na)" table
 //    printfn "addExpression FINISHED"
 //    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
@@ -357,8 +355,8 @@ let main argv =
     // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
     // per predire valori nominal serve una funzione di uscita sigmoid
 //    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
-//    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, linear))
-//    NN.Train(table, "Na")
+    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, sigmoid))
+    NN.Train(table, "Class")
 //    let out = NN.Classify(table.Rows.[0])
 //    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["Na"])) out
 //    let out = NN.Classify(table.Rows.[1])
@@ -371,10 +369,11 @@ let main argv =
 //    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[4].["Na"])) out
 //
 //
-//    let valBuilder = new BasicValidationBuilder()
-//    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(100.0))
-//    let stat = NN.Validate(valBuilder.BuildTestTable(table))
-//    stat.PrintStatistcs()
+    let valBuilder = new BasicValidationBuilder()
+    valBuilder.GlobalParameters.AddValue("TRAINING_TABLE", table)
+    valBuilder.GlobalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
+    let stat = NN.Validate(valBuilder.Build())
+    stat.PrintStatistcs()
 
 //    let form = new Form()
 ////    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)

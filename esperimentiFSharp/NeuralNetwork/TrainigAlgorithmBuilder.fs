@@ -3,7 +3,6 @@
 open System
 open System.Data
 open System.Collections.Generic
-open Parameter
 open Neural
 open NeuralTypes
 open TableUtilities
@@ -125,7 +124,6 @@ type BackPropagationBuilder() =
             failwith "Only one LEARNING_RATE parameter can be setted in BackPropagationBuilder"
         if numOfEpochs <> 1 then
             failwith "Only one EPOCHS parameter can be setted in BackPropagationBuilder"
-
 
     override this.Name = "BackPropagationBuilder"
     override this.Build() = 
