@@ -26,7 +26,7 @@ type BasicValidationBuilder() =
         dic.Add("PERCENTAGE_SPLIT", (Number(0.0).GetType(), (fun el -> el.NumberOf>=1.0)))   
         dic
 
-    let _paramStore = new ParameterStore(initParameterTypes())
+    let _paramStore = new ParameterStore(initParameterTypes()) 
 
     member this.ParameterStore = _paramStore
 
@@ -41,6 +41,9 @@ type BasicValidationBuilder() =
                     | String(path) -> createTestFromFile path
                     | Number(perc) -> createTestFromSplit trainingTable perc
                     | _ -> failwith "never here!!"
+
+
+
 
     
 

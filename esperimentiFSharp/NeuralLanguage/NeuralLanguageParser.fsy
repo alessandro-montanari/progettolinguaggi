@@ -133,8 +133,8 @@ expression :
 	| MAX LP statElement RP				{ Max $3 }
 	| SUM LP statElement RP				{ Sum $3 }
 	| SUMSQUARED LP statElement RP		{ SumSquared $3 }
-	| ID								{ ExpId $1 }
-	| ATTID								{ ExpAttId (Convert.ToInt32($1, cultureInfo)) }
+	| ID								{ ExpId $1 }											// Per il preprocessing, controllo che esista un'attributo con quel nome o lo faccio fare alla datatable
+	| ATTID								{ ExpAttId (Convert.ToInt32($1, cultureInfo)) }			// Per il preprocessing, controllo che esista un'attributo con quell'indice e lo trasformo nel relativo nome			
 	| TRUE								{ True }
 	| FALSE								{ False }
 	| number							{ ExpNum $1 }

@@ -27,8 +27,8 @@ type ParameterStore(typeDic : Dictionary<string, (Type*(ParameterValue -> bool))
     let _paramsDict = new Dictionary<string, ParameterValue>(HashIdentity.Structural)
     let _paramsTypeDict : Dictionary<string, (Type*(ParameterValue -> bool))> = typeDic
 
-    let checkType expected actual =
-        if expected <> actual then
+    let checkType expected actual =                                                         // Fare un controllo sul tipo così è limitante, non si tiene conto dell'ereditarietà
+        if expected <> actual then                                                          // Quindi lasceremo liberi gli utilizzatori di controllare tutto quello che vogliono
             invalidArg "newValue" "Invalid argument type"
         else 
             true

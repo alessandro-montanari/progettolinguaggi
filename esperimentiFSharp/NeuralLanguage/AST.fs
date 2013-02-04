@@ -20,7 +20,7 @@ type Expression =
     | Rel of Expression * Relation * Expression
     | ExpId of string
     | ExpAttId of int
-    | ExpIstId of int
+    | ExpIstId of int                   // ????
     | Neg of Expression
     | ExpNum of double
     | Add of Expression * Expression

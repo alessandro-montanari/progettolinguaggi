@@ -10,6 +10,10 @@ open AttributePreprocessing
 open InstancePreprocessing
 open NeuralTypes
 
+open System 
+open System.CodeDom.Compiler 
+open Microsoft.FSharp.Compiler.CodeDom
+
 //[<EntryPoint>]
 //let main argv = 
 //    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
@@ -314,12 +318,12 @@ let main argv =
 //    NN.OutputLayer.Add("democrat", out1)
 //    NN.OutputLayer.Add("republican", out2)
 
-    let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
-    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.3))
-    algBuilder.ParameterStore.SetValue("EPOCHS", Number(200.0))
-//
-    let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
-    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
+//    let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
+//    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.3))
+//    algBuilder.ParameterStore.SetValue("EPOCHS", Number(200.0))
+////
+//    let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
+//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
 //    addExpression "newAtt" "RI+100+sum(Na)" table
 //    printfn "addExpression FINISHED"
 //    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
@@ -350,7 +354,7 @@ let main argv =
     // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
     // per predire valori nominal serve una funzione di uscita sigmoid
 //    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
-    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, linear))
+//    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, linear))
 //    NN.Train(table, "Na")
 //    let out = NN.Classify(table.Rows.[0])
 //    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["Na"])) out
@@ -369,11 +373,11 @@ let main argv =
 //    let stat = NN.Validate(valBuilder.BuildTestTable(table))
 //    stat.PrintStatistcs()
 
-    let form = new Form()
-//    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
-    form.Controls.Add((Graph.createGraphFromNetwork NN))
-    form.Visible <- true
-    Application.Run(form)
+//    let form = new Form()
+////    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
+//    form.Controls.Add((Graph.createGraphFromNetwork NN))
+//    form.Visible <- true
+//    Application.Run(form)
 
 
 //    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\iris.arff"
@@ -391,7 +395,45 @@ let main argv =
 
 
 
+    
+    // Prova compilazione ed esecuzione codice F# da stringa
+
+    // Our (very simple) code string consisting of just one function: unit -> string 
+    let codeString =
+        "let activationFunction input = input 
+                                          |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0" 
+
+    let CompileFSharpCode codeString =
+            let codeString = "module Custom.Code\n"+codeString
+            use provider = new FSharpCodeProvider() 
+            let options = CompilerParameters()
+            options.GenerateInMemory <- true
+            let result = provider.CompileAssemblyFromSource( options, [|codeString|] ) 
+            // If we missed anything, let compiler show us what's the problem
+            if result.Errors.Count <> 0 then  
+                for i = 0 to result.Errors.Count - 1 do
+                    printfn "%A" (result.Errors.Item(i).ErrorText)
+            result
+
+    let result = CompileFSharpCode codeString
+    if result.Errors.Count = 0 then
+        let synthAssembly = result.CompiledAssembly
+        let synthMethod  = synthAssembly.GetType("Custom.Code").GetMethod("activationFunction") 
+        let input = [(1.0,2.0);(1.0,2.0);(1.0,2.0)] |> List.toSeq
+        let myFunction (theMethod:Reflection.MethodInfo) (input:seq<double*double>) =
+            Convert.ToDouble(theMethod.Invoke(null,[|input|]))
+
+        let actFun = myFunction synthMethod
+        printfn "Success: %A" (actFun input)
+    else
+         printfn "Compile error"
+
+
+
     System.Console.ReadLine() |> ignore
     0
+
+
+
 
    
