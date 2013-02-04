@@ -404,7 +404,7 @@ let main argv =
                                           |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0" 
 
     let CompileFSharpCode codeString =
-            let codeString = "module Custom.Code\n"+codeString
+            let codeString = "#light\nmodule Custom.Code\n"+codeString
             use provider = new FSharpCodeProvider() 
             let options = CompilerParameters()
             options.GenerateInMemory <- true
