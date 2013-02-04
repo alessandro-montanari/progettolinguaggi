@@ -318,9 +318,12 @@ let main argv =
 //    NN.OutputLayer.Add("democrat", out1)
 //    NN.OutputLayer.Add("republican", out2)
 
-//    let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
-//    algBuilder.ParameterStore.SetValue("LEARNING_RATE", Number(0.3))
-//    algBuilder.ParameterStore.SetValue("EPOCHS", Number(200.0))
+    let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
+    algBuilder.GlobalParameters.AddValue("EPOCHS",0)
+    algBuilder.GlobalParameters.AddValue("LEARNING_RATE",0.3)
+    algBuilder.GlobalParameters.AddValue("LEARNING_RATE",0.3)
+    algBuilder.Build()
+
 ////
 //    let NN  = new MultiLayerNetwork(algBuilder.BuildTrainingFunction())
 //    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"

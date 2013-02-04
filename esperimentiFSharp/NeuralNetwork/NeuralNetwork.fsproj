@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Parameter.fs" />
+    <Compile Include="Builder.fs" />
     <Compile Include="TableUtilities.fs" />
     <Compile Include="Neural.fs" />
     <Compile Include="TrainigAlgorithmBuilder.fs" />

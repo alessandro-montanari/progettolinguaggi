@@ -7,6 +7,7 @@ open Parameter
 open Neural
 open NeuralTypes
 open TableUtilities
+open Builder
 
 let private der (f:double->double) (x:double) =
     (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
@@ -93,21 +94,43 @@ let backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt:DataTab
                
                 globalError <- globalError+currentError
 
+let private globalRules = new Dictionary<string, (string->obj->unit)>(HashIdentity.Structural)
+globalRules.Add("LEARNING_RATE", (fun name input -> if input.GetType() <> typeof<double> then
+                                                        invalidArg name "Wrong type, expected 'double'"
+                                                    let value = unbox input
+                                                    if (value < 0.0) || (value > 1.0) then
+                                                        invalidArg name "Must be in the range [0; 1]" ))
+
+globalRules.Add("EPOCHS", (fun name input -> if input.GetType() <> typeof<int> then
+                                                invalidArg name "Wrong type, expected 'int'"
+                                             let value = unbox input
+                                             if value <= 0 then
+                                                invalidArg name "Must be grater than 0" ))
+
+let private aspectsRules = new Dictionary<string, Dictionary<string,(string->obj->unit)>>(HashIdentity.Structural)
 
 type BackPropagationBuilder() =
-    
-    let initParameterTypes() =                                               
-        let dic = new Dictionary<string, (Type*(ParameterValue -> bool))>(HashIdentity.Structural)     
-        dic.Add("LEARNING_RATE", (Number(0.0).GetType(), (fun value -> (value.NumberOf>=0.0) && (value.NumberOf<=1.0))))
-        dic.Add("EPOCHS", (Number(0.0).GetType(), (fun value -> value.NumberOf>=1.0)))
-        dic
+    inherit Builder<TrainigFunctionType>(globalRules, aspectsRules)
 
-    let _paramStore = new ParameterStore(initParameterTypes())
+    let check (builder:Builder<'T>) =
+        let numOfAspects = builder.Aspects |> Seq.length
+        let numOfGlobParams = builder.GlobalParameters.ParameterValues |> Seq.length
+        let numOfLearningRate = builder.GlobalParameters.GetValues("LEARNING_RATE") |> Seq.length
+        let numOfEpochs = builder.GlobalParameters.GetValues("EPOCHS") |> Seq.length
+        if numOfAspects > 0 then
+            failwith "It is not possible to set aspects in the BackPropagationBuilder"
+        if numOfGlobParams <> 2 then
+            failwith "Two global parameters must be set in BackPropagationBuilder, LEARNING_RATE and EPOCHS"
+        if numOfLearningRate <> 1 then
+            failwith "Only one LEARNING_RATE parameter can be setted in BackPropagationBuilder"
+        if numOfEpochs <> 1 then
+            failwith "Only one EPOCHS parameter can be setted in BackPropagationBuilder"
 
-    member this.ParameterStore = _paramStore
 
-    member this.BuildTrainingFunction() : SupervisedNeuralNetwork -> DataTable -> string -> unit =
-        let rate = this.ParameterStore.GetValue("LEARNING_RATE").NumberOf
-        let epochs = int (this.ParameterStore.GetValue("EPOCHS").NumberOf)
+    override this.Name = "BackPropagationBuilder"
+    override this.Build() = 
+        check this
+        let rate = unbox(this.GlobalParameters.GetValues("LEARNING_RATE") |> Seq.exactlyOne)
+        let epochs = unbox( this.GlobalParameters.GetValues("EPOCHS") |> Seq.exactlyOne)
         backPropagation rate epochs
 
