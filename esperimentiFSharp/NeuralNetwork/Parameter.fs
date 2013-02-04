@@ -6,18 +6,17 @@ open System.Collections.Generic
 type ParameterStore(rules : Dictionary<string, (string -> obj -> unit)>) =
     
     let _params = new Dictionary<string, ResizeArray<obj>>()
-    let _rules = rules
 
     /// Names of the parameters that can be setted in this store
-    member this.ParameterNames = _rules.Keys |> Seq.readonly
+    member this.ParameterNames = rules.Keys |> Seq.readonly
 
-    /// Returns the list of values for each parameter in the store
+    /// Returns the sequence of values for each parameter in the store
     member this.ParameterValues = _params |> Seq.map (fun el -> el.Key,el.Value|>Seq.readonly)
 
     /// Add a new value for the specified parameter. An exception is raised if it is not possible to set the specified parameter 
     /// or if the constraint on the value is not satisfied
     member this.AddValue(paramName, newValue) =
-        let checkFun = match _rules.TryGetValue(paramName) with
+        let checkFun = match rules.TryGetValue(paramName) with
                         | res,checkFun when res=true -> checkFun
                         | _ -> failwithf "The parameter %s cannot be set in the parameterstore" paramName
         checkFun paramName newValue                               // Se passa questo punto, il check è andato a buon fine, posso inserire il valore
@@ -33,7 +32,7 @@ type ParameterStore(rules : Dictionary<string, (string -> obj -> unit)>) =
         | res, objlist when res=true -> objlist |> Seq.readonly
         | _,_ -> Seq.empty
 
-    /// Clear all the values for all the parameters
+    /// Clear all the values for all parameters
     member this.Clear() =
         _params.Clear()
 
