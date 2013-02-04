@@ -400,8 +400,9 @@ let main argv =
 
     // Our (very simple) code string consisting of just one function: unit -> string 
     let codeString =
-        "let activationFunction input = input 
-                                          |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0" 
+        "let activationFunction input = input
+                                          |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0"
+                                          
 
     let CompileFSharpCode codeString =
             let codeString = "#light\nmodule Custom.Code\n"+codeString
@@ -420,10 +421,15 @@ let main argv =
         let synthAssembly = result.CompiledAssembly
         let synthMethod  = synthAssembly.GetType("Custom.Code").GetMethod("activationFunction") 
         let input = [(1.0,2.0);(1.0,2.0);(1.0,2.0)] |> List.toSeq
-        let myFunction (theMethod:Reflection.MethodInfo) (input:seq<double*double>) =
+        let actFunction (theMethod:Reflection.MethodInfo) (input:seq<double*double>) =
+            if theMethod.ReturnType <> typeof<double> then
+                failwithf "%s : The return type of the function is not correct, it is '%A' but should be 'double'" theMethod.Name theMethod.ReturnType
+            let returnType = theMethod.GetParameters().[0].ParameterType
+            if returnType <> typeof<seq<double*double>> then
+                 failwithf "%s : The input type of the function is not correct, it is '%A' but should be 'seq<double*double>'" theMethod.Name returnType
             Convert.ToDouble(theMethod.Invoke(null,[|input|]))
 
-        let actFun = myFunction synthMethod
+        let actFun = actFunction synthMethod
         printfn "Success: %A" (actFun input)
     else
          printfn "Compile error"
