@@ -9,7 +9,7 @@ open Parameter
 [<AbstractClass>]
 type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRules:Dictionary<string, Dictionary<string,(string->obj->unit)>> ) =
     
-    let _globParameterStore = new ParameterStore(globalRules)
+    let _locParameterStore = new ParameterStore(globalRules)
     let _aspects = new Dictionary<string, ResizeArray<ParameterStore>>(HashIdentity.Structural)
 
     /// Add the specified paramters to the specified aspect. An exception is raised if the aspect cannot be set in this builder or if the parameters doesn't pass the rules
@@ -29,7 +29,7 @@ type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRule
                                     list.Add(paramStore)
                                     _aspects.Add(aspectName, list)
 
-    member this.GlobalParameters = _globParameterStore
+    member this.LocalParameters = _locParameterStore
 
     /// Returns a sequence of ParameterStore for each aspect currently in the builder
     member this.Aspects =  _aspects |> Seq.map (fun el -> el.Key,el.Value|>Seq.readonly)
@@ -48,7 +48,7 @@ type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRule
         _aspects.Clear()
 
     abstract member Name : string
-    abstract member Build : unit -> 'T
+    abstract member Build : gobalParameters:ParameterStore -> 'T
 
 
 // TEST

@@ -5,6 +5,7 @@ open NeuralTypes
 open System.Collections.Generic
 open System
 
+/// Custom DataColumn to hold the AttributeType of the attribute represented by the column
 type AttributeDataColumn =
     inherit DataColumn
 
@@ -12,7 +13,7 @@ type AttributeDataColumn =
     new () = { inherit DataColumn(); AttributeType = AttributeType.String }
     new (attType) = { inherit DataColumn(); AttributeType = attType }       
 
-
+/// Transforms the value storend in the specified DataRow, in the column specfied by the index, into an istance of AttributeValue
 let toAttributeValue (row:DataRow) (index:int) =
     let attType = (row.Table.Columns.[index] :?> AttributeDataColumn).AttributeType
     if row.IsNull(index) then

@@ -11,7 +11,7 @@ type ParameterStore(rules : Dictionary<string, (string -> obj -> unit)>) =
     member this.ParameterNames = rules.Keys |> Seq.readonly
 
     /// Returns the sequence of values for each parameter in the store
-    member this.ParameterValues = _params |> Seq.map (fun el -> el.Key,el.Value|>Seq.readonly)
+    member this.ParameterValues = _params |> Seq.map (fun el -> el.Key,el.Value|>Seq.readonly)  // la lista di oggetti (el.Value) viene resa readOnly così assume anche il tipo seq<obj>
 
     /// Add a new value for the specified parameter. An exception is raised if it is not possible to set the specified parameter 
     /// or if the constraint on the value is not satisfied

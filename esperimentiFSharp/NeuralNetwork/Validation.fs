@@ -1,4 +1,4 @@
-﻿module ValidationBuilder
+﻿module Validation
 
 open System
 open System.Data
@@ -15,8 +15,6 @@ globalRules.Add("PERCENTAGE_SPLIT", (fun name input -> if input.GetType() <> typ
                                                        let value = unbox input
                                                        if value <= 0.0 && value > 100.0 then
                                                             invalidArg name "Must be grater than 0.0 and less than or equal to 100.0" ))
-globalRules.Add("TRAINING_TABLE", (fun name input -> if not (typeof<DataTable>.IsInstanceOfType(input)) then
-                                                        invalidArg name "Wrong type, expected 'DataTable'" ))
 
 let private aspectsRules = new Dictionary<string, Dictionary<string,(string->obj->unit)>>(HashIdentity.Structural)
 
@@ -25,10 +23,10 @@ type BasicValidationBuilder() =
 
     let check (builder:Builder<'T>) =
         let numOfAspects = builder.Aspects |> Seq.length
-        let numOfGlobParams = builder.GlobalParameters.ParameterValues |> Seq.length
-        let numOfTestSet = builder.GlobalParameters.GetValues("TEST_SET") |> Seq.length
-        let numOfSplit = builder.GlobalParameters.GetValues("PERCENTAGE_SPLIT") |> Seq.length
-        let numOfTable = builder.GlobalParameters.GetValues("TRAINING_TABLE") |> Seq.length
+        let numOfGlobParams = builder.LocalParameters.ParameterValues |> Seq.length
+        let numOfTestSet = builder.LocalParameters.GetValues("TEST_SET") |> Seq.length
+        let numOfSplit = builder.LocalParameters.GetValues("PERCENTAGE_SPLIT") |> Seq.length
+//        let numOfTable = builder.LocalParameters.GetValues("TRAINING_TABLE") |> Seq.length
         if numOfAspects > 0 then
             failwith "It is not possible to set aspects in the BackPropagationBuilder"
         if numOfGlobParams > 2 then                                                                 // Massimo due parametri settati
@@ -37,8 +35,8 @@ type BasicValidationBuilder() =
             failwith "Only one TEST_SET parameter can be setted in BasicValidationBuilder"
         if numOfSplit > 1 then
             failwith "Only one PERCENTAGE_SPLIT parameter can be setted in BasicValidationBuilder"
-        if numOfTable <> 1 then
-            failwith "Exactly one TRAINING_TABLE parameter must be setted in BasicValidationBuilder"
+//        if numOfTable <> 1 then
+//            failwith "Exactly one TRAINING_TABLE parameter must be setted in BasicValidationBuilder"
     
     let createTestFromFile path =                                           // funzione privata
         TableUtilities.buildTableFromArff path
@@ -53,16 +51,16 @@ type BasicValidationBuilder() =
             table.Rows.Add(trainingTable.Rows.[index].ItemArray) |> ignore
         table   
 
-    override this.Build() =
+    override this.Build(gobalParameters:ParameterStore) =
         check this
-        let trainingTable = this.GlobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox
-        let numOfGlobParams = this.GlobalParameters.ParameterValues |> Seq.length
+        let trainingTable = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox          // TODO Manca l'errore se il parametro non c'è
+        let numOfGlobParams = this.LocalParameters.ParameterValues |> Seq.length
         if numOfGlobParams = 1 then                                                     // Se non sono stati settati parametri utilizzo la training table
             trainingTable
         else
-            match this.GlobalParameters.ParameterValues |> Seq.tryFind (fun (name,_) -> name = "TEST_SET") with
+            match this.LocalParameters.ParameterValues |> Seq.tryFind (fun (name,_) -> name = "TEST_SET") with
             | Some((_, objList)) -> createTestFromFile (objList |> Seq.exactlyOne |> unbox)
-            | None ->  match this.GlobalParameters.ParameterValues |> Seq.tryFind (fun (name,_) -> name = "PERCENTAGE_SPLIT") with
+            | None ->  match this.LocalParameters.ParameterValues |> Seq.tryFind (fun (name,_) -> name = "PERCENTAGE_SPLIT") with
                         | Some((_, objList)) -> createTestFromSplit trainingTable (objList |> Seq.exactlyOne |> unbox)
                         | None -> failwith "never here!!"
 

@@ -1,6 +1,7 @@
 ﻿module Graph
 
 open Neural
+open MultiLayerNetwork
 
 let createGraphFromNetwork (nn:MultiLayerNetwork) =
     let viewer = new Microsoft.Glee.GraphViewerGdi.GViewer();

@@ -4,11 +4,13 @@ open System
 open System.Data
 open System.Windows.Forms
 open Parameter
-open ValidationBuilder
+open Validation
 open Neural
 open AttributePreprocessing
 open InstancePreprocessing
 open NeuralTypes
+open MultiLayerNetwork
+open System.Collections.Generic
 
 open System 
 open System.CodeDom.Compiler 
@@ -57,273 +59,47 @@ open Microsoft.FSharp.Compiler.CodeDom
 
 [<EntryPoint>]
 let main argv = 
-//     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff"
-//     let rows = table.Compute("Sum(temperature)","")
-//     0
 
-//    let NN  = new MultiLayerNetwork(TrainigAlgorithmBuilder.backPropagation)
-//    let const1 = new ConstantNeuron()
-//    let const2 = new ConstantNeuron()
-//    let const3 = new ConstantNeuron()
-//    let const4 = new ConstantNeuron()
-//    let const5 = new ConstantNeuron()
-//    let const6 = new ConstantNeuron()
-//    let const7 = new ConstantNeuron()
-//    let const8 = new ConstantNeuron()
-//    let const9 = new ConstantNeuron()
-//    let const10 = new ConstantNeuron()
-//    let const11 = new ConstantNeuron()
-//    let const12 = new ConstantNeuron()
-//    let const13 = new ConstantNeuron()
-//    let const14 = new ConstantNeuron()
-//    let const15 = new ConstantNeuron()
-//    let const16 = new ConstantNeuron()
-//
-//    NN.InputLayer.Add("handicapped-infants", const1)
-//    NN.InputLayer.Add("water-project-cost-sharing", const2)
-//    NN.InputLayer.Add("adoption-of-the-budget-resolution", const3)
-//    NN.InputLayer.Add("physician-fee-freeze", const4) 
-//    NN.InputLayer.Add("el-salvador-aid", const5)
-//    NN.InputLayer.Add("religious-groups-in-schools", const6)
-//    NN.InputLayer.Add("anti-satellite-test-ban", const7)
-//    NN.InputLayer.Add("aid-to-nicaraguan-contras", const8) 
-//    NN.InputLayer.Add("mx-missile", const9)
-//    NN.InputLayer.Add("immigration", const10)
-//    NN.InputLayer.Add("synfuels-corporation-cutback", const11)
-//    NN.InputLayer.Add("education-spending", const12) 
-//    NN.InputLayer.Add("superfund-right-to-sue", const13)
-//    NN.InputLayer.Add("crime", const14)
-//    NN.InputLayer.Add("duty-free-exports", const15)
-//    NN.InputLayer.Add("export-administration-act-south-africa", const16) 
-//    
-//    let hid1 = new Neuron()
-//    hid1.ActivationFunction <- sumOfProducts
-//    hid1.OutputFunction <- sigmoid
-//    hid1.InputMap.Add(const1, 0.005) 
-//    hid1.InputMap.Add(const2, -0.0005) 
-//    hid1.InputMap.Add(const3, 0.06666) 
-//    hid1.InputMap.Add(const4, 0.01116) 
-//    hid1.InputMap.Add(const5, -0.005) 
-//    hid1.InputMap.Add(const6, 0.0005) 
-//    hid1.InputMap.Add(const7, -0.06666) 
-//    hid1.InputMap.Add(const8, -0.01116) 
-//    hid1.InputMap.Add(const9, 0.005) 
-//    hid1.InputMap.Add(const10, 0.0005) 
-//    hid1.InputMap.Add(const11, -0.06666) 
-//    hid1.InputMap.Add(const12, 0.01116) 
-//    hid1.InputMap.Add(const13, -0.1005) 
-//    hid1.InputMap.Add(const14, 0.0005) 
-//    hid1.InputMap.Add(const15, -0.06666) 
-//    hid1.InputMap.Add(const16, 0.01116) 
-//
-//
-//    let hid2 = new Neuron()
-//    hid2.ActivationFunction <- sumOfProducts
-//    hid2.OutputFunction <- sigmoid
-//    hid2.InputMap.Add(const1, 1.005) 
-//    hid2.InputMap.Add(const2, 0.0005) 
-//    hid2.InputMap.Add(const3, -0.06666) 
-//    hid2.InputMap.Add(const4, -0.01116) 
-//    hid2.InputMap.Add(const5, -0.005) 
-//    hid2.InputMap.Add(const6, 0.0005) 
-//    hid2.InputMap.Add(const7, 0.06666) 
-//    hid2.InputMap.Add(const8, 0.01116) 
-//    hid2.InputMap.Add(const9, 0.005) 
-//    hid2.InputMap.Add(const10, 0.10005) 
-//    hid2.InputMap.Add(const11, 1.06666) 
-//    hid2.InputMap.Add(const12, 0.01116) 
-//    hid2.InputMap.Add(const13, -0.005) 
-//    hid2.InputMap.Add(const14, -0.0005) 
-//    hid2.InputMap.Add(const15, 0.06666) 
-//    hid2.InputMap.Add(const16, 0.01116) 
-//
-//    let hid3 = new Neuron()
-//    hid3.ActivationFunction <- sumOfProducts
-//    hid3.OutputFunction <- sigmoid
-//    hid3.InputMap.Add(const1, 0.005) 
-//    hid3.InputMap.Add(const2, 0.0005) 
-//    hid3.InputMap.Add(const3, 0.16666) 
-//    hid3.InputMap.Add(const4, 0.01116)
-//    hid3.InputMap.Add(const5, 0.1005) 
-//    hid3.InputMap.Add(const6, 1.0005) 
-//    hid3.InputMap.Add(const7, 0.06666) 
-//    hid3.InputMap.Add(const8, -0.01116) 
-//    hid3.InputMap.Add(const9, 0.005) 
-//    hid3.InputMap.Add(const10, -0.0005) 
-//    hid3.InputMap.Add(const11, 0.06666) 
-//    hid3.InputMap.Add(const12, -0.01116) 
-//    hid3.InputMap.Add(const13, 0.005) 
-//    hid3.InputMap.Add(const14, 0.0005) 
-//    hid3.InputMap.Add(const15, 1.06666) 
-//    hid3.InputMap.Add(const16, -0.101116) 
-//
-//    let hid4 = new Neuron()
-//    hid4.ActivationFunction <- sumOfProducts
-//    hid4.OutputFunction <- sigmoid
-//    hid4.InputMap.Add(const1, 0.005) 
-//    hid4.InputMap.Add(const2, 0.0005) 
-//    hid4.InputMap.Add(const3, -0.06666) 
-//    hid4.InputMap.Add(const4, 0.01116)
-//    hid4.InputMap.Add(const5, 0.005) 
-//    hid4.InputMap.Add(const6, 0.0005) 
-//    hid4.InputMap.Add(const7, -0.06666) 
-//    hid4.InputMap.Add(const8, -0.01116) 
-//    hid4.InputMap.Add(const9, 0.005) 
-//    hid4.InputMap.Add(const10, 0.0005) 
-//    hid4.InputMap.Add(const11, 0.06666) 
-//    hid4.InputMap.Add(const12, 0.01116) 
-//    hid4.InputMap.Add(const13, 0.005) 
-//    hid4.InputMap.Add(const14, 0.0005) 
-//    hid4.InputMap.Add(const15, -0.06666) 
-//    hid4.InputMap.Add(const16, 0.01116) 
-//
-//    let hid5 = new Neuron()
-//    hid5.ActivationFunction <- sumOfProducts
-//    hid5.OutputFunction <- sigmoid
-//    hid5.InputMap.Add(const1, -0.005) 
-//    hid5.InputMap.Add(const2, -0.0005) 
-//    hid5.InputMap.Add(const3, 0.06666) 
-//    hid5.InputMap.Add(const4, 0.01116)
-//    hid5.InputMap.Add(const5, 0.005) 
-//    hid5.InputMap.Add(const6, 0.0005) 
-//    hid5.InputMap.Add(const7, -0.06666) 
-//    hid5.InputMap.Add(const8, 0.01116) 
-//    hid5.InputMap.Add(const9, 0.005) 
-//    hid5.InputMap.Add(const10, 0.0005) 
-//    hid5.InputMap.Add(const11, 0.06666) 
-//    hid5.InputMap.Add(const12, 0.01116) 
-//    hid5.InputMap.Add(const13, 0.005) 
-//    hid5.InputMap.Add(const14, 0.0005) 
-//    hid5.InputMap.Add(const15, 0.06666) 
-//    hid5.InputMap.Add(const16, 0.01116)
-//
-//    let hid6 = new Neuron()
-//    hid6.ActivationFunction <- sumOfProducts
-//    hid6.OutputFunction <- sigmoid
-//    hid6.InputMap.Add(const1, 0.005) 
-//    hid6.InputMap.Add(const2, 0.0005) 
-//    hid6.InputMap.Add(const3, 0.06666) 
-//    hid6.InputMap.Add(const4, 0.01116)
-//    hid6.InputMap.Add(const5, 0.005) 
-//    hid6.InputMap.Add(const6, 0.0005) 
-//    hid6.InputMap.Add(const7, 0.06666) 
-//    hid6.InputMap.Add(const8, 0.01116) 
-//    hid6.InputMap.Add(const9, 0.005) 
-//    hid6.InputMap.Add(const10, 0.0005) 
-//    hid6.InputMap.Add(const11, 0.06666) 
-//    hid6.InputMap.Add(const12, 0.01116) 
-//    hid6.InputMap.Add(const13, 0.005) 
-//    hid6.InputMap.Add(const14, 0.0005) 
-//    hid6.InputMap.Add(const15, 0.06666) 
-//    hid6.InputMap.Add(const16, 0.01116)
-//
-//    let hid7 = new Neuron()
-//    hid7.ActivationFunction <- sumOfProducts
-//    hid7.OutputFunction <- sigmoid
-//    hid7.InputMap.Add(const1, 0.005) 
-//    hid7.InputMap.Add(const2, 0.0005) 
-//    hid7.InputMap.Add(const3, 0.06666) 
-//    hid7.InputMap.Add(const4, 0.01116)
-//    hid7.InputMap.Add(const5, 0.005) 
-//    hid7.InputMap.Add(const6, 0.0005) 
-//    hid7.InputMap.Add(const7, 0.06666) 
-//    hid7.InputMap.Add(const8, 0.01116) 
-//    hid7.InputMap.Add(const9, 0.005) 
-//    hid7.InputMap.Add(const10, 0.0005) 
-//    hid7.InputMap.Add(const11, 0.06666) 
-//    hid7.InputMap.Add(const12, 0.01116) 
-//    hid7.InputMap.Add(const13, 0.005) 
-//    hid7.InputMap.Add(const14, 0.0005) 
-//    hid7.InputMap.Add(const15, 0.06666) 
-//    hid7.InputMap.Add(const16, 0.01116)
-//
-//    let hid8 = new Neuron()
-//    hid8.ActivationFunction <- sumOfProducts
-//    hid8.OutputFunction <- sigmoid
-//    hid8.InputMap.Add(const1, 0.005) 
-//    hid8.InputMap.Add(const2, 0.0005) 
-//    hid8.InputMap.Add(const3, 0.06666) 
-//    hid8.InputMap.Add(const4, 0.01116)
-//    hid8.InputMap.Add(const5, 0.005) 
-//    hid8.InputMap.Add(const6, 0.0005) 
-//    hid8.InputMap.Add(const7, 0.06666) 
-//    hid8.InputMap.Add(const8, 0.01116) 
-//    hid8.InputMap.Add(const9, 0.005) 
-//    hid8.InputMap.Add(const10, 0.0005) 
-//    hid8.InputMap.Add(const11, 0.06666) 
-//    hid8.InputMap.Add(const12, 0.01116) 
-//    hid8.InputMap.Add(const13, 0.005) 
-//    hid8.InputMap.Add(const14, 0.0005) 
-//    hid8.InputMap.Add(const15, 0.06666) 
-//    hid8.InputMap.Add(const16, 0.01116)
-//
-//    let hid9 = new Neuron()
-//    hid9.ActivationFunction <- sumOfProducts
-//    hid9.OutputFunction <- sigmoid
-//    hid9.InputMap.Add(const1, 0.005) 
-//    hid9.InputMap.Add(const2, 0.0005) 
-//    hid9.InputMap.Add(const3, 0.06666) 
-//    hid9.InputMap.Add(const4, 0.01116)
-//    hid9.InputMap.Add(const5, 0.005) 
-//    hid9.InputMap.Add(const6, 0.0005) 
-//    hid9.InputMap.Add(const7, 0.06666) 
-//    hid9.InputMap.Add(const8, 0.01116) 
-//    hid9.InputMap.Add(const9, 0.005) 
-//    hid9.InputMap.Add(const10, 0.0005) 
-//    hid9.InputMap.Add(const11, 0.06666) 
-//    hid9.InputMap.Add(const12, 0.01116) 
-//    hid9.InputMap.Add(const13, 0.005) 
-//    hid9.InputMap.Add(const14, 0.0005) 
-//    hid9.InputMap.Add(const15, 0.06666) 
-//    hid9.InputMap.Add(const16, 0.01116)
-//
-//    let hidLayer = new NeuralLayer()
-//    hidLayer.Add(hid1)
-//    hidLayer.Add(hid2)
-//    hidLayer.Add(hid3)
-//    hidLayer.Add(hid4)
-//    hidLayer.Add(hid5)
-//    hidLayer.Add(hid6)
-//    hidLayer.Add(hid7)
-//    hidLayer.Add(hid8)
-//    hidLayer.Add(hid9)
-//    NN.HiddenLayers.Add(hidLayer)
-//
-//    let out1 = new Neuron()
-//    out1.ActivationFunction <- sumOfProducts
-//    out1.OutputFunction <- sigmoid
-//    out1.InputMap.Add(hid1, 0.09) 
-//    out1.InputMap.Add(hid2, 0.09) 
-//    out1.InputMap.Add(hid3, 0.09) 
-//    out1.InputMap.Add(hid4, 0.09) 
-//    out1.InputMap.Add(hid5, 0.09) 
-//    out1.InputMap.Add(hid6, 0.09) 
-//    out1.InputMap.Add(hid7, 0.09) 
-//    out1.InputMap.Add(hid8, 0.09) 
-//    out1.InputMap.Add(hid9, 0.09) 
-//
-//    let out2 = new Neuron()
-//    out2.ActivationFunction <- sumOfProducts
-//    out2.OutputFunction <- sigmoid
-//    out2.InputMap.Add(hid1, 0.09) 
-//    out2.InputMap.Add(hid2, 0.09) 
-//    out2.InputMap.Add(hid3, 0.09) 
-//    out2.InputMap.Add(hid4, 0.09) 
-//    out2.InputMap.Add(hid5, 0.09) 
-//    out2.InputMap.Add(hid6, 0.09) 
-//    out2.InputMap.Add(hid7, 0.09) 
-//    out2.InputMap.Add(hid8, 0.09) 
-//    out2.InputMap.Add(hid9, 0.09) 
-//
-//    NN.OutputLayer.Add("democrat", out1)
-//    NN.OutputLayer.Add("republican", out2)
-
-    let algBuilder = new TrainigAlgorithmBuilder.BackPropagationBuilder()
-    algBuilder.GlobalParameters.AddValue("EPOCHS",50)
-    algBuilder.GlobalParameters.AddValue("LEARNING_RATE",0.3)
-
-    let NN  = new MultiLayerNetwork(algBuilder.Build())
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
+    let classAtt = "Class"
+
+    let globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+    globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then
+                                                                invalidArg name "Wrong type, expected 'DataTable'" ))
+
+    globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
+                                                                invalidArg name "Wrong type, expected 'string'" ))
+    let globalParam = new ParameterStore(globalRules)
+    globalParam.AddValue("TRAINING_TABLE", table)
+    globalParam.AddValue("CLASS_ATTRIBUTE", classAtt)
+
+    let algBuilder = new BackPropagation.BackPropagationBuilder()
+    algBuilder.LocalParameters.AddValue("EPOCHS",50)
+    algBuilder.LocalParameters.AddValue("LEARNING_RATE",0.3)
+
+    let networkbuilder = new MultiLayerNetworkBuilder()
+    let validationBuilder = new BasicValidationBuilder()
+
+    validationBuilder.LocalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
+
+//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 20);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
+//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 40);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
+//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 10);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
+//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 5);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
+//    networkbuilder.AddAspect("OUTPUT_LAYER", [("ACTIVATION_FUNCTION", box sumOfProducts); ("OUTPUT_FUNCTION", box sigmoid)])
+    let NN  = networkbuilder.Build(globalParam)
+    NN.TrainingFunction <- algBuilder.Build(globalParam)
+    NN.Train(table, classAtt)
+    let stat = NN.Validate(validationBuilder.Build(globalParam))
+    stat.PrintStatistcs()
+
+    let graph = Graph.createGraphFromNetwork (NN :?> MultiLayerNetwork)
+    let form = new Form()
+    form.Controls.Add(graph)
+    form.Visible <- true
+    Application.Run(form)
+   
+   
 
 //    addExpression "newAtt" "RI+100+sum(Na)" table
 //    printfn "addExpression FINISHED"
@@ -355,25 +131,14 @@ let main argv =
     // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
     // per predire valori nominal serve una funzione di uscita sigmoid
 //    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
-    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, sigmoid))
-    NN.Train(table, "Class")
-//    let out = NN.Classify(table.Rows.[0])
-//    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[0].["Na"])) out
-//    let out = NN.Classify(table.Rows.[1])
-//    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[1].["Na"])) out
-//    let out = NN.Classify(table.Rows.[2])                                
-//    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[2].["Na"])) out
-//    let out = NN.Classify(table.Rows.[3])                                
-//    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[3].["Na"])) out
-//    let out = NN.Classify(table.Rows.[4])                                
-//    printfn "ACTUAL: %s ---- OUT: %A" (Convert.ToString(table.Rows.[4].["Na"])) out
+//    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, sigmoid))
+//    NN.Train(table, "Class")
 //
-//
-    let valBuilder = new BasicValidationBuilder()
-    valBuilder.GlobalParameters.AddValue("TRAINING_TABLE", table)
-    valBuilder.GlobalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
-    let stat = NN.Validate(valBuilder.Build())
-    stat.PrintStatistcs()
+//    let valBuilder = new BasicValidationBuilder()
+//    valBuilder.GlobalParameters.AddValue("TRAINING_TABLE", table)
+//    valBuilder.GlobalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
+//    let stat = NN.Validate(valBuilder.Build())
+//    stat.PrintStatistcs()
 
 //    let form = new Form()
 ////    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)

@@ -121,6 +121,9 @@ let createEditor =
     text.Settings.Keywords.Add("VALIDATION")
     text.Settings.Keywords.Add("TRAINING")
     text.Settings.Keywords.Add("NETWORK")
+    text.Settings.Keywords.Add("TRAINING_SET")
+    text.Settings.Keywords.Add("CLASS_ATTRIBUTE")
+    
 
     text.Settings.Comment <- "//"
 

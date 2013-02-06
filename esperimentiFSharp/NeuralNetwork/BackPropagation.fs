@@ -1,4 +1,4 @@
-﻿module TrainigAlgorithmBuilder
+﻿module BackPropagation
 
 open System
 open System.Data
@@ -7,6 +7,8 @@ open Neural
 open NeuralTypes
 open TableUtilities
 open Builder
+open MultiLayerNetwork
+open Parameter
 
 let private der (f:double->double) (x:double) =
     (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
@@ -113,9 +115,9 @@ type BackPropagationBuilder() =
 
     let check (builder:Builder<'T>) =
         let numOfAspects = builder.Aspects |> Seq.length
-        let numOfGlobParams = builder.GlobalParameters.ParameterValues |> Seq.length
-        let numOfLearningRate = builder.GlobalParameters.GetValues("LEARNING_RATE") |> Seq.length
-        let numOfEpochs = builder.GlobalParameters.GetValues("EPOCHS") |> Seq.length
+        let numOfGlobParams = builder.LocalParameters.ParameterValues |> Seq.length
+        let numOfLearningRate = builder.LocalParameters.GetValues("LEARNING_RATE") |> Seq.length
+        let numOfEpochs = builder.LocalParameters.GetValues("EPOCHS") |> Seq.length
         if numOfAspects > 0 then
             failwith "It is not possible to set aspects in the BackPropagationBuilder"
         if numOfGlobParams <> 2 then
@@ -126,9 +128,9 @@ type BackPropagationBuilder() =
             failwith "Only one EPOCHS parameter can be setted in BackPropagationBuilder"
 
     override this.Name = "BackPropagationBuilder"
-    override this.Build() = 
+    override this.Build(gobalParameters:ParameterStore) = 
         check this
-        let rate = unbox(this.GlobalParameters.GetValues("LEARNING_RATE") |> Seq.exactlyOne)
-        let epochs = unbox( this.GlobalParameters.GetValues("EPOCHS") |> Seq.exactlyOne)
+        let rate = unbox(this.LocalParameters.GetValues("LEARNING_RATE") |> Seq.exactlyOne)
+        let epochs = unbox( this.LocalParameters.GetValues("EPOCHS") |> Seq.exactlyOne)
         backPropagation rate epochs
 
