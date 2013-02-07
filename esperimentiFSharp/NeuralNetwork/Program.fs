@@ -24,11 +24,13 @@ let main argv =
     let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
 
     let values = new Dictionary<string, obj>(HashIdentity.Structural)
-    values.Add("dt", table)
+    values.Add("table", table)
     values.Add("expression", "RI+1000")
     values.Add("attName", "NEWATT")
 
-    Preprocessing.invokeAttributeFilter "addExpressione" values
+    Preprocessing.invokeAttributeFilter "addExpression" values
+
+    InstancePreprocessing.removeRange [10000] table
     
     let form = new Form()
     let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
