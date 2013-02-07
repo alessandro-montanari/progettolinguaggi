@@ -115,12 +115,12 @@ type BackPropagationBuilder() =
 
     let check (builder:Builder<'T>) =
         let numOfAspects = builder.Aspects |> Seq.length
-        let numOfGlobParams = builder.LocalParameters.ParameterValues |> Seq.length
+        let numOfLocParams = builder.LocalParameters.ParameterValues |> Seq.length
         let numOfLearningRate = builder.LocalParameters.GetValues("LEARNING_RATE") |> Seq.length
         let numOfEpochs = builder.LocalParameters.GetValues("EPOCHS") |> Seq.length
         if numOfAspects > 0 then
             failwith "It is not possible to set aspects in the BackPropagationBuilder"
-        if numOfGlobParams <> 2 then
+        if numOfLocParams <> 2 then
             failwith "Two global parameters must be set in BackPropagationBuilder, LEARNING_RATE and EPOCHS"
         if numOfLearningRate <> 1 then
             failwith "Only one LEARNING_RATE parameter can be setted in BackPropagationBuilder"

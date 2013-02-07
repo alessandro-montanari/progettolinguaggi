@@ -23,20 +23,17 @@ type BasicValidationBuilder() =
 
     let check (builder:Builder<'T>) =
         let numOfAspects = builder.Aspects |> Seq.length
-        let numOfGlobParams = builder.LocalParameters.ParameterValues |> Seq.length
+        let numOfLocParams = builder.LocalParameters.ParameterValues |> Seq.length
         let numOfTestSet = builder.LocalParameters.GetValues("TEST_SET") |> Seq.length
         let numOfSplit = builder.LocalParameters.GetValues("PERCENTAGE_SPLIT") |> Seq.length
-//        let numOfTable = builder.LocalParameters.GetValues("TRAINING_TABLE") |> Seq.length
         if numOfAspects > 0 then
             failwith "It is not possible to set aspects in the BackPropagationBuilder"
-        if numOfGlobParams > 2 then                                                                 // Massimo due parametri settati
+        if numOfLocParams > 2 then                                                                 // Massimo due parametri settati
             failwith "Only one global parameter must be set in BasicValidationBuilder, TEST_SET or PERCENTAGE_SPLIT"
         if numOfTestSet > 1 then
             failwith "Only one TEST_SET parameter can be setted in BasicValidationBuilder"
         if numOfSplit > 1 then
             failwith "Only one PERCENTAGE_SPLIT parameter can be setted in BasicValidationBuilder"
-//        if numOfTable <> 1 then
-//            failwith "Exactly one TRAINING_TABLE parameter must be setted in BasicValidationBuilder"
     
     let createTestFromFile path =                                           // funzione privata
         TableUtilities.buildTableFromArff path
@@ -53,7 +50,7 @@ type BasicValidationBuilder() =
 
     override this.Build(gobalParameters:ParameterStore) =
         check this
-        let trainingTable = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox          // TODO Manca l'errore se il parametro non c'è
+        let trainingTable = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox          // Non controllo se c'è o meno il parametro, do per scontato che ci sia
         let numOfGlobParams = this.LocalParameters.ParameterValues |> Seq.length
         if numOfGlobParams = 1 then                                                     // Se non sono stati settati parametri utilizzo la training table
             trainingTable

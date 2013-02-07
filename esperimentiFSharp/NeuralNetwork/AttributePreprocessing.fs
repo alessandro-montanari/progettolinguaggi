@@ -6,6 +6,8 @@ open System.Collections.Generic
 open TableUtilities
 open NeuralTypes
 
+//TODO PRECONDIZIONI====================================================
+
 let private cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
 
 // Controllare che gli attributi a cui si applica siano numerici

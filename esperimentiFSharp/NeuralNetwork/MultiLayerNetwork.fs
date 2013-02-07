@@ -147,16 +147,30 @@ aspectsRules.Add("HIDDEN_LAYER", layerRules)
 type MultiLayerNetworkBuilder() =
     inherit Builder<SupervisedNeuralNetwork>(globalRules, aspectsRules)
 
-    // TODO devo controllare che ci sia una sola funzione di att, una sola di out e una sola specifica dei neuroni ->
-    // se non controllo esplicitamente è lo stesso perché c'è Seq.exactlyOne che lancia eccezione se ci sono più di un elemento ->
-    // però il messaggio di errore è "brutto" :(
     let check (builder:Builder<'T>) =
-        let numOfGlobParams = builder.LocalParameters.ParameterValues |> Seq.length
+        let numOfLocParams = builder.LocalParameters.ParameterValues |> Seq.length
         let numOfOutput = builder.GetAspects("OUTPUT_LAYER") |> Seq.length 
-        if numOfGlobParams > 1 then
+        if numOfLocParams > 1 then
             failwith "Only one global parameter can be setted in MultiLayerNetworkBuilder, SEED"
         if numOfOutput > 1 then
-            failwith "Only one OUTPUT_LAYER can be setted in MultiLayerNetworkBuilder"
+            failwith "Only one OUTPUT_LAYER aspect can be setted in MultiLayerNetworkBuilder"
+        builder.GetAspects("HIDDEN_LAYER")
+        |> Seq.iter (fun pStore ->  let nNeurons = pStore.GetValues("NEURONS") |> Seq.length
+                                    let nActFun = pStore.GetValues("ACTIVATION_FUNCTION") |> Seq.length
+                                    let nOutFun = pStore.GetValues("OUTPUT_FUNCTION") |> Seq.length
+                                    if nNeurons = 0 || nNeurons > 1 then
+                                        failwith "Exactly one 'NEURONS' specification can be added in an 'HIDDEN_LAYER' aspect"
+                                    if nActFun = 0 || nActFun > 1 then
+                                        failwith "Exactly one 'ACTIVATION_FUNCTION' specification can be added in an 'HIDDEN_LAYER' aspect"
+                                    if nOutFun = 0 || nOutFun > 1 then
+                                        failwith "Exactly one 'OUTPUT_FUNCTION' specification can be added in an 'HIDDEN_LAYER' aspect" ) 
+        builder.GetAspects("OUTPUT_LAYER")
+        |> Seq.iter (fun pStore ->  let nActFun = pStore.GetValues("ACTIVATION_FUNCTION") |> Seq.length
+                                    let nOutFun = pStore.GetValues("OUTPUT_FUNCTION") |> Seq.length
+                                    if nActFun > 1 then
+                                        failwith "Only one 'ACTIVATION_FUNCTION' specification can be added in an 'OUTPUT_LAYER' aspect"
+                                    if nOutFun > 1 then
+                                        failwith "Only one 'OUTPUT_FUNCTION' specification can be added in an 'OUTPUT_LAYER' aspect" )
 
     let createHiddenLayersList (builder:Builder<'T>) =
         if builder.GetAspects("HIDDEN_LAYER") = Seq.empty then
@@ -179,17 +193,20 @@ type MultiLayerNetworkBuilder() =
             let outFun : OutputFunType = outStore.GetValues("OUTPUT_FUNCTION") |> Seq.exactlyOne |> unbox
             Some(actFun, outFun)
 
+    let createSeed  (builder:Builder<'T>) =
+        if builder.LocalParameters.GetValues("SEED") = Seq.empty then
+            None
+        else
+            Some(builder.LocalParameters.GetValues("SEED") |> Seq.exactlyOne |> unbox)
+
     override this.Name = "MultiLayerNetworkBuilder"
     override this.Build(gobalParameters:ParameterStore) = 
         check this
-        let trainingSet = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox    // TODO Manca l'errore se il parametro non c'è
-        let classAtt = gobalParameters.GetValues("CLASS_ATTRIBUTE") |> Seq.exactlyOne |> unbox      // TODO Manca l'errore se il parametro non c'è
+        let trainingSet = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox    // Non controllo se c'è o meno il parametro, do per scontato che ci sia
+        let classAtt = gobalParameters.GetValues("CLASS_ATTRIBUTE") |> Seq.exactlyOne |> unbox      
         let hiddenLayers = createHiddenLayersList this
         let outputLayer = createOutputLayer this
-        let seed = if this.LocalParameters.GetValues("SEED") = Seq.empty then
-                      None
-                   else
-                      Some(this.LocalParameters.GetValues("SEED") |> Seq.exactlyOne |> unbox)
+        let seed = createSeed this
         
         let NN = new MultiLayerNetwork((fun a b c -> ()))                                           // Il training algorithm lo creo da fuori e lo setto con l'opportuno builder
         NN.CreateNetork(trainingSet, classAtt, seed, hiddenLayers, outputLayer)

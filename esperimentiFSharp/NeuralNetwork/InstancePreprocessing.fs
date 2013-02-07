@@ -3,6 +3,8 @@
 open System
 open System.Data
 
+//TODO PRECONDIZIONI====================================================
+
 let removeRange (instances:int list) (dt:DataTable) =
     instances
     |> List.map (fun index -> dt.Rows.[index])

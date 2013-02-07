@@ -16,91 +16,71 @@ open System
 open System.CodeDom.Compiler 
 open Microsoft.FSharp.Compiler.CodeDom
 
-//[<EntryPoint>]
-//let main argv = 
-//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
-//    // TEST - TableUtilities.buildTableFromArff
-////    let form = new Form()
-////    form.Text <- table.TableName
-////    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
-////    form.Controls.Add(grid)
-////    form.Visible <- true
-////    Application.Run(form)
-//
-//    let valBuilder = new BasicValidationBuilder()
-//    let testTable = valBuilder.BuildTestTable(table)
-//    printfn "%A" (table=testTable)                      // Non sono stati settati parametri quindi ls testTable deve essere uguale alla training table (controllo tra riferimenti)
-//
-//    valBuilder.ParameterStore.SetValue("TEST_SET", String(@"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\weather.arff"))
-//    let testTable2 = valBuilder.BuildTestTable(table)
-////    let form = new Form()
-////    let grid = new DataGridView(DataSource=testTable2, Dock=DockStyle.Fill)
-////    form.Text <- testTable2.TableName
-////    form.Controls.Add(grid)
-////    form.Visible <- true
-////    Application.Run(form)
-//
-//    valBuilder.ParameterStore.ClearParameters()
-//    valBuilder.ParameterStore.SetValue("PERCENTAGE_SPLIT", Number(1.0))
-//    let testTableSplit = valBuilder.BuildTestTable(table)
-////    let form = new Form()
-////    let grid = new DataGridView(DataSource=testTableSplit, Dock=DockStyle.Fill)
-////    form.Text <- testTableSplit.TableName
-////    form.Controls.Add(grid)
-////    form.Visible <- true
-////    Application.Run(form)
-//
-////    valBuilder.ParameterStore.SetValue("TEST_SET", String(@"C:"))        // Settati due parametri -> eccezione
-////    let testTable3 = valBuilder.BuildTestTable(table)
-//
-//    System.Console.ReadLine() |> ignore
-//    0
-
 
 [<EntryPoint>]
+[<STAThread>]
 let main argv = 
 
-    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
-    let classAtt = "Class"
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
 
-    let globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
-    globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then
-                                                                invalidArg name "Wrong type, expected 'DataTable'" ))
+    let values = new Dictionary<string, obj>(HashIdentity.Structural)
+    values.Add("dt", table)
+    values.Add("expression", "RI+1000")
+    values.Add("attName", "NEWATT")
 
-    globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
-                                                                invalidArg name "Wrong type, expected 'string'" ))
-    let globalParam = new ParameterStore(globalRules)
-    globalParam.AddValue("TRAINING_TABLE", table)
-    globalParam.AddValue("CLASS_ATTRIBUTE", classAtt)
-
-    let algBuilder = new BackPropagation.BackPropagationBuilder()
-    algBuilder.LocalParameters.AddValue("EPOCHS",50)
-    algBuilder.LocalParameters.AddValue("LEARNING_RATE",0.3)
-
-    let networkbuilder = new MultiLayerNetworkBuilder()
-    let validationBuilder = new BasicValidationBuilder()
-
-    validationBuilder.LocalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
-
-//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 20);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
-//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 40);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
-//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 10);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
-//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 5);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
-//    networkbuilder.AddAspect("OUTPUT_LAYER", [("ACTIVATION_FUNCTION", box sumOfProducts); ("OUTPUT_FUNCTION", box sigmoid)])
-    let NN  = networkbuilder.Build(globalParam)
-    NN.TrainingFunction <- algBuilder.Build(globalParam)
-    NN.Train(table, classAtt)
-    let stat = NN.Validate(validationBuilder.Build(globalParam))
-    stat.PrintStatistcs()
-
-    let graph = Graph.createGraphFromNetwork (NN :?> MultiLayerNetwork)
+    Preprocessing.invokeAttributeFilter "addExpressione" values
+    
     let form = new Form()
-    form.Controls.Add(graph)
+    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
+    form.Controls.Add(grid)
     form.Visible <- true
     Application.Run(form)
-   
-   
 
+//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
+//    let classAtt = "Class"
+//
+//    let globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+//    globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
+//                                                                invalidArg name "Wrong type, expected 'DataTable'" ))
+//
+//    globalRules.Add("TRAINING_SET", (fun name input -> if input.GetType() <> typeof<string> then
+//                                                         invalidArg name "Wrong type, expected 'string'" ))
+//
+//    globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
+//                                                                invalidArg name "Wrong type, expected 'string'" ))
+//    let globalParam = new ParameterStore(globalRules)
+//    globalParam.AddValue("TRAINING_TABLE", table)
+//    globalParam.AddValue("TRAINING_SET", @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff")
+//    globalParam.AddValue("CLASS_ATTRIBUTE", classAtt)
+//
+//    let algBuilder = new BackPropagation.BackPropagationBuilder()
+//    algBuilder.LocalParameters.AddValue("EPOCHS",50)
+//    algBuilder.LocalParameters.AddValue("LEARNING_RATE",0.3)
+//
+//    let networkbuilder = new MultiLayerNetworkBuilder()
+//    let validationBuilder = new BasicValidationBuilder()
+//
+//    validationBuilder.LocalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
+//
+////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 20);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
+////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 40);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
+////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 10);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
+////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 5);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
+////    networkbuilder.AddAspect("OUTPUT_LAYER", [("ACTIVATION_FUNCTION", box sumOfProducts); ("OUTPUT_FUNCTION", box sigmoid)])
+//    let NN  = networkbuilder.Build(globalParam)
+//    NN.TrainingFunction <- algBuilder.Build(globalParam)
+//    NN.Train(table, classAtt)
+//    let stat = NN.Validate(validationBuilder.Build(globalParam))
+//    stat.PrintStatistcs()
+//
+//    let graph = Graph.createGraphFromNetwork (NN :?> MultiLayerNetwork)
+//    let form = new Form()
+//    form.Controls.Add(graph)
+//    form.Visible <- true
+//    Application.Run(form)
+   
+   
+// -----------------PREPROCESSING-----------------------------------------------------
 //    addExpression "newAtt" "RI+100+sum(Na)" table
 //    printfn "addExpression FINISHED"
 //    mathExpression [("Fe", "Fe+1000"); ("Ba", "Fe-1000")] table
