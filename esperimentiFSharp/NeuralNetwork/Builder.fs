@@ -1,8 +1,11 @@
 ﻿module Builder
 
+//TODO Forse va nella parte del linguaggio
+
 open System
 open System.Collections.Generic
 open Parameter
+open System.Reflection
 
 /// Every builder is able to build an object of type 'T configured via global parameters or aspects (collections of parameters).
 /// The constructor takes the cheking rules for the global parameters and the set of rules for each parameter in each aspect
@@ -25,9 +28,9 @@ type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRule
         // Inserisco il nuovo aspect nel builder
         match _aspects.TryGetValue(aspectName) with
         | res, storeList when res=true -> storeList.Add(paramStore)
-        | res, _ when res=false ->  let list = new ResizeArray<ParameterStore>()
-                                    list.Add(paramStore)
-                                    _aspects.Add(aspectName, list)
+        | _,_ ->    let list = new ResizeArray<ParameterStore>()
+                    list.Add(paramStore)
+                    _aspects.Add(aspectName, list)
 
     member this.LocalParameters = _locParameterStore
 
@@ -49,6 +52,35 @@ type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRule
 
     abstract member Name : string
     abstract member Build : gobalParameters:ParameterStore -> 'T
+
+    /// Returns a System.Windows.Forms.Control that is able to display an object of type 'T. If the visualizer is not available, this method returns null
+    abstract member GetVisualizer : 'T -> System.Windows.Forms.Control
+
+type BuilderFactory<'T,'S when 'T :> Builder<'S>>() = 
+
+    let _builders = new Dictionary<string, 'T>(HashIdentity.Structural)
+    
+    /// Loads the assembly from the specified path and searches for 'T inside it and returns the number of builders added to the factory
+    member this.LoadBuilder(path) =
+        this.LoadBuilder(Assembly.LoadFrom(path))     
+           
+    /// Searches for 'T inside the specified assembly and returns the number of builders added to the factory
+    member this.LoadBuilder(assembly) = 
+        assembly.GetTypes()
+        |> Array.filter(fun el -> el.BaseType = typeof<'T>)
+        |> Array.map(fun builderType -> let builder : 'T = Activator.CreateInstance(builderType) |> unbox
+                                        _builders.Add(builder.Name, builder)
+                                        builderType )
+        |> Array.length
+
+    member this.CreateBuilder(name) =
+        match _builders.TryGetValue(name) with
+        | res, builder when res=true -> builder
+        | _,_ -> failwithf "'%s' is not loaded" name
+
+    member this.BuilderNames =
+        _builders.Keys |> Seq.toList
+
 
 
 // TEST
@@ -74,6 +106,3 @@ type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRule
 //myBuilder.GetAspects("hiddenLayer")
 //myBuilder.Aspects
 //myBuilder.AspectsNames
-
-
-    

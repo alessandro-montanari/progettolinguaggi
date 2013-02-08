@@ -18,6 +18,7 @@ globalRules.Add("PERCENTAGE_SPLIT", (fun name input -> if input.GetType() <> typ
 
 let private aspectsRules = new Dictionary<string, Dictionary<string,(string->obj->unit)>>(HashIdentity.Structural)
 
+// potrei anche non usarlo
 type BasicValidationBuilder() =
     inherit Builder<DataTable>(globalRules, aspectsRules)
 
@@ -62,6 +63,9 @@ type BasicValidationBuilder() =
                         | None -> failwith "never here!!"
 
     override this.Name = "BasicValidationBuilder"
+
+    override this.GetVisualizer(param) =
+        null
 
 
 

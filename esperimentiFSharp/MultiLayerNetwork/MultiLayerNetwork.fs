@@ -116,7 +116,101 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
                             | _ -> failwith "never here!!!"
             let attVal = fst max                                                // Prendo il primo valore della tupla, ossia il valore nominale
             let index = (List.findIndex (fun el -> el = attVal) nomList) + 1    // Trovo l'indice della posizione del valore nella lista di valori nominali
-            Nominal(attVal, index)          
+            Nominal(attVal, index)     
+            
+
+// ----------------------------------------------------------------------------------------
+// -------------------------------VISUALIZER-----------------------------------------------
+// ----------------------------------------------------------------------------------------          
+            
+let private createGraphFromNetwork (nn:SupervisedNeuralNetwork) =
+    if not (typeof<MultiLayerNetwork>.IsInstanceOfType(nn)) then
+        failwithf "The visualizer cannot be built for the type '%s'" (nn.GetType().Name)
+
+    let nn = nn :?> MultiLayerNetwork
+    let viewer = new Microsoft.Glee.GraphViewerGdi.GViewer();
+    let graph = new Microsoft.Glee.Drawing.Graph("Neural Netowrk");
+    graph.GraphAttr.Orientation <- Microsoft.Glee.Drawing.Orientation.Landscape
+    graph.GraphAttr.LayerDirection <- Microsoft.Glee.Drawing.LayerDirection.LR
+    graph.GraphAttr.LayerSep <- 150.0
+
+    nn.OutputLayer
+    |> Seq.iter (fun el ->  let targetNode = graph.AddEdge(el.Value.Id.ToString(), el.Key).TargetNode
+                            
+                            targetNode.Attr.Shape <- Microsoft.Glee.Drawing.Shape.Box
+                            targetNode.Attr.Fillcolor <- Microsoft.Glee.Drawing.Color.Yellow
+                            el.Value.InputMap.Keys
+                                |> Seq.iter ( fun prevNeur -> graph.AddEdge(prevNeur.Id.ToString(), el.Value.Id.ToString()) |> ignore) )
+
+    for layer in nn.HiddenLayers do
+        layer
+        |> Seq.iter (fun neur -> neur.InputMap.Keys
+                                    |> Seq.iter ( fun prevNeur -> graph.AddEdge(prevNeur.Id.ToString(), neur.Id.ToString()) |> ignore) )
+
+    nn.InputLayer
+    |> Seq.iter ( fun el -> let sourceNode = graph.AddEdge(el.Key, el.Value.Id.ToString()).SourceNode
+                            sourceNode.Attr.Shape <- Microsoft.Glee.Drawing.Shape.Box
+                            sourceNode.Attr.Fillcolor <- Microsoft.Glee.Drawing.Color.LightGreen )
+
+
+    viewer.Graph <- graph;
+    viewer.Dock <- System.Windows.Forms.DockStyle.Fill;
+    viewer
+
+
+// Selezione nodo o ramo-------------------------------------------
+//object selectedObjectAttr;
+//    object selectedObject;
+//    void gViewer_SelectionChanged(object sender, EventArgs e)
+//    {
+//
+//      if (selectedObject != null)
+//      {
+//        if (selectedObject is Edge)
+//          (selectedObject as Edge).Attr = selectedObjectAttr as EdgeAttr;
+//        else if (selectedObject is Node)
+//          (selectedObject as Node).Attr = selectedObjectAttr as NodeAttr;
+//
+//        selectedObject = null;
+//      }
+//
+//      if (gViewer.SelectedObject == null)
+//      {
+//        label1.Text = "No object under the mouse";
+//        this.gViewer.SetToolTip(toolTip1, "");
+//
+//      }
+//      else
+//      {
+//        selectedObject = gViewer.SelectedObject;
+//      
+//        if (selectedObject is Edge)
+//        {
+//          selectedObjectAttr = (gViewer.SelectedObject as Edge).Attr.Clone();
+//          (gViewer.SelectedObject as Edge).Attr.Color = Microsoft.Glee.Drawing.Color.Magenta;
+//          (gViewer.SelectedObject as Edge).Attr.Fontcolor = Microsoft.Glee.Drawing.Color.Magenta;
+//          Edge edge=gViewer.SelectedObject as Edge;
+//       
+//         
+//
+//
+//        //here you can use e.Attr.Id or e.UserData to get back to you data
+//          this.gViewer.SetToolTip(this.toolTip1, String.Format("edge from {0} {1}", edge.Source, edge.Target));
+//     
+//        }
+//        else if (selectedObject is Node)
+//        {
+//
+//          selectedObjectAttr = (gViewer.SelectedObject as Node).Attr.Clone();
+//          (selectedObject as Node).Attr.Color = Microsoft.Glee.Drawing.Color.Magenta;
+//          (selectedObject as Node).Attr.Fontcolor = Microsoft.Glee.Drawing.Color.Magenta;
+//          //here you can use e.Attr.Id to get back to your data
+//          this.gViewer.SetToolTip(toolTip1,String.Format("node {0}", (selectedObject as Node).Attr.Label));
+//        }
+//        label1.Text = selectedObject.ToString();
+//      }
+//      gViewer.Invalidate();
+//    }     
             
 
 // ----------------------------------------------------------------------------------------
@@ -199,7 +293,7 @@ type MultiLayerNetworkBuilder() =
         else
             Some(builder.LocalParameters.GetValues("SEED") |> Seq.exactlyOne |> unbox)
 
-    override this.Name = "MultiLayerNetworkBuilder"
+    override this.Name = "MultiLayerNetwork"
     override this.Build(gobalParameters:ParameterStore) = 
         check this
         let trainingSet = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox    // Non controllo se c'è o meno il parametro, do per scontato che ci sia
@@ -211,4 +305,7 @@ type MultiLayerNetworkBuilder() =
         let NN = new MultiLayerNetwork((fun a b c -> ()))                                           // Il training algorithm lo creo da fuori e lo setto con l'opportuno builder
         NN.CreateNetork(trainingSet, classAtt, seed, hiddenLayers, outputLayer)
         NN :> SupervisedNeuralNetwork
+
+    override this.GetVisualizer(net) =
+        (createGraphFromNetwork net) :> Windows.Forms.Control
            

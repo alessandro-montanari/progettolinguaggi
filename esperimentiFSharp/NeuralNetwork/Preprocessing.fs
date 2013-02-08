@@ -33,7 +33,7 @@ let private invoke (theModule : Type) (funcsDict:Dictionary<string, ParameterInf
                                             met.Invoke(null, values) |> ignore
                                         with
                                             | :? ArgumentException -> failwithf "The parameters passed to '%s' are not correct" funcName 
-                                            // Non catturo qui la TargetInvocationException, tanto verrà catturata da chi c'è sopra
+                                            // Non catturo qui la TargetInvocationException, tanto verrà catturata da chi invoca me
     | _,_ -> failwithf "The filter '%s' is not defined in '%s'" funcName theModule.Name
 
 let invokeInstanceFilter funcName paramValues =

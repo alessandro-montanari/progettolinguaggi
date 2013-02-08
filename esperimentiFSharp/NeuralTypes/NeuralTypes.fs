@@ -3,6 +3,9 @@
 open System
 open System.Collections.Generic
 
+type ActivationFunType = seq<double * double> -> double   // input * peso
+type OutputFunType = double -> double
+
 type AttributeType =
     | String
     | Numeric

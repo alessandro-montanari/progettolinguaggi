@@ -11,6 +11,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ArffLanguage", "ArffLanguag
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NeuralTypes", "NeuralTypes\NeuralTypes.fsproj", "{79AA9006-BD70-4D2F-9E3D-21F6AEDCC4D3}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MultiLayerNetwork", "MultiLayerNetwork\MultiLayerNetwork.fsproj", "{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,16 @@ Global
 		{79AA9006-BD70-4D2F-9E3D-21F6AEDCC4D3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{79AA9006-BD70-4D2F-9E3D-21F6AEDCC4D3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{79AA9006-BD70-4D2F-9E3D-21F6AEDCC4D3}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D6EEEB79-E832-44C8-99E0-5437B19AF7EE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

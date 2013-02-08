@@ -59,6 +59,7 @@
     <Compile Include="NeuralLanguageParser.fsi" />
     <Compile Include="NeuralLanguageParser.fs" />
     <Compile Include="NeuralLanguageLexer.fs" />
+    <Compile Include="Iterpreter.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
   </ItemGroup>

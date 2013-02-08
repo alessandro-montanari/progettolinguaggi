@@ -95,6 +95,11 @@ let backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt:DataTab
                
                 globalError <- globalError+currentError
 
+
+// ----------------------------------------------------------------------------------------
+// -------------------------------BUILDER--------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
 let private globalRules = new Dictionary<string, (string->obj->unit)>(HashIdentity.Structural)
 globalRules.Add("LEARNING_RATE", (fun name input -> if input.GetType() <> typeof<double> then
                                                         invalidArg name "Wrong type, expected 'double'"
@@ -127,10 +132,12 @@ type BackPropagationBuilder() =
         if numOfEpochs <> 1 then
             failwith "Only one EPOCHS parameter can be setted in BackPropagationBuilder"
 
-    override this.Name = "BackPropagationBuilder"
+    override this.Name = "BackPropagation"
     override this.Build(gobalParameters:ParameterStore) = 
         check this
         let rate = unbox(this.LocalParameters.GetValues("LEARNING_RATE") |> Seq.exactlyOne)
         let epochs = unbox( this.LocalParameters.GetValues("EPOCHS") |> Seq.exactlyOne)
         backPropagation rate epochs
 
+    override this.GetVisualizer(param) =
+        null

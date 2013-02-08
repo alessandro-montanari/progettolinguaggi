@@ -11,7 +11,7 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 
 // Simboli terminali
 %token <string> ID
-%token <string> ATTID
+%token <string> ATTID		// Devo proprio distingure questi due id da degli identificatori classici???
 %token <string> INSTID			
 %token <string> PATH
 %token <double> NUMBER

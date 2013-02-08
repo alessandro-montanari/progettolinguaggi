@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>ArffLanguage</name></assembly>
+<members>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:ArffLanguageLex">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:ArffLanguageParser.token_to_string(ArffLanguageParser.token)">
+<summary>
+ This function gets the name of a token as a string
+</summary>
+</member>
+<member name="M:ArffLanguageParser.prodIdxToNonTerminal(System.Int32)">
+<summary>
+ This function maps production indexes returned in syntax errors to strings representing the non terminal that would be produced by that production
+</summary>
+</member>
+<member name="M:ArffLanguageParser.tokenTagToTokenId(System.Int32)">
+<summary>
+ This function maps integers indexes to symbolic token ids
+</summary>
+</member>
+<member name="M:ArffLanguageParser.tagOfToken(ArffLanguageParser.token)">
+<summary>
+ This function maps integers indexes to symbolic token ids
+</summary>
+</member>
+<member name="T:ArffLanguageParser">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:ArffLanguageUtilities">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:Program">
+
+</member>
+</members>
+</doc>

@@ -5,12 +5,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>aefb4e87-d837-441a-91d0-0529aa7f8f9b</ProjectGuid>
+    <ProjectGuid>d6eeeb79-e832-44c8-99e0-5437b19af7ee</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>NeuralNetwork</RootNamespace>
-    <AssemblyName>NeuralNetwork</AssemblyName>
+    <RootNamespace>MultiLayerNetwork</RootNamespace>
+    <AssemblyName>MultiLayerNetwork</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <Name>NeuralNetwork</Name>
+    <Name>MultiLayerNetwork</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,9 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\NeuralNetwork.XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>bin\Debug\MultiLayerNetwork.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,19 +29,17 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Release\NeuralNetwork.XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>bin\Release\MultiLayerNetwork.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Compiler">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SDKs\F#\3.0\Framework\v4.0\FSharp.Compiler.dll</HintPath>
+    <Reference Include="Microsoft.GLEE">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Research\GLEE\bin\Microsoft.GLEE.dll</HintPath>
     </Reference>
-    <Reference Include="FSharp.Compiler.CodeDom">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\FSharpPowerPack-4.0.0.0\bin\FSharp.Compiler.CodeDom.dll</HintPath>
+    <Reference Include="Microsoft.GLEE.Drawing">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Research\GLEE\bin\Microsoft.GLEE.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="FSharp.PowerPack">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\FSharpPowerPack-4.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
+    <Reference Include="Microsoft.Glee.GraphViewerGDI">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Research\GLEE\bin\Microsoft.GLEE.GraphViewerGDI.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -52,27 +48,19 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parameter.fs" />
-    <Compile Include="Builder.fs" />
-    <Compile Include="TableUtilities.fs" />
-    <Compile Include="Neural.fs" />
-    <Compile Include="Validation.fs" />
-    <Compile Include="AttributePreprocessing.fs" />
-    <Compile Include="InstancePreprocessing.fs" />
-    <Compile Include="Preprocessing.fs" />
-    <None Include="App.config" />
+    <Compile Include="MultiLayerNetwork.fs" />
+    <Compile Include="BackPropagation.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">
-      <Name>ArffLanguage</Name>
-      <Project>{d64fc3c0-83a2-4cca-a39e-2cf2d4a2f92b}</Project>
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.fsproj">
+      <Name>NeuralNetwork</Name>
+      <Project>{aefb4e87-d837-441a-91d0-0529aa7f8f9b}</Project>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\NeuralTypes\NeuralTypes.fsproj">

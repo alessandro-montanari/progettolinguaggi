@@ -9,72 +9,69 @@ open Neural
 open AttributePreprocessing
 open InstancePreprocessing
 open NeuralTypes
-open MultiLayerNetwork
 open System.Collections.Generic
 
 open System 
 open System.CodeDom.Compiler 
 open Microsoft.FSharp.Compiler.CodeDom
 
+open System.Reflection
+open Builder
+
+
 
 [<EntryPoint>]
 [<STAThread>]
 let main argv = 
-
-    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass.arff"
-
-    let values = new Dictionary<string, obj>(HashIdentity.Structural)
-    values.Add("table", table)
-    values.Add("expression", "RI+1000")
-    values.Add("attName", "NEWATT")
-
-    Preprocessing.invokeAttributeFilter "addExpression" values
-
-    InstancePreprocessing.removeRange [10000] table
     
+    let networkBuilderFactory = new BuilderFactory<Builder<SupervisedNeuralNetwork>, SupervisedNeuralNetwork>()
+    networkBuilderFactory.LoadBuilder(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\MultiLayerNetwork.exe") |> ignore
+    let networkBuilder = networkBuilderFactory.CreateBuilder("MultiLayerNetwork")
+
+    let trainingBuilderFactory = new BuilderFactory<Builder<TrainigFunctionType>, TrainigFunctionType>()
+    trainingBuilderFactory.LoadBuilder(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\MultiLayerNetwork.exe") |> ignore
+    let trainingBuilder = trainingBuilderFactory.CreateBuilder("BackPropagation")
+
+    let validationBuilder = new BasicValidationBuilder()
+       
+    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
+    let classAtt = "Class"
+
+    let globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+    globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
+                                                                invalidArg name "Wrong type, expected 'DataTable'" ))
+
+    globalRules.Add("TRAINING_SET", (fun name input -> if input.GetType() <> typeof<string> then
+                                                         invalidArg name "Wrong type, expected 'string'" ))
+
+    globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
+                                                                invalidArg name "Wrong type, expected 'string'" ))
+    let globalParam = new ParameterStore(globalRules)
+    globalParam.AddValue("TRAINING_TABLE", table)
+    globalParam.AddValue("TRAINING_SET", @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff")
+    globalParam.AddValue("CLASS_ATTRIBUTE", classAtt)
+
+    trainingBuilder.LocalParameters.AddValue("EPOCHS",50)
+    trainingBuilder.LocalParameters.AddValue("LEARNING_RATE",0.3)
+
+    validationBuilder.LocalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
+
+//    networkBuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 20);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
+//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 40);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
+//    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 10);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
+//    networkBuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 5);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
+//    networkBuilder.AddAspect("OUTPUT_LAYER", [("ACTIVATION_FUNCTION", box sumOfProducts); ("OUTPUT_FUNCTION", box sigmoid)])
+    let NN  = networkBuilder.Build(globalParam)
+    NN.TrainingFunction <- trainingBuilder.Build(globalParam)
+    NN.Train(table, classAtt)
+    let stat = NN.Validate(validationBuilder.Build(globalParam))
+    stat.PrintStatistcs()
+
     let form = new Form()
-    let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
-    form.Controls.Add(grid)
+    form.Controls.Add((networkBuilder.GetVisualizer(NN)))
     form.Visible <- true
     Application.Run(form)
 
-//    let table = TableUtilities.buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff"
-//    let classAtt = "Class"
-//
-//    let globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
-//    globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
-//                                                                invalidArg name "Wrong type, expected 'DataTable'" ))
-//
-//    globalRules.Add("TRAINING_SET", (fun name input -> if input.GetType() <> typeof<string> then
-//                                                         invalidArg name "Wrong type, expected 'string'" ))
-//
-//    globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
-//                                                                invalidArg name "Wrong type, expected 'string'" ))
-//    let globalParam = new ParameterStore(globalRules)
-//    globalParam.AddValue("TRAINING_TABLE", table)
-//    globalParam.AddValue("TRAINING_SET", @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\vote.arff")
-//    globalParam.AddValue("CLASS_ATTRIBUTE", classAtt)
-//
-//    let algBuilder = new BackPropagation.BackPropagationBuilder()
-//    algBuilder.LocalParameters.AddValue("EPOCHS",50)
-//    algBuilder.LocalParameters.AddValue("LEARNING_RATE",0.3)
-//
-//    let networkbuilder = new MultiLayerNetworkBuilder()
-//    let validationBuilder = new BasicValidationBuilder()
-//
-//    validationBuilder.LocalParameters.AddValue("PERCENTAGE_SPLIT", 100.0)
-//
-////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 20);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
-////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 40);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION",box sigmoid)])
-////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 10);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
-////    networkbuilder.AddAspect("HIDDEN_LAYER", [("NEURONS", box 5);("ACTIVATION_FUNCTION", box sumOfProducts);("OUTPUT_FUNCTION", box sigmoid)])
-////    networkbuilder.AddAspect("OUTPUT_LAYER", [("ACTIVATION_FUNCTION", box sumOfProducts); ("OUTPUT_FUNCTION", box sigmoid)])
-//    let NN  = networkbuilder.Build(globalParam)
-//    NN.TrainingFunction <- algBuilder.Build(globalParam)
-//    NN.Train(table, classAtt)
-//    let stat = NN.Validate(validationBuilder.Build(globalParam))
-//    stat.PrintStatistcs()
-//
 //    let graph = Graph.createGraphFromNetwork (NN :?> MultiLayerNetwork)
 //    let form = new Form()
 //    form.Controls.Add(graph)
@@ -112,7 +109,7 @@ let main argv =
 
     // per predire valori numerici serve una funzione di uscita linear per il nodo di uscita
     // per predire valori nominal serve una funzione di uscita sigmoid
-//    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))          // TODO forse un po' da migliorare l'interfaccia qui
+//    NN.CreateNetork(table, "Type", 5, [(20,sumOfProducts,sigmoid);(10,sumOfProducts,sigmoid);(5,sumOfProducts,sigmoid)], (sumOfProducts, linear))         
 //    NN.CreateNetork(table, "Class", outputLayer=(sumOfProducts, sigmoid))
 //    NN.Train(table, "Class")
 //

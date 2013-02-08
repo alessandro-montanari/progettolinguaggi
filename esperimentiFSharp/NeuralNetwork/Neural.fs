@@ -15,9 +15,6 @@ let private getUniqueId : (unit -> int) =
     (function _ ->  id := !id+1
                     !id )
 
-type ActivationFunType = seq<double * double> -> double   // input * peso
-type OutputFunType = double -> double
-
 // Funzioni di uscita
 let sigmoid (t : double) : double = 1.0 / (1.0 + exp(-t))
 let heavisied (t :double) (theta :double) : double =    if t < theta then
