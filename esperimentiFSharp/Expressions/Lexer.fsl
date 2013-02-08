@@ -1,0 +1,38 @@
+﻿{
+module Lexer
+open System
+open Parser
+open Microsoft.FSharp.Text.Lexing
+
+let lexeme lexbuf =
+    LexBuffer<char>.LexemeString lexbuf
+
+let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
+}
+
+// These are some regular expression definitions
+let digit = ['0'-'9']
+let IntNumber = digit+
+let DoubleNumber = digit+ ('.' digit*)?(['e''E']['-']?digit+)?
+let whitespace = [' ' '\t' ]
+let newline = ('\n' | '\r' '\n')
+let function = "exp" | "sin" | "cos" | "tan" | "atan" | "sinh" | "tanh" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
+
+rule tokenize = parse
+| whitespace	{ tokenize lexbuf }
+| newline       { tokenize lexbuf }
+// Operators
+| function		{ FUNCTION(lexeme lexbuf) }	
+| "+"			{ PLUS }
+| "-"			{ MINUS }
+| "*"			{ ASTER }
+| "/"			{ SLASH }
+// Misc
+| "("			{ LPAREN }
+| ")"			{ RPAREN }
+// Numberic constants
+| IntNumber			{ INT32 (Int32.Parse(lexeme lexbuf, cultureInfo)) }
+| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
+// EOF
+| eof   { EOF }
+

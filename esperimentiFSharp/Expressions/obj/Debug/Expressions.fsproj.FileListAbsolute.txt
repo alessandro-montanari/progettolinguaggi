@@ -1,0 +1,11 @@
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\Expressions.exe.config
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\Expressions.XML
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\Expressions.exe
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\Expressions.pdb
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\FSharp.Core.dll
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\FSharp.PowerPack.dll
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\FSharp.PowerPack.pdb
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\FSharp.PowerPack.xml
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\bin\Debug\FSharp.Core.xml
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\obj\Debug\Expressions.exe
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\obj\Debug\Expressions.pdb
