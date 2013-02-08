@@ -7,6 +7,7 @@ type token =
   | LB
   | RB
   | COMMA
+  | DOTS
   | PLUS
   | MINUS
   | ASTER
@@ -24,6 +25,7 @@ type tokenId =
     | TOKEN_LB
     | TOKEN_RB
     | TOKEN_COMMA
+    | TOKEN_DOTS
     | TOKEN_PLUS
     | TOKEN_MINUS
     | TOKEN_ASTER
@@ -44,8 +46,8 @@ type nonTerminalId =
     | NONTERM_Term
     | NONTERM_Unary
     | NONTERM_Factor
-    | NONTERM_ExprListInner
     | NONTERM_ExprList
+    | NONTERM_ExprListInner
 /// This function maps integers indexes to symbolic token ids
 val tagOfToken: token -> int
 

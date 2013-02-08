@@ -22,26 +22,27 @@ let function = "exp" | "sin" | "cos" | "tan" | "atan" | "sinh" | "tanh" | "log" 
 let aggregateFunction = "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
 
 rule tokenize = parse
-| whitespace	{ tokenize lexbuf }
-| newline       { tokenize lexbuf }
-// Operators
-| function			{ FUNCTION(lexeme lexbuf) }	
-| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
-| identifier	{ ID(lexeme lexbuf) }
-| "+"			{ PLUS  }
-| "-"			{ MINUS }
-| "*"			{ ASTER }
-| "/"			{ SLASH }
-| "^"			{ POW }
-// Misc
-| "("			{ LPAREN }
-| ")"			{ RPAREN }
-| '['			{ LB }
-| ']'			{ RB }
-| ','			{ COMMA }
-// Numberic constants
-| IntNumber			{ INT32 (Int32.Parse(lexeme lexbuf, cultureInfo)) }
-| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
-// EOF
-| eof   { EOF }
+	| whitespace	{ tokenize lexbuf }
+	| newline       { tokenize lexbuf }
+	// Operators
+	| function			{ FUNCTION(lexeme lexbuf) }	
+	| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
+	| identifier	{ ID(lexeme lexbuf) }
+	| "+"			{ PLUS  }
+	| "-"			{ MINUS }
+	| "*"			{ ASTER }
+	| "/"			{ SLASH }
+	| "^"			{ POW }
+	// Misc
+	| "("			{ LPAREN }
+	| ")"			{ RPAREN }
+	| '['			{ LB }
+	| ']'			{ RB }
+	| ','			{ COMMA }
+	| ".."			{ DOTS }
+	// Numberic constants
+	| IntNumber			{ INT32 (Int32.Parse(lexeme lexbuf, cultureInfo)) }
+	| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
+	// EOF
+	| eof   { EOF }
 

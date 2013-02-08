@@ -8,6 +8,7 @@ type Value =
     | Expression of Expression
     | Function of string * Expression
     | AggregateFunction of string * Expression list
+    | Range of double * double
 
 and Expression =
     | Value of Value

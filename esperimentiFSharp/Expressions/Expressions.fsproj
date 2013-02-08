@@ -59,7 +59,23 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.fsproj">
+      <Name>NeuralNetwork</Name>
+      <Project>{aefb4e87-d837-441a-91d0-0529aa7f8f9b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\NeuralTypes\NeuralTypes.fsproj">
+      <Name>NeuralTypes</Name>
+      <Project>{79aa9006-bd70-4d2f-9e3d-21f6aedcc4d3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>fsyacc "$(ProjectDir)Parser.fsy" --module Parser
