@@ -5,7 +5,7 @@ type Value =
     | Float   of Double
     | Integer of Int32
     | Id of string
-    | Expression of Expression
+//    | Expression of Expression
     | Function of string * Expression
     | AggregateFunction of string * Expression list
     | Range of double * double

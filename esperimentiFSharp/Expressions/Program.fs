@@ -44,7 +44,7 @@ for col in table.Columns do
 let rec checkValue factor (env:Environment) =
     match factor with
     | Id id -> if not (env.EnvSingle.ContainsKey(id) || env.EnvSeries.ContainsKey(id)) then failwithf "The identifier '%s' is not defined" id
-    | Expression x -> checkExpression x env
+//    | Expression x -> checkExpression x env
     | Function (name,ex) -> checkExpression ex env
     | AggregateFunction (name, exList) -> (exList |> List.iter(fun exp -> checkExpression exp env) )
     | _ -> ()
@@ -75,14 +75,14 @@ let rec evalValue factor (env:Environment) =
     | Float x   -> x
     | Integer x -> float x
     | Id id -> env.EnvSingle.[id]
-    | Expression x -> evalExpression x env
+//    | Expression x -> evalExpression x env
     | Function (name,ex) -> evalFunction name (evalExpression ex env)
     | AggregateFunction (name, exList) -> evalAggregateFunction name (exList |> List.collect(fun exp -> match exp with
                                                                                                         | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
                                                                                                         | Value(Range(val1, val2)) ->   if val1 <= val2 then
                                                                                                                                             [val1..val2]
                                                                                                                                         else
-                                                                                                                                            [val2..val1]
+                                                                                                                                            [val1..(-1.0)..val2]
                                                                                                         | exp -> [evalExpression exp env]) )
     | Range(val1, val2) -> failwith "Ranges can only be evaluated by aggregate functions"
     
