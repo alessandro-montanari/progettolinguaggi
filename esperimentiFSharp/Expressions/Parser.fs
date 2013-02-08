@@ -15,10 +15,16 @@ type token =
   | EOF
   | LPAREN
   | RPAREN
+  | LB
+  | RB
+  | COMMA
   | PLUS
   | MINUS
   | ASTER
   | SLASH
+  | POW
+  | ID of (string)
+  | AGGFUNCTION of (string)
   | FUNCTION of (string)
   | DOUBLE of (System.Double)
   | INT32 of (System.Int32)
@@ -27,10 +33,16 @@ type tokenId =
     | TOKEN_EOF
     | TOKEN_LPAREN
     | TOKEN_RPAREN
+    | TOKEN_LB
+    | TOKEN_RB
+    | TOKEN_COMMA
     | TOKEN_PLUS
     | TOKEN_MINUS
     | TOKEN_ASTER
     | TOKEN_SLASH
+    | TOKEN_POW
+    | TOKEN_ID
+    | TOKEN_AGGFUNCTION
     | TOKEN_FUNCTION
     | TOKEN_DOUBLE
     | TOKEN_INT32
@@ -45,6 +57,8 @@ type nonTerminalId =
     | NONTERM_Term
     | NONTERM_Unary
     | NONTERM_Factor
+    | NONTERM_ExprListInner
+    | NONTERM_ExprList
 
 // This function maps tokens to integers indexes
 let tagOfToken (t:token) = 
@@ -52,13 +66,19 @@ let tagOfToken (t:token) =
   | EOF  -> 0 
   | LPAREN  -> 1 
   | RPAREN  -> 2 
-  | PLUS  -> 3 
-  | MINUS  -> 4 
-  | ASTER  -> 5 
-  | SLASH  -> 6 
-  | FUNCTION _ -> 7 
-  | DOUBLE _ -> 8 
-  | INT32 _ -> 9 
+  | LB  -> 3 
+  | RB  -> 4 
+  | COMMA  -> 5 
+  | PLUS  -> 6 
+  | MINUS  -> 7 
+  | ASTER  -> 8 
+  | SLASH  -> 9 
+  | POW  -> 10 
+  | ID _ -> 11 
+  | AGGFUNCTION _ -> 12 
+  | FUNCTION _ -> 13 
+  | DOUBLE _ -> 14 
+  | INT32 _ -> 15 
 
 // This function maps integers indexes to symbolic token ids
 let tokenTagToTokenId (tokenIdx:int) = 
@@ -66,15 +86,21 @@ let tokenTagToTokenId (tokenIdx:int) =
   | 0 -> TOKEN_EOF 
   | 1 -> TOKEN_LPAREN 
   | 2 -> TOKEN_RPAREN 
-  | 3 -> TOKEN_PLUS 
-  | 4 -> TOKEN_MINUS 
-  | 5 -> TOKEN_ASTER 
-  | 6 -> TOKEN_SLASH 
-  | 7 -> TOKEN_FUNCTION 
-  | 8 -> TOKEN_DOUBLE 
-  | 9 -> TOKEN_INT32 
-  | 12 -> TOKEN_end_of_input
-  | 10 -> TOKEN_error
+  | 3 -> TOKEN_LB 
+  | 4 -> TOKEN_RB 
+  | 5 -> TOKEN_COMMA 
+  | 6 -> TOKEN_PLUS 
+  | 7 -> TOKEN_MINUS 
+  | 8 -> TOKEN_ASTER 
+  | 9 -> TOKEN_SLASH 
+  | 10 -> TOKEN_POW 
+  | 11 -> TOKEN_ID 
+  | 12 -> TOKEN_AGGFUNCTION 
+  | 13 -> TOKEN_FUNCTION 
+  | 14 -> TOKEN_DOUBLE 
+  | 15 -> TOKEN_INT32 
+  | 18 -> TOKEN_end_of_input
+  | 16 -> TOKEN_error
   | _ -> failwith "tokenTagToTokenId: bad token"
 
 /// This function maps production indexes returned in syntax errors to strings representing the non terminal that would be produced by that production
@@ -86,19 +112,25 @@ let prodIdxToNonTerminal (prodIdx:int) =
     | 3 -> NONTERM_Expr 
     | 4 -> NONTERM_Expr 
     | 5 -> NONTERM_Expr 
-    | 6 -> NONTERM_Term 
+    | 6 -> NONTERM_Expr 
     | 7 -> NONTERM_Term 
     | 8 -> NONTERM_Term 
-    | 9 -> NONTERM_Unary 
+    | 9 -> NONTERM_Term 
     | 10 -> NONTERM_Unary 
-    | 11 -> NONTERM_Factor 
+    | 11 -> NONTERM_Unary 
     | 12 -> NONTERM_Factor 
     | 13 -> NONTERM_Factor 
     | 14 -> NONTERM_Factor 
+    | 15 -> NONTERM_Factor 
+    | 16 -> NONTERM_Factor 
+    | 17 -> NONTERM_Factor 
+    | 18 -> NONTERM_ExprListInner 
+    | 19 -> NONTERM_ExprListInner 
+    | 20 -> NONTERM_ExprList 
     | _ -> failwith "prodIdxToNonTerminal: bad production index"
 
-let _fsyacc_endOfInputTag = 12 
-let _fsyacc_tagOfErrorTerminal = 10
+let _fsyacc_endOfInputTag = 18 
+let _fsyacc_tagOfErrorTerminal = 16
 
 // This function gets the name of a token as a string
 let token_to_string (t:token) = 
@@ -106,10 +138,16 @@ let token_to_string (t:token) =
   | EOF  -> "EOF" 
   | LPAREN  -> "LPAREN" 
   | RPAREN  -> "RPAREN" 
+  | LB  -> "LB" 
+  | RB  -> "RB" 
+  | COMMA  -> "COMMA" 
   | PLUS  -> "PLUS" 
   | MINUS  -> "MINUS" 
   | ASTER  -> "ASTER" 
   | SLASH  -> "SLASH" 
+  | POW  -> "POW" 
+  | ID _ -> "ID" 
+  | AGGFUNCTION _ -> "AGGFUNCTION" 
   | FUNCTION _ -> "FUNCTION" 
   | DOUBLE _ -> "DOUBLE" 
   | INT32 _ -> "INT32" 
@@ -120,25 +158,31 @@ let _fsyacc_dataOfToken (t:token) =
   | EOF  -> (null : System.Object) 
   | LPAREN  -> (null : System.Object) 
   | RPAREN  -> (null : System.Object) 
+  | LB  -> (null : System.Object) 
+  | RB  -> (null : System.Object) 
+  | COMMA  -> (null : System.Object) 
   | PLUS  -> (null : System.Object) 
   | MINUS  -> (null : System.Object) 
   | ASTER  -> (null : System.Object) 
   | SLASH  -> (null : System.Object) 
+  | POW  -> (null : System.Object) 
+  | ID _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
+  | AGGFUNCTION _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | FUNCTION _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | DOUBLE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | INT32 _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
-let _fsyacc_gotos = [| 0us; 65535us; 1us; 65535us; 0us; 1us; 1us; 65535us; 0us; 2us; 3us; 65535us; 0us; 3us; 22us; 5us; 25us; 6us; 5us; 65535us; 0us; 11us; 7us; 8us; 9us; 10us; 22us; 11us; 25us; 11us; 5us; 65535us; 0us; 16us; 7us; 16us; 9us; 16us; 22us; 16us; 25us; 16us; 8us; 65535us; 0us; 17us; 7us; 17us; 9us; 17us; 12us; 13us; 14us; 15us; 18us; 19us; 22us; 17us; 25us; 17us; |]
-let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 3us; 5us; 9us; 15us; 21us; |]
-let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 1us; 1us; 3us; 2us; 3us; 4us; 1us; 2us; 3us; 3us; 4us; 13us; 3us; 3us; 4us; 14us; 1us; 3us; 3us; 3us; 6us; 7us; 1us; 4us; 3us; 4us; 6us; 7us; 3us; 5us; 6us; 7us; 1us; 6us; 1us; 6us; 1us; 7us; 1us; 7us; 1us; 8us; 1us; 9us; 1us; 10us; 1us; 10us; 1us; 11us; 1us; 12us; 1us; 13us; 1us; 13us; 1us; 14us; 1us; 14us; 1us; 14us; |]
-let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 6us; 10us; 12us; 16us; 20us; 22us; 26us; 28us; 32us; 36us; 38us; 40us; 42us; 44us; 46us; 48us; 50us; 52us; 54us; 56us; 58us; 60us; 62us; 64us; |]
-let _fsyacc_action_rows = 27
-let _fsyacc_actionTableElements = [|5us; 32768us; 1us; 22us; 4us; 18us; 7us; 24us; 8us; 20us; 9us; 21us; 0us; 49152us; 0us; 16385us; 3us; 32768us; 0us; 4us; 3us; 7us; 4us; 9us; 0us; 16386us; 3us; 32768us; 2us; 23us; 3us; 7us; 4us; 9us; 3us; 32768us; 2us; 26us; 3us; 7us; 4us; 9us; 5us; 32768us; 1us; 22us; 4us; 18us; 7us; 24us; 8us; 20us; 9us; 21us; 2us; 16387us; 5us; 12us; 6us; 14us; 5us; 32768us; 1us; 22us; 4us; 18us; 7us; 24us; 8us; 20us; 9us; 21us; 2us; 16388us; 5us; 12us; 6us; 14us; 2us; 16389us; 5us; 12us; 6us; 14us; 4us; 32768us; 1us; 22us; 7us; 24us; 8us; 20us; 9us; 21us; 0us; 16390us; 4us; 32768us; 1us; 22us; 7us; 24us; 8us; 20us; 9us; 21us; 0us; 16391us; 0us; 16392us; 0us; 16393us; 4us; 32768us; 1us; 22us; 7us; 24us; 8us; 20us; 9us; 21us; 0us; 16394us; 0us; 16395us; 0us; 16396us; 5us; 32768us; 1us; 22us; 4us; 18us; 7us; 24us; 8us; 20us; 9us; 21us; 0us; 16397us; 1us; 32768us; 1us; 25us; 5us; 32768us; 1us; 22us; 4us; 18us; 7us; 24us; 8us; 20us; 9us; 21us; 0us; 16398us; |]
-let _fsyacc_actionTableRowOffsets = [|0us; 6us; 7us; 8us; 12us; 13us; 17us; 21us; 27us; 30us; 36us; 39us; 42us; 47us; 48us; 53us; 54us; 55us; 56us; 61us; 62us; 63us; 64us; 70us; 71us; 73us; 79us; |]
-let _fsyacc_reductionSymbolCounts = [|1us; 1us; 2us; 3us; 3us; 1us; 3us; 3us; 1us; 1us; 2us; 1us; 1us; 3us; 4us; |]
-let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 3us; 3us; 3us; 4us; 4us; 4us; 5us; 5us; 6us; 6us; 6us; 6us; |]
-let _fsyacc_immediateActions = [|65535us; 49152us; 16385us; 65535us; 16386us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 16390us; 65535us; 16391us; 16392us; 16393us; 65535us; 16394us; 16395us; 16396us; 65535us; 16397us; 65535us; 65535us; 16398us; |]
+let _fsyacc_gotos = [| 0us; 65535us; 1us; 65535us; 0us; 1us; 1us; 65535us; 0us; 2us; 5us; 65535us; 0us; 3us; 26us; 5us; 29us; 6us; 35us; 7us; 37us; 7us; 8us; 65535us; 0us; 14us; 8us; 9us; 10us; 11us; 12us; 13us; 26us; 14us; 29us; 14us; 35us; 14us; 37us; 14us; 8us; 65535us; 0us; 19us; 8us; 19us; 10us; 19us; 12us; 19us; 26us; 19us; 29us; 19us; 35us; 19us; 37us; 19us; 11us; 65535us; 0us; 20us; 8us; 20us; 10us; 20us; 12us; 20us; 15us; 16us; 17us; 18us; 21us; 22us; 26us; 20us; 29us; 20us; 35us; 20us; 37us; 20us; 2us; 65535us; 35us; 36us; 37us; 38us; 1us; 65535us; 32us; 33us; |]
+let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 3us; 5us; 11us; 20us; 29us; 41us; 44us; |]
+let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 1us; 1us; 4us; 2us; 3us; 4us; 5us; 1us; 2us; 4us; 3us; 4us; 5us; 15us; 4us; 3us; 4us; 5us; 16us; 5us; 3us; 4us; 5us; 18us; 19us; 1us; 3us; 3us; 3us; 7us; 8us; 1us; 4us; 3us; 4us; 7us; 8us; 1us; 5us; 3us; 5us; 7us; 8us; 3us; 6us; 7us; 8us; 1us; 7us; 1us; 7us; 1us; 8us; 1us; 8us; 1us; 9us; 1us; 10us; 1us; 11us; 1us; 11us; 1us; 12us; 1us; 13us; 1us; 14us; 1us; 15us; 1us; 15us; 1us; 16us; 1us; 16us; 1us; 16us; 1us; 17us; 1us; 17us; 1us; 17us; 1us; 17us; 1us; 19us; 1us; 19us; 1us; 20us; 1us; 20us; 1us; 20us; |]
+let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 6us; 11us; 13us; 18us; 23us; 29us; 31us; 35us; 37us; 41us; 43us; 47us; 51us; 53us; 55us; 57us; 59us; 61us; 63us; 65us; 67us; 69us; 71us; 73us; 75us; 77us; 79us; 81us; 83us; 85us; 87us; 89us; 91us; 93us; 95us; 97us; 99us; |]
+let _fsyacc_action_rows = 40
+let _fsyacc_actionTableElements = [|7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 49152us; 0us; 16385us; 4us; 32768us; 0us; 4us; 6us; 8us; 7us; 10us; 10us; 12us; 0us; 16386us; 4us; 32768us; 2us; 27us; 6us; 8us; 7us; 10us; 10us; 12us; 4us; 32768us; 2us; 30us; 6us; 8us; 7us; 10us; 10us; 12us; 4us; 16402us; 5us; 35us; 6us; 8us; 7us; 10us; 10us; 12us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 2us; 16387us; 8us; 15us; 9us; 17us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 2us; 16388us; 8us; 15us; 9us; 17us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 2us; 16389us; 8us; 15us; 9us; 17us; 2us; 16390us; 8us; 15us; 9us; 17us; 6us; 32768us; 1us; 26us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 16391us; 6us; 32768us; 1us; 26us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 16392us; 0us; 16393us; 0us; 16394us; 6us; 32768us; 1us; 26us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 16395us; 0us; 16396us; 0us; 16397us; 0us; 16398us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 16399us; 1us; 32768us; 1us; 29us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 16400us; 1us; 32768us; 1us; 32us; 1us; 32768us; 3us; 37us; 1us; 32768us; 2us; 34us; 0us; 16401us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 0us; 16403us; 7us; 32768us; 1us; 26us; 7us; 21us; 11us; 25us; 12us; 31us; 13us; 28us; 14us; 23us; 15us; 24us; 1us; 32768us; 4us; 39us; 0us; 16404us; |]
+let _fsyacc_actionTableRowOffsets = [|0us; 8us; 9us; 10us; 15us; 16us; 21us; 26us; 31us; 39us; 42us; 50us; 53us; 61us; 64us; 67us; 74us; 75us; 82us; 83us; 84us; 85us; 92us; 93us; 94us; 95us; 96us; 104us; 105us; 107us; 115us; 116us; 118us; 120us; 122us; 123us; 131us; 132us; 140us; 142us; |]
+let _fsyacc_reductionSymbolCounts = [|1us; 1us; 2us; 3us; 3us; 3us; 1us; 3us; 3us; 1us; 1us; 2us; 1us; 1us; 1us; 3us; 4us; 4us; 1us; 3us; 3us; |]
+let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 3us; 3us; 3us; 3us; 4us; 4us; 4us; 5us; 5us; 6us; 6us; 6us; 6us; 6us; 6us; 7us; 7us; 8us; |]
+let _fsyacc_immediateActions = [|65535us; 49152us; 16385us; 65535us; 16386us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 16391us; 65535us; 16392us; 16393us; 16394us; 65535us; 16395us; 16396us; 16397us; 16398us; 65535us; 16399us; 65535us; 65535us; 16400us; 65535us; 65535us; 65535us; 16401us; 65535us; 16403us; 65535us; 65535us; 16404us; |]
 let _fsyacc_reductions ()  =    [| 
-# 141 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 185 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data :  Ast.Equation )) in
             Microsoft.FSharp.Core.Operators.box
@@ -147,167 +191,236 @@ let _fsyacc_reductions ()  =    [|
                       raise (Microsoft.FSharp.Text.Parsing.Accept(Microsoft.FSharp.Core.Operators.box _1))
                    )
                  : '_startstart));
-# 150 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 194 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Prog)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 28 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 30 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                    Equation(_1) 
                    )
-# 28 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 30 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  :  Ast.Equation ));
-# 161 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 205 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 31 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 33 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                           _1 
                    )
-# 31 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 33 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Prog));
-# 172 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 216 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 34 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 36 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                                Plus(_1, _3)  
                    )
-# 34 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 36 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Expr));
-# 184 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 228 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 37 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                                Minus(_1, _3) 
                    )
-# 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 37 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Expr));
-# 196 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 240 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                           Pow(_1, _3) 
+                   )
+# 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                 : 'Expr));
+# 252 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 36 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                        _1      
                    )
-# 36 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Expr));
-# 207 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 263 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                                  Times(_1, _3)  
                    )
-# 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Term));
-# 219 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 275 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 40 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                                  Divide(_1, _3) 
                    )
-# 40 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Term));
-# 231 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 287 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Unary)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 41 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 44 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                         _1 
                    )
-# 41 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 44 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Term));
-# 242 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 298 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 44 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                     _1 
                    )
-# 44 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
-# 253 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 309 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 45 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                                           Negative(_2) 
                    )
-# 45 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
-# 264 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 320 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : System.Double)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                         Value(Float(_1))  
+# 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                           Value(Float(_1))  
                    )
-# 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Factor));
-# 275 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 331 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : System.Int32)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                         Value(Integer(_1)) 
+# 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                           Value(Integer(_1)) 
                    )
-# 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Factor));
-# 286 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 342 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 53 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                     Value(Id(_1)) 
+                   )
+# 53 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                 : 'Factor));
+# 353 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 50 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                  _2 
+# 54 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                                    _2 
                    )
-# 50 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 54 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Factor));
-# 297 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 364 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                      Value(Function(_1, _3)) 
+# 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                                        Value(Function(_1, _3)) 
                    )
-# 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+# 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Factor));
+# 376 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'ExprList)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                                             Value(AggregateFunction(_1, _3)) 
+                   )
+# 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                 : 'Factor));
+# 388 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 59 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                    [_1] 
+                   )
+# 59 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                 : 'ExprListInner));
+# 399 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'ExprListInner)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 60 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                                    _1 :: _3 
+                   )
+# 60 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                 : 'ExprListInner));
+# 411 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'ExprListInner)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 63 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                                               _2 
+                   )
+# 63 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
+                 : 'ExprList));
 |]
-# 310 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
+# 423 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
 let tables () : Microsoft.FSharp.Text.Parsing.Tables<_> = 
   { reductions= _fsyacc_reductions ();
     endOfInputTag = _fsyacc_endOfInputTag;
@@ -326,7 +439,7 @@ let tables () : Microsoft.FSharp.Text.Parsing.Tables<_> =
                               match parse_error_rich with 
                               | Some f -> f ctxt
                               | None -> parse_error ctxt.Message);
-    numTerminals = 13;
+    numTerminals = 19;
     productionToNonTerminalTable = _fsyacc_productionToNonTerminalTable  }
 let engine lexer lexbuf startState = (tables ()).Interpret(lexer, lexbuf, startState)
 let start lexer lexbuf :  Ast.Equation  =

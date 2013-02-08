@@ -4,10 +4,16 @@ type token =
   | EOF
   | LPAREN
   | RPAREN
+  | LB
+  | RB
+  | COMMA
   | PLUS
   | MINUS
   | ASTER
   | SLASH
+  | POW
+  | ID of (string)
+  | AGGFUNCTION of (string)
   | FUNCTION of (string)
   | DOUBLE of (System.Double)
   | INT32 of (System.Int32)
@@ -15,10 +21,16 @@ type tokenId =
     | TOKEN_EOF
     | TOKEN_LPAREN
     | TOKEN_RPAREN
+    | TOKEN_LB
+    | TOKEN_RB
+    | TOKEN_COMMA
     | TOKEN_PLUS
     | TOKEN_MINUS
     | TOKEN_ASTER
     | TOKEN_SLASH
+    | TOKEN_POW
+    | TOKEN_ID
+    | TOKEN_AGGFUNCTION
     | TOKEN_FUNCTION
     | TOKEN_DOUBLE
     | TOKEN_INT32
@@ -32,6 +44,8 @@ type nonTerminalId =
     | NONTERM_Term
     | NONTERM_Unary
     | NONTERM_Factor
+    | NONTERM_ExprListInner
+    | NONTERM_ExprList
 /// This function maps integers indexes to symbolic token ids
 val tagOfToken: token -> int
 

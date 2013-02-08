@@ -68,7 +68,58 @@
 <member name="">
 
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="T:Lexer">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
 
 </member>
 <member name="">
@@ -196,12 +247,12 @@
 <member name="">
 
 </member>
-<member name="M:Program.evalEquation(Ast.Equation)">
+<member name="M:Program.evalEquation(Ast.Equation,System.Collections.Generic.Dictionary{System.String,System.Double})">
 <summary>
  Evaluate an equation
 </summary>
 </member>
-<member name="M:Program.evalExpression(Ast.Expression)">
+<member name="M:Program.evalExpression(Ast.Expression,System.Collections.Generic.Dictionary{System.String,System.Double})">
 <summary>
  Evaluate an expression
 </summary>
@@ -209,10 +260,16 @@
 <member name="">
 
 </member>
-<member name="M:Program.evalValue(Ast.Value)">
+<member name="">
+
+</member>
+<member name="M:Program.evalValue(Ast.Value,System.Collections.Generic.Dictionary{System.String,System.Double})">
 <summary>
  Evaluate a value
 </summary>
+</member>
+<member name="">
+
 </member>
 <member name="T:Program">
 
