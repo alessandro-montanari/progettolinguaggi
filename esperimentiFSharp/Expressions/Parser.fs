@@ -80,13 +80,13 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startstart
     | NONTERM_start
-    | NONTERM_BExpr
-    | NONTERM_BTerm
+    | NONTERM_BOr
+    | NONTERM_BAnd
     | NONTERM_CondExpr
-    | NONTERM_Expr
-    | NONTERM_Term
+    | NONTERM_Additive
+    | NONTERM_Multiplicative
     | NONTERM_Unary
-    | NONTERM_Factor
+    | NONTERM_Value
     | NONTERM_ExprList
     | NONTERM_ExprInnerList
 
@@ -166,10 +166,10 @@ let prodIdxToNonTerminal (prodIdx:int) =
   match prodIdx with
     | 0 -> NONTERM__startstart 
     | 1 -> NONTERM_start 
-    | 2 -> NONTERM_BExpr 
-    | 3 -> NONTERM_BExpr 
-    | 4 -> NONTERM_BTerm 
-    | 5 -> NONTERM_BTerm 
+    | 2 -> NONTERM_BOr 
+    | 3 -> NONTERM_BOr 
+    | 4 -> NONTERM_BAnd 
+    | 5 -> NONTERM_BAnd 
     | 6 -> NONTERM_CondExpr 
     | 7 -> NONTERM_CondExpr 
     | 8 -> NONTERM_CondExpr 
@@ -177,23 +177,23 @@ let prodIdxToNonTerminal (prodIdx:int) =
     | 10 -> NONTERM_CondExpr 
     | 11 -> NONTERM_CondExpr 
     | 12 -> NONTERM_CondExpr 
-    | 13 -> NONTERM_Expr 
-    | 14 -> NONTERM_Expr 
-    | 15 -> NONTERM_Expr 
-    | 16 -> NONTERM_Expr 
-    | 17 -> NONTERM_Term 
-    | 18 -> NONTERM_Term 
-    | 19 -> NONTERM_Term 
+    | 13 -> NONTERM_Additive 
+    | 14 -> NONTERM_Additive 
+    | 15 -> NONTERM_Additive 
+    | 16 -> NONTERM_Additive 
+    | 17 -> NONTERM_Multiplicative 
+    | 18 -> NONTERM_Multiplicative 
+    | 19 -> NONTERM_Multiplicative 
     | 20 -> NONTERM_Unary 
     | 21 -> NONTERM_Unary 
     | 22 -> NONTERM_Unary 
-    | 23 -> NONTERM_Factor 
-    | 24 -> NONTERM_Factor 
-    | 25 -> NONTERM_Factor 
-    | 26 -> NONTERM_Factor 
-    | 27 -> NONTERM_Factor 
-    | 28 -> NONTERM_Factor 
-    | 29 -> NONTERM_Factor 
+    | 23 -> NONTERM_Value 
+    | 24 -> NONTERM_Value 
+    | 25 -> NONTERM_Value 
+    | 26 -> NONTERM_Value 
+    | 27 -> NONTERM_Value 
+    | 28 -> NONTERM_Value 
+    | 29 -> NONTERM_Value 
     | 30 -> NONTERM_ExprList 
     | 31 -> NONTERM_ExprList 
     | 32 -> NONTERM_ExprInnerList 
@@ -270,13 +270,13 @@ let _fsyacc_dataOfToken (t:token) =
   | FUNCTION _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | BOOLEAN _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | DOUBLE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
-let _fsyacc_gotos = [| 0us; 65535us; 1us; 65535us; 0us; 1us; 8us; 65535us; 0us; 2us; 47us; 5us; 50us; 6us; 53us; 7us; 57us; 7us; 59us; 7us; 62us; 8us; 65us; 7us; 9us; 65535us; 0us; 4us; 9us; 10us; 47us; 4us; 50us; 4us; 53us; 4us; 57us; 4us; 59us; 4us; 62us; 4us; 65us; 4us; 10us; 65535us; 0us; 11us; 9us; 11us; 12us; 13us; 47us; 11us; 50us; 11us; 53us; 11us; 57us; 11us; 59us; 11us; 62us; 11us; 65us; 11us; 16us; 65535us; 0us; 14us; 9us; 14us; 12us; 14us; 15us; 16us; 17us; 18us; 19us; 20us; 21us; 22us; 23us; 24us; 25us; 26us; 47us; 14us; 50us; 14us; 53us; 14us; 57us; 14us; 59us; 14us; 62us; 14us; 65us; 14us; 19us; 65535us; 0us; 33us; 9us; 33us; 12us; 33us; 15us; 33us; 17us; 33us; 19us; 33us; 21us; 33us; 23us; 33us; 25us; 33us; 27us; 28us; 29us; 30us; 31us; 32us; 47us; 33us; 50us; 33us; 53us; 33us; 57us; 33us; 59us; 33us; 62us; 33us; 65us; 33us; 21us; 65535us; 0us; 38us; 9us; 38us; 12us; 38us; 15us; 38us; 17us; 38us; 19us; 38us; 21us; 38us; 23us; 38us; 25us; 38us; 27us; 38us; 29us; 38us; 31us; 38us; 34us; 35us; 36us; 37us; 47us; 38us; 50us; 38us; 53us; 38us; 57us; 38us; 59us; 38us; 62us; 38us; 65us; 38us; 23us; 65535us; 0us; 39us; 9us; 39us; 12us; 39us; 15us; 39us; 17us; 39us; 19us; 39us; 21us; 39us; 23us; 39us; 25us; 39us; 27us; 39us; 29us; 39us; 31us; 39us; 34us; 39us; 36us; 39us; 40us; 41us; 42us; 43us; 47us; 39us; 50us; 39us; 53us; 39us; 57us; 39us; 59us; 39us; 62us; 39us; 65us; 39us; 4us; 65535us; 53us; 54us; 57us; 58us; 59us; 60us; 65us; 66us; 1us; 65535us; 62us; 63us; |]
-let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 3us; 12us; 22us; 33us; 50us; 70us; 92us; 116us; 121us; |]
+let _fsyacc_gotos = [| 0us; 65535us; 1us; 65535us; 0us; 1us; 8us; 65535us; 0us; 2us; 47us; 5us; 50us; 6us; 53us; 7us; 57us; 7us; 59us; 7us; 62us; 8us; 65us; 8us; 9us; 65535us; 0us; 4us; 9us; 10us; 47us; 4us; 50us; 4us; 53us; 4us; 57us; 4us; 59us; 4us; 62us; 4us; 65us; 4us; 10us; 65535us; 0us; 11us; 9us; 11us; 12us; 13us; 47us; 11us; 50us; 11us; 53us; 11us; 57us; 11us; 59us; 11us; 62us; 11us; 65us; 11us; 16us; 65535us; 0us; 14us; 9us; 14us; 12us; 14us; 15us; 16us; 17us; 18us; 19us; 20us; 21us; 22us; 23us; 24us; 25us; 26us; 47us; 14us; 50us; 14us; 53us; 14us; 57us; 14us; 59us; 14us; 62us; 14us; 65us; 14us; 19us; 65535us; 0us; 33us; 9us; 33us; 12us; 33us; 15us; 33us; 17us; 33us; 19us; 33us; 21us; 33us; 23us; 33us; 25us; 33us; 27us; 28us; 29us; 30us; 31us; 32us; 47us; 33us; 50us; 33us; 53us; 33us; 57us; 33us; 59us; 33us; 62us; 33us; 65us; 33us; 21us; 65535us; 0us; 38us; 9us; 38us; 12us; 38us; 15us; 38us; 17us; 38us; 19us; 38us; 21us; 38us; 23us; 38us; 25us; 38us; 27us; 38us; 29us; 38us; 31us; 38us; 34us; 35us; 36us; 37us; 47us; 38us; 50us; 38us; 53us; 38us; 57us; 38us; 59us; 38us; 62us; 38us; 65us; 38us; 23us; 65535us; 0us; 39us; 9us; 39us; 12us; 39us; 15us; 39us; 17us; 39us; 19us; 39us; 21us; 39us; 23us; 39us; 25us; 39us; 27us; 39us; 29us; 39us; 31us; 39us; 34us; 39us; 36us; 39us; 40us; 41us; 42us; 43us; 47us; 39us; 50us; 39us; 53us; 39us; 57us; 39us; 59us; 39us; 62us; 39us; 65us; 39us; 3us; 65535us; 53us; 54us; 57us; 58us; 59us; 60us; 2us; 65535us; 62us; 63us; 65us; 66us; |]
+let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 3us; 12us; 22us; 33us; 50us; 70us; 92us; 116us; 120us; |]
 let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 2us; 1us; 3us; 1us; 1us; 2us; 2us; 5us; 2us; 3us; 26us; 2us; 3us; 27us; 2us; 3us; 30us; 3us; 3us; 32us; 33us; 1us; 3us; 2us; 3us; 5us; 7us; 4us; 7us; 8us; 9us; 10us; 11us; 12us; 1us; 5us; 7us; 5us; 7us; 8us; 9us; 10us; 11us; 12us; 4us; 6us; 13us; 14us; 15us; 1us; 7us; 4us; 7us; 13us; 14us; 15us; 1us; 8us; 4us; 8us; 13us; 14us; 15us; 1us; 9us; 4us; 9us; 13us; 14us; 15us; 1us; 10us; 4us; 10us; 13us; 14us; 15us; 1us; 11us; 4us; 11us; 13us; 14us; 15us; 1us; 12us; 4us; 12us; 13us; 14us; 15us; 1us; 13us; 3us; 13us; 17us; 18us; 1us; 14us; 3us; 14us; 17us; 18us; 1us; 15us; 3us; 15us; 17us; 18us; 3us; 16us; 17us; 18us; 1us; 17us; 1us; 17us; 1us; 18us; 1us; 18us; 1us; 19us; 1us; 20us; 1us; 21us; 1us; 21us; 1us; 22us; 1us; 22us; 1us; 23us; 1us; 24us; 1us; 25us; 1us; 26us; 1us; 26us; 1us; 27us; 1us; 27us; 1us; 27us; 1us; 28us; 1us; 28us; 1us; 28us; 1us; 28us; 1us; 29us; 1us; 29us; 1us; 29us; 1us; 29us; 1us; 29us; 1us; 29us; 1us; 31us; 1us; 31us; 1us; 31us; 1us; 33us; 1us; 33us; |]
 let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 7us; 9us; 12us; 15us; 18us; 21us; 25us; 27us; 30us; 38us; 40us; 48us; 53us; 55us; 60us; 62us; 67us; 69us; 74us; 76us; 81us; 83us; 88us; 90us; 95us; 97us; 101us; 103us; 107us; 109us; 113us; 117us; 119us; 121us; 123us; 125us; 127us; 129us; 131us; 133us; 135us; 137us; 139us; 141us; 143us; 145us; 147us; 149us; 151us; 153us; 155us; 157us; 159us; 161us; 163us; 165us; 167us; 169us; 171us; 173us; 175us; 177us; 179us; 181us; |]
 let _fsyacc_action_rows = 67
-let _fsyacc_actionTableElements = [|9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 49152us; 2us; 32768us; 0us; 3us; 16us; 9us; 0us; 16385us; 1us; 16386us; 15us; 12us; 2us; 32768us; 3us; 48us; 16us; 9us; 2us; 32768us; 3us; 51us; 16us; 9us; 1us; 16414us; 16us; 9us; 2us; 16416us; 6us; 65us; 16us; 9us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 16387us; 15us; 12us; 6us; 16388us; 9us; 15us; 10us; 17us; 11us; 19us; 12us; 21us; 13us; 23us; 14us; 25us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 6us; 16389us; 9us; 15us; 10us; 17us; 11us; 19us; 12us; 21us; 13us; 23us; 14us; 25us; 3us; 16390us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16391us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16392us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16393us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16394us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16395us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16396us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 2us; 16397us; 22us; 34us; 23us; 36us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 2us; 16398us; 22us; 34us; 23us; 36us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 2us; 16399us; 22us; 34us; 23us; 36us; 2us; 16400us; 22us; 34us; 23us; 36us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16401us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16402us; 0us; 16403us; 0us; 16404us; 7us; 32768us; 1us; 56us; 2us; 47us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16405us; 7us; 32768us; 1us; 56us; 2us; 47us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16406us; 0us; 16407us; 0us; 16408us; 0us; 16409us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16410us; 1us; 32768us; 2us; 50us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16411us; 1us; 32768us; 2us; 53us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 3us; 55us; 0us; 16412us; 1us; 32768us; 2us; 57us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 8us; 59us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 3us; 61us; 0us; 16413us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 5us; 64us; 0us; 16415us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16417us; |]
-let _fsyacc_actionTableRowOffsets = [|0us; 10us; 11us; 14us; 15us; 17us; 20us; 23us; 25us; 28us; 38us; 40us; 47us; 57us; 64us; 68us; 78us; 82us; 92us; 96us; 106us; 110us; 120us; 124us; 134us; 138us; 148us; 152us; 162us; 165us; 175us; 178us; 188us; 191us; 194us; 204us; 205us; 215us; 216us; 217us; 218us; 226us; 227us; 235us; 236us; 237us; 238us; 239us; 249us; 250us; 252us; 262us; 263us; 265us; 276us; 278us; 279us; 281us; 292us; 294us; 305us; 307us; 308us; 318us; 320us; 321us; 332us; |]
+let _fsyacc_actionTableElements = [|9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 49152us; 2us; 32768us; 0us; 3us; 16us; 9us; 0us; 16385us; 1us; 16386us; 15us; 12us; 2us; 32768us; 3us; 48us; 16us; 9us; 2us; 32768us; 3us; 51us; 16us; 9us; 1us; 16414us; 16us; 9us; 2us; 16416us; 6us; 65us; 16us; 9us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 16387us; 15us; 12us; 6us; 16388us; 9us; 15us; 10us; 17us; 11us; 19us; 12us; 21us; 13us; 23us; 14us; 25us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 6us; 16389us; 9us; 15us; 10us; 17us; 11us; 19us; 12us; 21us; 13us; 23us; 14us; 25us; 3us; 16390us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16391us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16392us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16393us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16394us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16395us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 3us; 16396us; 20us; 27us; 21us; 29us; 24us; 31us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 2us; 16397us; 22us; 34us; 23us; 36us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 2us; 16398us; 22us; 34us; 23us; 36us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 2us; 16399us; 22us; 34us; 23us; 36us; 2us; 16400us; 22us; 34us; 23us; 36us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16401us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16402us; 0us; 16403us; 0us; 16404us; 7us; 32768us; 1us; 56us; 2us; 47us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16405us; 7us; 32768us; 1us; 56us; 2us; 47us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16406us; 0us; 16407us; 0us; 16408us; 0us; 16409us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16410us; 1us; 32768us; 2us; 50us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16411us; 1us; 32768us; 2us; 53us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 3us; 55us; 0us; 16412us; 1us; 32768us; 2us; 57us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 8us; 59us; 10us; 32768us; 1us; 56us; 2us; 47us; 4us; 62us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 3us; 61us; 0us; 16413us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 1us; 32768us; 5us; 64us; 0us; 16415us; 9us; 32768us; 1us; 56us; 2us; 47us; 17us; 42us; 21us; 40us; 25us; 46us; 26us; 52us; 27us; 49us; 28us; 44us; 29us; 45us; 0us; 16417us; |]
+let _fsyacc_actionTableRowOffsets = [|0us; 10us; 11us; 14us; 15us; 17us; 20us; 23us; 25us; 28us; 38us; 40us; 47us; 57us; 64us; 68us; 78us; 82us; 92us; 96us; 106us; 110us; 120us; 124us; 134us; 138us; 148us; 152us; 162us; 165us; 175us; 178us; 188us; 191us; 194us; 204us; 205us; 215us; 216us; 217us; 218us; 226us; 227us; 235us; 236us; 237us; 238us; 239us; 249us; 250us; 252us; 262us; 263us; 265us; 276us; 278us; 279us; 281us; 292us; 294us; 305us; 307us; 308us; 318us; 320us; 321us; 331us; |]
 let _fsyacc_reductionSymbolCounts = [|1us; 2us; 1us; 3us; 1us; 3us; 1us; 3us; 3us; 3us; 3us; 3us; 3us; 3us; 3us; 3us; 1us; 3us; 3us; 1us; 1us; 2us; 2us; 1us; 1us; 1us; 3us; 4us; 4us; 6us; 1us; 3us; 1us; 3us; |]
 let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 2us; 3us; 3us; 4us; 4us; 4us; 4us; 4us; 4us; 4us; 5us; 5us; 5us; 5us; 6us; 6us; 6us; 7us; 7us; 7us; 8us; 8us; 8us; 8us; 8us; 8us; 8us; 9us; 9us; 10us; 10us; |]
 let _fsyacc_immediateActions = [|65535us; 49152us; 65535us; 16385us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 16401us; 65535us; 16402us; 16403us; 16404us; 65535us; 16405us; 65535us; 16406us; 16407us; 16408us; 16409us; 65535us; 16410us; 65535us; 65535us; 16411us; 65535us; 65535us; 65535us; 16412us; 65535us; 65535us; 65535us; 65535us; 65535us; 16413us; 65535us; 65535us; 16415us; 65535us; 16417us; |]
@@ -292,38 +292,38 @@ let _fsyacc_reductions ()  =    [|
                  : '_startstart));
 # 293 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                           _1 
+                                         _1 
                    )
 # 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  :  Ast.Expression ));
 # 304 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BTerm)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BAnd)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                     _1 
+                                    _1 
                    )
 # 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'BExpr));
+                 : 'BOr));
 # 315 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'BTerm)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'BAnd)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                           Or(_1, _3)  
+                                        Or(_1, _3)  
                    )
 # 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'BExpr));
+                 : 'BOr));
 # 327 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
@@ -334,173 +334,173 @@ let _fsyacc_reductions ()  =    [|
                                        _1 
                    )
 # 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'BTerm));
+                 : 'BAnd));
 # 338 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BTerm)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BAnd)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                              And(_1, _3)  
+                                             And(_1, _3)  
                    )
 # 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'BTerm));
+                 : 'BAnd));
 # 350 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 46 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                    _1 
+                                        _1 
                    )
 # 46 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 361 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                             Lt(_1, _3)  
+                                                 Lt(_1, _3)  
                    )
 # 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 373 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                              Lte(_1, _3)  
+                                                  Lte(_1, _3)  
                    )
 # 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 385 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                             Gt(_1, _3)  
+                                                 Gt(_1, _3)  
                    )
 # 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 397 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 50 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                              Gte(_1, _3)  
+                                                  Gte(_1, _3)  
                    )
 # 50 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 409 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                             Eq(_1, _3)  
+                                                 Eq(_1, _3)  
                    )
 # 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 421 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'CondExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                               NotEq(_1, _3)  
+                                                   NotEq(_1, _3)  
                    )
 # 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
 # 433 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Multiplicative)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                               Plus(_1, _3)  
+                                                             Plus(_1, _3)  
                    )
 # 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Expr));
+                 : 'Additive));
 # 445 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Multiplicative)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                               Minus(_1, _3) 
+                                                             Minus(_1, _3) 
                    )
 # 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Expr));
+                 : 'Additive));
 # 457 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Expr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Additive)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Multiplicative)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 57 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                           Pow(_1, _3) 
+                                                         Pow(_1, _3) 
                    )
 # 57 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Expr));
+                 : 'Additive));
 # 469 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Multiplicative)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 58 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                       _1      
+                                                 _1      
                    )
 # 58 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Expr));
+                 : 'Additive));
 # 480 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Multiplicative)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Unary)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 61 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                Times(_1, _3)  
+                                                          Times(_1, _3)  
                    )
 # 61 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Term));
+                 : 'Multiplicative));
 # 492 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Term)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Multiplicative)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'Unary)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 62 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                Divide(_1, _3) 
+                                                          Divide(_1, _3) 
                    )
 # 62 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Term));
+                 : 'Multiplicative));
 # 504 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Unary)) in
@@ -511,37 +511,37 @@ let _fsyacc_reductions ()  =    [|
                                         _1 
                    )
 # 63 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Term));
+                 : 'Multiplicative));
 # 515 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'Value)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 66 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                     _1 
+                                    _1 
                    )
 # 66 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
 # 526 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'Value)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 67 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                          Negative(_2) 
+                                         Negative(_2) 
                    )
 # 67 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
 # 537 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'Factor)) in
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'Value)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 68 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                     Not(_2) 
+                                    Not(_2) 
                    )
 # 68 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
@@ -555,7 +555,7 @@ let _fsyacc_reductions ()  =    [|
                                               Value(Boolean(_1))
                    )
 # 71 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 559 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : System.Double)) in
@@ -566,7 +566,7 @@ let _fsyacc_reductions ()  =    [|
                                                 Value(Double(_1))  
                    )
 # 72 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 570 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
@@ -577,30 +577,30 @@ let _fsyacc_reductions ()  =    [|
                                           Value(Id(_1)) 
                    )
 # 73 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 581 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 74 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                          _2 
+                                                        _2 
                    )
 # 74 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 592 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 75 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                              Value(Function(_1, _3)) 
+                                                            Value(Function(_1, _3)) 
                    )
 # 75 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 604 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
@@ -612,7 +612,7 @@ let _fsyacc_reductions ()  =    [|
                                                                   Value(AggregateFunction(_1, _3)) 
                    )
 # 76 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 616 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'ExprList)) in
@@ -624,15 +624,15 @@ let _fsyacc_reductions ()  =    [|
                                                                                   Value(SumOfProducts(_3, _5)) 
                    )
 # 77 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 : 'Factor));
+                 : 'Value));
 # 628 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 80 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                     [_1] 
+                                   [_1] 
                    )
 # 80 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'ExprList));
@@ -649,24 +649,24 @@ let _fsyacc_reductions ()  =    [|
                  : 'ExprList));
 # 650 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 84 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                     [_1] 
+                                   [_1] 
                    )
 # 84 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'ExprInnerList));
 # 661 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BExpr)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'ExprList)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BOr)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'ExprInnerList)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
 # 85 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                 _1 :: _3 
+                                                   _1 :: _3 
                    )
 # 85 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'ExprInnerList));

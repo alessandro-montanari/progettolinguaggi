@@ -67,13 +67,13 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startstart
     | NONTERM_start
-    | NONTERM_BExpr
-    | NONTERM_BTerm
+    | NONTERM_BOr
+    | NONTERM_BAnd
     | NONTERM_CondExpr
-    | NONTERM_Expr
-    | NONTERM_Term
+    | NONTERM_Additive
+    | NONTERM_Multiplicative
     | NONTERM_Unary
-    | NONTERM_Factor
+    | NONTERM_Value
     | NONTERM_ExprList
     | NONTERM_ExprInnerList
 /// This function maps integers indexes to symbolic token ids

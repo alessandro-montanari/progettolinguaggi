@@ -123,7 +123,7 @@ let createEditor =
     text.Settings.Keywords.Add("NETWORK")
     text.Settings.Keywords.Add("TRAINING_SET")
     text.Settings.Keywords.Add("CLASS_ATTRIBUTE")
-    text.Settings.Keywords.Add("#LOAD_TRAINING")
+    text.Settings.Keywords.Add("LOAD_TRAINING")
     text.Settings.Keywords.Add("#LOAD_NETWORK")
 
     text.Settings.Comment <- "//"

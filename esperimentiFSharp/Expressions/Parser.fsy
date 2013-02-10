@@ -32,54 +32,54 @@ open Ast
 // produce data using F# data construction terms.
 
 start:
-    | BExpr EOF					{ $1 }
+    | BOr EOF				{ $1 }
 
-BExpr:
-	| BTerm						{ $1 }
-	| BExpr OR BTerm			{ Or($1, $3)  }
+BOr:
+	| BAnd					{ $1 }
+	| BOr OR BAnd			{ Or($1, $3) }
 
-BTerm:
-	| CondExpr					{ $1 }
-	| BTerm AND CondExpr		{ And($1, $3)  }
+BAnd:
+	| CondExpr				{ $1 }
+	| BAnd AND CondExpr		{ And($1, $3) }
 
 CondExpr:
-	| Expr						{ $1 }
-	| CondExpr LT Expr			{ Lt($1, $3)  }
-	| CondExpr LTE Expr			{ Lte($1, $3)  }
-	| CondExpr GT Expr			{ Gt($1, $3)  }
-	| CondExpr GTE Expr			{ Gte($1, $3)  }
-	| CondExpr EQ Expr			{ Eq($1, $3)  }
-	| CondExpr NOTEQ Expr		{ NotEq($1, $3)  }
+	| Additive						{ $1 }
+	| CondExpr LT Additive			{ Lt($1, $3) }
+	| CondExpr LTE Additive			{ Lte($1, $3) }
+	| CondExpr GT Additive			{ Gt($1, $3) }
+	| CondExpr GTE Additive			{ Gte($1, $3) }
+	| CondExpr EQ Additive			{ Eq($1, $3) }
+	| CondExpr NOTEQ Additive		{ NotEq($1, $3) }
 	
-Expr: 
-    | Expr PLUS  Term			{ Plus($1, $3)  }
-    | Expr MINUS Term			{ Minus($1, $3) }
-	| Expr POW Term				{ Pow($1, $3) }
-    | Term						{ $1      }
+Additive: 
+    | Additive PLUS  Multiplicative		{ Plus($1, $3)  }
+    | Additive MINUS Multiplicative		{ Minus($1, $3) }
+	| Additive POW Multiplicative		{ Pow($1, $3) }
+    | Multiplicative					{ $1 }
 
-Term:
-    | Term ASTER Unary			{ Times($1, $3)  }
-    | Term SLASH Unary			{ Divide($1, $3) }
-    | Unary						{ $1 }
+Multiplicative:
+    | Multiplicative ASTER Unary		{ Times($1, $3)  }
+    | Multiplicative SLASH Unary		{ Divide($1, $3) }
+    | Unary								{ $1 }
 
 Unary:
-    | Factor		{ $1 }
-    | MINUS Factor	{ Negative($2) }
-	| NOT Factor	{ Not($2) }
+    | Value			{ $1 }
+    | MINUS Value	{ Negative($2) }
+	| NOT Value		{ Not($2) }
     
-Factor:
+Value:
 	| BOOLEAN													{ Value(Boolean($1))}
     | DOUBLE													{ Value(Double($1))  }
 	| ID														{ Value(Id($1)) }
-    | LPAREN BExpr RPAREN										{ $2 }
-	| FUNCTION LPAREN BExpr RPAREN								{ Value(Function($1, $3)) }
+    | LPAREN BOr RPAREN											{ $2 }
+	| FUNCTION LPAREN BOr RPAREN								{ Value(Function($1, $3)) }
 	| AGGFUNCTION LPAREN ExprList RPAREN						{ Value(AggregateFunction($1, $3)) }
 	| SUMOFPRODUCTS LPAREN ExprList SEMICOLON ExprList RPAREN	{ Value(SumOfProducts($3, $5)) }
 
 ExprList:
-	| BExpr						{ [$1] }
+	| BOr						{ [$1] }
 	| LB ExprInnerList RB		{ $2 }
 
 ExprInnerList:
-	| BExpr						{ [$1] }
-	| BExpr COMMA ExprList 		{ $1 :: $3 }
+	| BOr						{ [$1] }
+	| BOr COMMA ExprInnerList 	{ $1 :: $3 }

@@ -17,54 +17,9 @@ let keywords = [
     "ATTRIBUTE", ATTKEY;
     "INSTANCE", INSTKEY;
     "TRAINING_SET", TRAINSETKEY;
-    "WITH_PLOT", PLOTKEY
-    "TEST_SET", TESTSETKEY] |> Map.ofList
-
-let mathOps = 
-    [ 
-        "+", PLUS;
-        "-", MINUS;
-        "*", TIMES;
-        "/", FRAC;
-        "^", POW ] |> Map.ofList
-
-let logicOps =
-    [
-        "&&", AND;
-        "||", OR;
-        "!", NOT;
-        "true", TRUE;
-        "false", FALSE;
-    ] |> Map.ofList
-
-let functions =
-    [
-        "sin", SIN;
-        "cos", COS;
-        "tan", TAN;
-        "atan", ATAN;
-        "log", LOG;
-        "ln", LN;
-        "floor", FLOOR;
-        "ceil", CEIL;
-        "sqrt", SQRT;
-        "mean", MEAN;
-        "sd", SD;
-        "min", MIN;
-        "max", MAX;
-        "sum", SUM;
-        "sumsquared", SUMSQUARED
-    ] |> Map.ofList
-
-let relOps = 
-    [
-        "<", LT;
-        "<=", LTE;
-        ">", GT;
-        ">=", GTE;
-        "==", EQ;
-        "!=", NOTEQ
-    ] |> Map.ofList
+    "CLASS_ATTRIBUTE", CLASSKEY;
+    "LOAD_TRAINING", LOADTRAIN;
+    "LOAD_NETWROK", LOADNET] |> Map.ofList
 }
 
 let char				= ['a'-'z' 'A'-'Z']
@@ -75,26 +30,18 @@ let newline				= "\n\r" | '\n' | '\r'
 let identifier			= char(char|digit|'_')*
 let attIdentifier		= "ATT"(digit)+
 let instIdentifier		= "INST"(digit)+
-let mathOp				= '+' | '-' | '*' | '/' | '^'
-let logicOp				= "&&" | "||" | '!' | "true" | "false"
-let function			= "sin" | "cos" | "tan" | "atan" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
-let relOp				= '<' | "<=" | '>' | ">=" | "==" | "!="
 
 // rules
 rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
 	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf }
-	| mathOp		{ mathOps.[lexeme lexbuf] }
 	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
 	| attIdentifier	{ ATTID(extractId (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
-	| instIdentifier{ INSTID(extractId (lexeme lexbuf)) }
-	| function		{ functions.[lexeme lexbuf] }													// stesso discorso di sopra
-	| logicOp		{ logicOps.[lexeme lexbuf] }
+	| instIdentifier{ INSTID(extractId (lexeme lexbuf)) }													// stesso discorso di sopra
 	| "\""			{ ID(string lexbuf.StartPos "" lexbuf) }
  	| identifier	{ match keywords.TryFind(lexeme lexbuf) with
                         | Some(token) -> token
                         | None -> ID(lexeme lexbuf) }
-	| relOp			{ relOps.[lexeme lexbuf] }
 	| ','			{ COMMA }
 	| '('			{ LP }
 	| ')'			{ RP }

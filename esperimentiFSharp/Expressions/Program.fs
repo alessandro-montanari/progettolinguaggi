@@ -16,7 +16,7 @@ open Parser
 open NeuralTypes
 open TableUtilities
 
-// Mi serve un'Environment "doppio"
+// Mi serve un'Environment "doppio" per tenere i valori scalari e le liste di valori
 type Environment() =
     
     let _envSingle = new Dictionary<string, double>(HashIdentity.Structural)
