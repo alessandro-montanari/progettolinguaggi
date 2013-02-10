@@ -18,21 +18,35 @@ let DoubleNumber = digit+ ('.' digit*)?(['e''E']['-']?digit+)?
 let identifier = char(char|digit|'_')*
 let whitespace = [' ' '\t' ]
 let newline = ('\n' | '\r' '\n')
-let function = "exp" | "sin" | "cos" | "tan" | "atan" | "sinh" | "tanh" | "log" | "ln" | "floor" | "ceil" | "sqrt" 
+let function = "exp" | "sin" | "cos" | "acos" | "asin" | "tan" | "atan" | "sinh" | "tanh" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "abs"
 let aggregateFunction = "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
+let boolLiteral = "true" | "false"
 
 rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
 	| newline       { tokenize lexbuf }
+	// Bool literal
+	| boolLiteral		{ BOOLEAN(System.Boolean.Parse(lexeme lexbuf))}
 	// Operators
 	| function			{ FUNCTION(lexeme lexbuf) }	
 	| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
+	| "sumOfProducts"	{ SUMOFPRODUCTS }
 	| identifier	{ ID(lexeme lexbuf) }
 	| "+"			{ PLUS  }
 	| "-"			{ MINUS }
 	| "*"			{ ASTER }
 	| "/"			{ SLASH }
 	| "^"			{ POW }
+	| '<'			{ LT }
+	| "<="			{ LTE }
+	| '>'			{ GT }
+	| ">="			{ GTE }
+	| "=="			{ EQ }
+	| "!="			{ NOTEQ }
+	| "!"			{ NOT }
+	| "&&"			{ AND }
+	| "||"			{ OR }
+
 	// Misc
 	| "("			{ LPAREN }
 	| ")"			{ RPAREN }
@@ -40,7 +54,8 @@ rule tokenize = parse
 	| ']'			{ RB }
 	| ','			{ COMMA }
 	| ".."			{ DOTS }
-	// Numberic constants
+	| ';'			{ SEMICOLON }
+	// Numeric constants
 	| IntNumber			{ INT32 (Int32.Parse(lexeme lexbuf, cultureInfo)) }
 	| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
 	// EOF

@@ -34,7 +34,7 @@ let table = buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguagg
 
 for col in table.Columns do
     let colName = col.ColumnName
-    if (table.Columns.[colName] :?> AttributeDataColumn).AttributeType = AttributeType.Numeric then
+    if (table.Columns.[colName] :?> AttributeDataColumn).AttributeType = AttributeType.Numeric then         //TODO devo lasciar passare anche gli attributi stringa
         let list:double list = query {  for row in table.Select() do
                                         where ( not (row.IsNull(colName)) )
                                         select row.[colName]  } |> Seq.map unbox |> Seq.toList
@@ -46,8 +46,10 @@ let rec checkValue factor (env:Environment) =
     | Id id -> if not (env.EnvSingle.ContainsKey(id) || env.EnvSeries.ContainsKey(id)) then failwithf "The identifier '%s' is not defined" id
 //    | Expression x -> checkExpression x env
     | Function (name,ex) -> checkExpression ex env
-    | AggregateFunction (name, exList) -> (exList |> List.iter(fun exp -> checkExpression exp env) )
-    | _ -> ()
+    | AggregateFunction (name, exList) -> exList |> List.iter(fun ex -> checkExpression ex env)
+    | SumOfProducts (exList1, exList2) ->   exList1 |> List.iter(fun ex -> checkExpression ex env)
+                                            exList2 |> List.iter(fun ex -> checkExpression ex env)
+    | _ -> ()  
 
 and checkExpression expr env =
     match expr with
@@ -75,19 +77,15 @@ let rec evalValue factor (env:Environment) =
     | Float x   -> x
     | Integer x -> float x
     | Id id -> env.EnvSingle.[id]
-//    | Expression x -> evalExpression x env
+    | Boolean b -> match b with
+                | true -> 1.0
+                | false -> 0.0
     | Function (name,ex) -> evalFunction name (evalExpression ex env)
     | AggregateFunction (name, exList) -> evalAggregateFunction name (exList |> List.collect(fun exp -> match exp with
                                                                                                         | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
-                                                                                                        | Value(Range(val1, val2)) ->   if val1 <= val2 then
-                                                                                                                                            [val1..val2]
-                                                                                                                                        else
-                                                                                                                                            [val1..(-1.0)..val2]
                                                                                                         | exp -> [evalExpression exp env]) )
-    | Range(val1, val2) -> failwith "Ranges can only be evaluated by aggregate functions"
-    
-                            
-                            
+
+    | SumOfProducts(exList1, exList2) -> List.fold2 (fun acc el1 el2 -> acc + (evalExpression el1 env)*(evalExpression el2 env)) 0.0 exList1 exList2
 
 and evalAggregateFunction name (paramList: double list) =
     match name with
@@ -97,12 +95,14 @@ and evalAggregateFunction name (paramList: double list) =
     | "sumsquared" -> paramList |> List.map(fun el -> el*el) |> List.sum
     | "mean" -> paramList |> List.average
     | "sd" ->   let avg = paramList |> List.average
-                sqrt (List.fold (fun acc elem -> acc + (float elem - avg) ** 2.0 ) 0.0 paramList / float paramList.Length)      //TODO Manca sumOfProducts(range1, range2)
+                sqrt (List.fold (fun acc elem -> acc + (float elem - avg) ** 2.0 ) 0.0 paramList / float paramList.Length)     
 
 and evalFunction name param =
     match name with
     | "sin" -> Math.Sin(param)
     | "cos" -> Math.Cos(param)
+    | "acos" -> Math.Acos(param)
+    | "asin" -> Math.Asin(param)
     | "tan" -> Math.Tan(param)
     | "atan" -> Math.Atan(param)
     | "sinh" -> Math.Sinh(param)
@@ -113,7 +113,7 @@ and evalFunction name param =
     | "ceil" -> Math.Ceiling(param)
     | "sqrt" -> Math.Sqrt(param)
     | "exp" -> Math.Exp(param)
-    | _ -> failwithf "Function '%s' not supported" name
+    | "abs" -> Math.Abs(param)
 
 /// Evaluate an expression
 and evalExpression expr env =
@@ -125,7 +125,34 @@ and evalExpression expr env =
     | Divide (term, fact) -> (evalExpression term env) / (evalExpression fact env)
     | Negative expr -> -(evalExpression expr env)
     | Value value -> evalValue value env
-
+    | And(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | 1.0,1.0 -> 1.0
+                        | _, _ -> 0.0
+    | Or(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | 1.0,_ | _, 1.0 -> 1.0
+                        | _, _ -> 0.0
+    | Not ex -> match (evalExpression ex env) with
+                | 1.0 -> 0.0
+                | _ -> 1.0
+    | Lt(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with     //TODO da fattorizzare
+                        | a, b when a<b -> 1.0
+                        | _, _ -> 0.0
+    | Lte(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | a, b when a<=b -> 1.0
+                        | _, _ -> 0.0
+    | Gt(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | a, b when a>b -> 1.0
+                        | _, _ -> 0.0
+    | Gte(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | a, b when a>=b -> 1.0
+                        | _, _ -> 0.0
+    | Eq(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | a, b when a=b -> 1.0
+                        | _, _ -> 0.0
+    | NotEq(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | a, b when a<>b -> 1.0
+                        | _, _ -> 0.0
+                                                
 /// Evaluate an equation
 and evalEquation eq env =
     match eq with
@@ -133,8 +160,9 @@ and evalEquation eq env =
 
 printfn "Calculator"
 
+
 let rec readAndProcess() =
-//    let exp = "min([RI])-Na"
+//    let exp = "min([RI,-5])-RI"
 //    printfn "%s" exp
 //    
 //    let lexbuff = LexBuffer<char>.FromString(exp)

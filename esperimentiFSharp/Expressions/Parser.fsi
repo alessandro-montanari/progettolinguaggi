@@ -2,12 +2,25 @@
 module Parser
 type token = 
   | EOF
+  | SUMOFPRODUCTS
   | LPAREN
   | RPAREN
   | LB
   | RB
   | COMMA
   | DOTS
+  | SEMICOLON
+  | LT
+  | LTE
+  | GT
+  | GTE
+  | EQ
+  | NOTEQ
+  | AND
+  | OR
+  | NOT
+  | TRUE
+  | FALSE
   | PLUS
   | MINUS
   | ASTER
@@ -16,16 +29,30 @@ type token =
   | ID of (string)
   | AGGFUNCTION of (string)
   | FUNCTION of (string)
+  | BOOLEAN of (bool)
   | DOUBLE of (System.Double)
   | INT32 of (System.Int32)
 type tokenId = 
     | TOKEN_EOF
+    | TOKEN_SUMOFPRODUCTS
     | TOKEN_LPAREN
     | TOKEN_RPAREN
     | TOKEN_LB
     | TOKEN_RB
     | TOKEN_COMMA
     | TOKEN_DOTS
+    | TOKEN_SEMICOLON
+    | TOKEN_LT
+    | TOKEN_LTE
+    | TOKEN_GT
+    | TOKEN_GTE
+    | TOKEN_EQ
+    | TOKEN_NOTEQ
+    | TOKEN_AND
+    | TOKEN_OR
+    | TOKEN_NOT
+    | TOKEN_TRUE
+    | TOKEN_FALSE
     | TOKEN_PLUS
     | TOKEN_MINUS
     | TOKEN_ASTER
@@ -34,6 +61,7 @@ type tokenId =
     | TOKEN_ID
     | TOKEN_AGGFUNCTION
     | TOKEN_FUNCTION
+    | TOKEN_BOOLEAN
     | TOKEN_DOUBLE
     | TOKEN_INT32
     | TOKEN_end_of_input
@@ -42,12 +70,15 @@ type nonTerminalId =
     | NONTERM__startstart
     | NONTERM_start
     | NONTERM_Prog
+    | NONTERM_BExpr
+    | NONTERM_BTerm
+    | NONTERM_CondExpr
     | NONTERM_Expr
     | NONTERM_Term
     | NONTERM_Unary
     | NONTERM_Factor
     | NONTERM_ExprList
-    | NONTERM_ExprListInner
+    | NONTERM_ExprInnerList
 /// This function maps integers indexes to symbolic token ids
 val tagOfToken: token -> int
 
