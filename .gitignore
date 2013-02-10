@@ -16,3 +16,5 @@ esperimentiFSharp/NeuralNetwork/obj/*
 esperimentiFSharp/ArffLanguage/ArffLanguageParser.fsyacc.output
 esperimentiFSharp/NeuralTypes/bin/*
 esperimentiFSharp/NeuralTypes/obj/*
+esperimentiFSharp/Expressions/bin/*
+esperimentiFSharp/Expressions/obj/*
