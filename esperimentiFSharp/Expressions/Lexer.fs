@@ -76,17 +76,17 @@ let trans : uint16[] array =
     (* State 30 *)
      [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 31 *)
-     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 35us; 65535us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
+     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 32 *)
      [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 33 *)
-     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 35us; 65535us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
-    (* State 34 *)
      [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 38us; 65535us; 65535us; 37us; 37us; 37us; 37us; 37us; 37us; 37us; 37us; 37us; 37us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
+    (* State 34 *)
+     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 35 *)
-     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
+     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 35us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 36 *)
-     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 34us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
+     [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 36us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 33us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 37 *)
      [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 39us; 39us; 39us; 39us; 39us; 39us; 39us; 39us; 39us; 39us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     (* State 38 *)
@@ -212,7 +212,7 @@ let trans : uint16[] array =
     (* State 98 *)
      [| 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 65535us; 65535us; 65535us; 65535us; 47us; 65535us; 47us; 47us; 47us; 47us; 94us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 47us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |];
     |] 
-let actions : uint16[] = [|65535us; 0us; 1us; 65535us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 7us; 8us; 9us; 10us; 11us; 12us; 14us; 65535us; 18us; 65535us; 65535us; 21us; 22us; 23us; 24us; 25us; 65535us; 27us; 28us; 30us; 28us; 65535us; 29us; 29us; 29us; 65535us; 29us; 26us; 20us; 19us; 17us; 16us; 15us; 13us; 6us; 6us; 6us; 6us; 4us; 6us; 6us; 3us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 4us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 5us; 6us; 6us; 6us; 6us; 6us; 6us; 3us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 2us; 6us; 6us; 3us; 6us; |]
+let actions : uint16[] = [|65535us; 0us; 1us; 65535us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 7us; 8us; 9us; 10us; 11us; 12us; 14us; 65535us; 18us; 65535us; 65535us; 21us; 22us; 23us; 24us; 25us; 65535us; 27us; 28us; 29us; 65535us; 28us; 28us; 28us; 28us; 65535us; 28us; 26us; 20us; 19us; 17us; 16us; 15us; 13us; 6us; 6us; 6us; 6us; 4us; 6us; 6us; 3us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 4us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 5us; 6us; 6us; 6us; 6us; 6us; 6us; 3us; 6us; 6us; 6us; 6us; 6us; 6us; 6us; 2us; 6us; 6us; 3us; 6us; |]
 let _fslex_tables = Microsoft.FSharp.Text.Lexing.UnicodeTables.Create(trans,actions)
 let rec _fslex_dummy () = _fslex_dummy() 
 (* Rule tokenize *)
@@ -221,13 +221,13 @@ and tokenize  (lexbuf : Microsoft.FSharp.Text.Lexing.LexBuffer<_>) = _fslex_toke
 and _fslex_tokenize  _fslex_state lexbuf =
   match _fslex_tables.Interpret(_fslex_state,lexbuf) with
   | 0 -> ( 
-# 26 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                               tokenize lexbuf 
+# 25 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                                tokenize lexbuf 
 # 226 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 1 -> ( 
-# 27 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                                  tokenize lexbuf 
+# 26 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                              tokenize lexbuf 
 # 231 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 2 -> ( 
@@ -236,147 +236,142 @@ and _fslex_tokenize  _fslex_state lexbuf =
 # 236 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 3 -> ( 
-# 31 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+# 32 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
                                FUNCTION(lexeme lexbuf) 
 # 241 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 4 -> ( 
-# 32 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+# 33 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
                                       AGGFUNCTION(lexeme lexbuf) 
 # 246 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 5 -> ( 
-# 33 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+# 34 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
                                     SUMOFPRODUCTS 
 # 251 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 6 -> ( 
-# 34 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                               ID(lexeme lexbuf) 
+# 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                                ID(lexeme lexbuf) 
 # 256 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 7 -> ( 
-# 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          PLUS  
+# 36 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           PLUS  
 # 261 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 8 -> ( 
-# 36 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          MINUS 
+# 37 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           MINUS 
 # 266 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 9 -> ( 
-# 37 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          ASTER 
+# 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           ASTER 
 # 271 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 10 -> ( 
-# 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          SLASH 
+# 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           SLASH 
 # 276 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 11 -> ( 
-# 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          POW 
+# 40 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           POW 
 # 281 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 12 -> ( 
-# 40 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          LT 
+# 41 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           LT 
 # 286 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 13 -> ( 
-# 41 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           LTE 
+# 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            LTE 
 # 291 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 14 -> ( 
-# 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          GT 
+# 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           GT 
 # 296 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 15 -> ( 
-# 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           GTE 
+# 44 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            GTE 
 # 301 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 16 -> ( 
-# 44 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           EQ 
+# 45 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            EQ 
 # 306 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 17 -> ( 
-# 45 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           NOTEQ 
+# 46 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            NOTEQ 
 # 311 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 18 -> ( 
-# 46 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          NOT 
+# 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           NOT 
 # 316 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 19 -> ( 
-# 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           AND 
+# 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            AND 
 # 321 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 20 -> ( 
-# 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           OR 
+# 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            OR 
 # 326 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 21 -> ( 
-# 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          LPAREN 
+# 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           LPAREN 
 # 331 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 22 -> ( 
-# 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          RPAREN 
+# 53 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           RPAREN 
 # 336 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 23 -> ( 
-# 53 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          LB 
+# 54 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           LB 
 # 341 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 24 -> ( 
-# 54 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          RB 
+# 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           RB 
 # 346 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 25 -> ( 
-# 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          COMMA 
+# 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           COMMA 
 # 351 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 26 -> ( 
-# 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                           DOTS 
+# 57 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                            DOTS 
 # 356 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 27 -> ( 
-# 57 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                          SEMICOLON 
+# 58 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                           SEMICOLON 
 # 361 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 28 -> ( 
-# 59 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                                INT32 (Int32.Parse(lexeme lexbuf, cultureInfo)) 
+# 61 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+                                  DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) 
 # 366 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | 29 -> ( 
-# 60 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
-                                  DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) 
-# 371 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
-          )
-  | 30 -> ( 
-# 62 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+# 64 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
                           EOF 
-# 376 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
+# 371 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"
           )
   | _ -> failwith "tokenize"
 
-# 64 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
+# 66 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fsl"
 
 # 3000000 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Lexer.fs"

@@ -9,7 +9,6 @@ open Ast
 
 // These are the terminal tokens of the grammar along with the types of
 // the data carried by each token:
-%token <System.Int32> INT32
 %token <System.Double> DOUBLE
 %token <bool> BOOLEAN
 %token <string> FUNCTION
@@ -24,16 +23,15 @@ open Ast
 
 // This is the type of the data produced by a successful reduction of the 'start'
 // symbol:
-%type < Ast.Equation > start
+%type < Ast.Expression > start
 
 %%
 
 // These are the rules of the grammar along with the F# code of the 
 // actions executed as rules are reduced.  In this case the actions 
 // produce data using F# data construction terms.
-start: Prog { Equation($1) }
 
-Prog:
+start:
     | BExpr EOF					{ $1 }
 
 BExpr:
@@ -71,8 +69,7 @@ Unary:
     
 Factor:
 	| BOOLEAN													{ Value(Boolean($1))}
-    | DOUBLE													{ Value(Float($1))  }
-    | INT32														{ Value(Integer($1)) }
+    | DOUBLE													{ Value(Double($1))  }
 	| ID														{ Value(Id($1)) }
     | LPAREN BExpr RPAREN										{ $2 }
 	| FUNCTION LPAREN BExpr RPAREN								{ Value(Function($1, $3)) }

@@ -31,7 +31,6 @@ type token =
   | FUNCTION of (string)
   | BOOLEAN of (bool)
   | DOUBLE of (System.Double)
-  | INT32 of (System.Int32)
 type tokenId = 
     | TOKEN_EOF
     | TOKEN_SUMOFPRODUCTS
@@ -63,13 +62,11 @@ type tokenId =
     | TOKEN_FUNCTION
     | TOKEN_BOOLEAN
     | TOKEN_DOUBLE
-    | TOKEN_INT32
     | TOKEN_end_of_input
     | TOKEN_error
 type nonTerminalId = 
     | NONTERM__startstart
     | NONTERM_start
-    | NONTERM_Prog
     | NONTERM_BExpr
     | NONTERM_BTerm
     | NONTERM_CondExpr
@@ -90,4 +87,4 @@ val prodIdxToNonTerminal: int -> nonTerminalId
 
 /// This function gets the name of a token as a string
 val token_to_string: token -> string
-val start : (Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> ( Ast.Equation ) 
+val start : (Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> Microsoft.FSharp.Text.Lexing.LexBuffer<'cty> -> ( Ast.Expression ) 

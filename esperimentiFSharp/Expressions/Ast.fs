@@ -8,11 +8,11 @@ open System
 //      La grammatica sarebbe diventata come la grammatica del C per le chiamate di funzioni. Sicuramente diventava il tutto più flessibile (era più facile inserire nuove
 //      funzioni anche con un numero di parametri maggiore di 2/2 senza dover modificare la grammatica), però questo avrebbe comportato un complicazione lato interprete.
 //      Si è ritenuto non complicare l'interprete più di tanto visto l'obbiettivo di voler rappresentare delle semplici funzioni matematiche.
+// - Espressioni booleane: valori double come boolean. 1.0 -> true, 0.0 -> false
 
 type Value =
     | Boolean of bool
-    | Float   of Double
-    | Integer of Int32                          // TODO Solo double
+    | Double   of double
     | Id of string
     | Function of string * Expression
     | AggregateFunction of string * Expression list
@@ -35,8 +35,5 @@ and Expression =
     | Gte of Expression * Expression
     | Eq of Expression * Expression
     | NotEq of Expression * Expression
-
-and Equation =
-    | Equation of Expression
 
 

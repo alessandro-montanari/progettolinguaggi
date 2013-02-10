@@ -13,7 +13,6 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 // These are some regular expression definitions
 let char = ['A' - 'Z' 'a' - 'z']
 let digit = ['0'-'9']
-let IntNumber = digit+
 let DoubleNumber = digit+ ('.' digit*)?(['e''E']['-']?digit+)?
 let identifier = char(char|digit|'_')*
 let whitespace = [' ' '\t' ]
@@ -23,41 +22,44 @@ let aggregateFunction = "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
 let boolLiteral = "true" | "false"
 
 rule tokenize = parse
-	| whitespace	{ tokenize lexbuf }
-	| newline       { tokenize lexbuf }
+	| whitespace		{ tokenize lexbuf }
+	| newline			{ tokenize lexbuf }
+
 	// Bool literal
 	| boolLiteral		{ BOOLEAN(System.Boolean.Parse(lexeme lexbuf))}
+
 	// Operators
 	| function			{ FUNCTION(lexeme lexbuf) }	
 	| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
 	| "sumOfProducts"	{ SUMOFPRODUCTS }
-	| identifier	{ ID(lexeme lexbuf) }
-	| "+"			{ PLUS  }
-	| "-"			{ MINUS }
-	| "*"			{ ASTER }
-	| "/"			{ SLASH }
-	| "^"			{ POW }
-	| '<'			{ LT }
-	| "<="			{ LTE }
-	| '>'			{ GT }
-	| ">="			{ GTE }
-	| "=="			{ EQ }
-	| "!="			{ NOTEQ }
-	| "!"			{ NOT }
-	| "&&"			{ AND }
-	| "||"			{ OR }
+	| identifier		{ ID(lexeme lexbuf) }
+	| "+"				{ PLUS  }
+	| "-"				{ MINUS }
+	| "*"				{ ASTER }
+	| "/"				{ SLASH }
+	| "^"				{ POW }
+	| '<'				{ LT }
+	| "<="				{ LTE }
+	| '>'				{ GT }
+	| ">="				{ GTE }
+	| "=="				{ EQ }
+	| "!="				{ NOTEQ }
+	| "!"				{ NOT }
+	| "&&"				{ AND }
+	| "||"				{ OR }
 
 	// Misc
-	| "("			{ LPAREN }
-	| ")"			{ RPAREN }
-	| '['			{ LB }
-	| ']'			{ RB }
-	| ','			{ COMMA }
-	| ".."			{ DOTS }
-	| ';'			{ SEMICOLON }
+	| "("				{ LPAREN }
+	| ")"				{ RPAREN }
+	| '['				{ LB }
+	| ']'				{ RB }
+	| ','				{ COMMA }
+	| ".."				{ DOTS }
+	| ';'				{ SEMICOLON }
+
 	// Numeric constants
-	| IntNumber			{ INT32 (Int32.Parse(lexeme lexbuf, cultureInfo)) }
 	| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
+
 	// EOF
 	| eof   { EOF }
 

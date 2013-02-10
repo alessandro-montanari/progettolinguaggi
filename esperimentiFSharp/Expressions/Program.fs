@@ -16,7 +16,7 @@ open Parser
 open NeuralTypes
 open TableUtilities
 
-
+// Mi serve un'Environment "doppio"
 type Environment() =
     
     let _envSingle = new Dictionary<string, double>(HashIdentity.Structural)
@@ -25,12 +25,12 @@ type Environment() =
     member this.EnvSingle = _envSingle
     member this.EnvSeries = _envSeries
 
+
+
+
 let env = new Environment()
 
 let table = buildTableFromArff @"C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\glass - Copy.arff"
-
-// Devo controllare che gli identificatori non siano duplicati -> creare una classe che rappresenta l'ambiente
-//let envSeries = new Dictionary<string, double list>(HashIdentity.Structural)       
 
 for col in table.Columns do
     let colName = col.ColumnName
@@ -65,21 +65,33 @@ and checkExpression expr env =
                              checkExpression fact env
     | Negative expr -> checkExpression expr env
     | Value value -> checkValue value env
-
-and checkEquation eq env =
-    match eq with
-    | Equation expr -> checkExpression expr env
+    | And(ex1, ex2) -> checkExpression ex1 env
+                       checkExpression ex2 env
+    | Or(ex1, ex2) -> checkExpression ex1 env
+                      checkExpression ex2 env
+    | Not ex -> checkExpression ex env
+    | Lt(ex1, ex2) -> checkExpression ex1 env
+                      checkExpression ex2 env
+    | Lte(ex1, ex2) -> checkExpression ex1 env
+                       checkExpression ex2 env
+    | Gt(ex1, ex2) -> checkExpression ex1 env
+                      checkExpression ex2 env
+    | Gte(ex1, ex2) -> checkExpression ex1 env
+                       checkExpression ex2 env
+    | Eq(ex1, ex2) -> checkExpression ex1 env
+                      checkExpression ex2 env
+    | NotEq(ex1, ex2) -> checkExpression ex1 env
+                         checkExpression ex2 env
 
 
 /// Evaluate a value
 let rec evalValue factor (env:Environment) =
     match factor with
-    | Float x   -> x
-    | Integer x -> float x
+    | Double x   -> x
     | Id id -> env.EnvSingle.[id]
     | Boolean b -> match b with
-                | true -> 1.0
-                | false -> 0.0
+                    | true -> 1.0
+                    | false -> 0.0
     | Function (name,ex) -> evalFunction name (evalExpression ex env)
     | AggregateFunction (name, exList) -> evalAggregateFunction name (exList |> List.collect(fun exp -> match exp with
                                                                                                         | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
@@ -117,13 +129,18 @@ and evalFunction name param =
 
 /// Evaluate an expression
 and evalExpression expr env =
+    let op f v v' = 
+        if (f v v') then
+            1.0
+        else
+            0.0
     match expr with
-    | Plus (expr, term)  -> (evalExpression expr env) + (evalExpression term env)
-    | Minus (expr, term) -> (evalExpression expr env) - (evalExpression term env)
-    | Times (term, fact)  -> (evalExpression term env) * (evalExpression fact env)
-    | Pow (term, fact) -> (evalExpression term env) ** (evalExpression fact env)
-    | Divide (term, fact) -> (evalExpression term env) / (evalExpression fact env)
-    | Negative expr -> -(evalExpression expr env)
+    | Plus (ex1, ex2)  -> (evalExpression ex1 env) + (evalExpression ex2 env)
+    | Minus (ex1, ex2) -> (evalExpression ex1 env) - (evalExpression ex2 env)
+    | Times (ex1, ex2)  -> (evalExpression ex1 env) * (evalExpression ex2 env)
+    | Pow (ex1, ex2) -> (evalExpression ex1 env) ** (evalExpression ex2 env)
+    | Divide (ex1, ex2) -> (evalExpression ex1 env) / (evalExpression ex2 env)
+    | Negative ex1 -> -(evalExpression ex1 env)
     | Value value -> evalValue value env
     | And(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
                         | 1.0,1.0 -> 1.0
@@ -134,46 +151,30 @@ and evalExpression expr env =
     | Not ex -> match (evalExpression ex env) with
                 | 1.0 -> 0.0
                 | _ -> 1.0
-    | Lt(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with     //TODO da fattorizzare
-                        | a, b when a<b -> 1.0
-                        | _, _ -> 0.0
-    | Lte(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-                        | a, b when a<=b -> 1.0
-                        | _, _ -> 0.0
-    | Gt(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-                        | a, b when a>b -> 1.0
-                        | _, _ -> 0.0
-    | Gte(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-                        | a, b when a>=b -> 1.0
-                        | _, _ -> 0.0
-    | Eq(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-                        | a, b when a=b -> 1.0
-                        | _, _ -> 0.0
-    | NotEq(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-                        | a, b when a<>b -> 1.0
-                        | _, _ -> 0.0
-                                                
-/// Evaluate an equation
-and evalEquation eq env =
-    match eq with
-    | Equation expr -> evalExpression expr env
+    | Lt(ex1, ex2) -> op (<) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Lte(ex1, ex2) -> op (<=) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Gt(ex1, ex2) -> op (>) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Gte(ex1, ex2) -> op (>=) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Eq(ex1, ex2) -> op (=) (evalExpression ex1 env) (evalExpression ex2 env)
+    | NotEq(ex1, ex2) -> op (<>) (evalExpression ex1 env) (evalExpression ex2 env)
+                                               
 
 printfn "Calculator"
 
 
 let rec readAndProcess() =
-//    let exp = "min([RI,-5])-RI"
+//    let exp = "RI>1.5"
 //    printfn "%s" exp
 //    
 //    let lexbuff = LexBuffer<char>.FromString(exp)
-//    let equation = Parser.start Lexer.tokenize lexbuff
+//    let expression = Parser.start Lexer.tokenize lexbuff
 //
 //    let attName = "NEW"
 //
 //    let colNameList = [for col in table.Columns do yield col.ColumnName]
 //    colNameList
 //    |> List.iter(fun el -> env.EnvSingle.Add(el, 0.0))    
-//    checkEquation equation env
+//    checkExpression expression env
 //
 //    env.EnvSingle.Clear()
 //
@@ -187,11 +188,27 @@ let rec readAndProcess() =
 //            if colName <> attName && not(row.IsNull(colName)) && (table.Columns.[colName] :?> AttributeDataColumn).AttributeType = AttributeType.Numeric then
 //                env.EnvSingle.Add(colName, unbox row.[colName])
 //        row.[attName] <- try
-//                            box (evalEquation equation env)          // Qui potrei andare parallelo/asincrono
+//                            box (evalExpression expression env)          // Qui potrei andare parallelo/asincrono
 //                         with
 //                         | exn -> box DBNull.Value
 //        env.EnvSingle.Clear()
 //
+//
+//
+//    for row in table.Select() do
+//        for col in table.Columns do
+//            let colName = col.ColumnName
+//            if  not(row.IsNull(colName)) && (table.Columns.[colName] :?> AttributeDataColumn).AttributeType = AttributeType.Numeric then
+//                env.EnvSingle.Add(colName, unbox row.[colName])
+//        let testRes = try
+//                        Some(evalExpression expression env)
+//                      with
+//                      | exn -> None                         // Vado qui se per un attributo specificato nell'espressione c'è un missing (non trova l'ID nell'env)
+//        match testRes with
+//        | Some(1.0) -> table.Rows.Remove(row)
+//        | Some(_) | None -> ()                              // Se l'espressione è false o un valore è missing, non elimino la riga
+//
+//        env.EnvSingle.Clear()
 //
 //    let form = new Form()
 //    let grid = new DataGridView(Dock=DockStyle.Fill, DataSource=table)
@@ -209,10 +226,10 @@ let rec readAndProcess() =
             let lexbuff = LexBuffer<char>.FromString(expr)
             
             printfn "Parsing..."
-            let equation = Parser.start Lexer.tokenize lexbuff
+            let expression = Parser.start Lexer.tokenize lexbuff
             
             printfn "Evaluating Equation..."
-            let result = evalEquation equation env
+            let result = evalExpression expression env
             
             printfn "Result: %s" (result.ToString())
             
