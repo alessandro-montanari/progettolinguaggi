@@ -10,7 +10,7 @@ open System.Windows.Forms
 
 open Microsoft.FSharp.Text.Lexing
 
-open Ast
+open ExpressionsAst
 open Lexer
 open Parser
 open NeuralTypes

@@ -1,4 +1,4 @@
-﻿namespace Ast
+﻿namespace ExpressionsAst
 open System
 
 // Note:

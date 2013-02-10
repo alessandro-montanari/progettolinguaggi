@@ -6,7 +6,7 @@ open Microsoft.FSharp.Text.Parsing.ParseHelpers
 # 1 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
 
 
-open Ast
+open ExpressionsAst
 
 
 # 12 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
@@ -283,7 +283,7 @@ let _fsyacc_immediateActions = [|65535us; 49152us; 65535us; 16385us; 65535us; 65
 let _fsyacc_reductions ()  =    [| 
 # 284 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data :  Ast.Expression )) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data :  ExpressionsAst.Expression )) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
@@ -297,10 +297,10 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                         _1 
+                                        _1 
                    )
 # 35 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                 :  Ast.Expression ));
+                 :  ExpressionsAst.Expression ));
 # 304 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'BAnd)) in
@@ -308,7 +308,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                    _1 
+                                   _1 
                    )
 # 38 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'BOr));
@@ -320,7 +320,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                        Or(_1, _3)  
+                                        Or(_1, _3) 
                    )
 # 39 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'BOr));
@@ -331,7 +331,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                       _1 
+                                      _1 
                    )
 # 42 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'BAnd));
@@ -343,7 +343,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                             And(_1, _3)  
+                                             And(_1, _3) 
                    )
 # 43 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'BAnd));
@@ -366,7 +366,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                 Lt(_1, _3)  
+                                                 Lt(_1, _3) 
                    )
 # 47 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
@@ -378,7 +378,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                  Lte(_1, _3)  
+                                                  Lte(_1, _3) 
                    )
 # 48 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
@@ -390,7 +390,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                 Gt(_1, _3)  
+                                                 Gt(_1, _3) 
                    )
 # 49 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
@@ -402,7 +402,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 50 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                  Gte(_1, _3)  
+                                                  Gte(_1, _3) 
                    )
 # 50 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
@@ -414,7 +414,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                 Eq(_1, _3)  
+                                                 Eq(_1, _3) 
                    )
 # 51 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
@@ -426,7 +426,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                   NotEq(_1, _3)  
+                                                   NotEq(_1, _3) 
                    )
 # 52 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'CondExpr));
@@ -438,7 +438,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                             Plus(_1, _3)  
+                                                            Plus(_1, _3)  
                    )
 # 55 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Additive));
@@ -450,7 +450,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                             Minus(_1, _3) 
+                                                            Minus(_1, _3) 
                    )
 # 56 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Additive));
@@ -462,7 +462,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 57 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                         Pow(_1, _3) 
+                                                       Pow(_1, _3) 
                    )
 # 57 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Additive));
@@ -473,7 +473,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 58 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                 _1      
+                                                _1 
                    )
 # 58 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Additive));
@@ -485,7 +485,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 61 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                          Times(_1, _3)  
+                                                         Times(_1, _3)  
                    )
 # 61 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Multiplicative));
@@ -497,7 +497,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 62 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                          Divide(_1, _3) 
+                                                         Divide(_1, _3) 
                    )
 # 62 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Multiplicative));
@@ -508,7 +508,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 63 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                        _1 
+                                          _1 
                    )
 # 63 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Multiplicative));
@@ -519,7 +519,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 66 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                    _1 
+                                     _1 
                    )
 # 66 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
@@ -541,7 +541,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 68 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                    Not(_2) 
+                                     Not(_2) 
                    )
 # 68 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Unary));
@@ -585,7 +585,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 74 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
-                                                        _2 
+                                                         _2 
                    )
 # 74 "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\Expressions\Parser.fsy"
                  : 'Value));
@@ -693,5 +693,5 @@ let tables () : Microsoft.FSharp.Text.Parsing.Tables<_> =
     numTerminals = 33;
     productionToNonTerminalTable = _fsyacc_productionToNonTerminalTable  }
 let engine lexer lexbuf startState = (tables ()).Interpret(lexer, lexbuf, startState)
-let start lexer lexbuf :  Ast.Expression  =
+let start lexer lexbuf :  ExpressionsAst.Expression  =
     Microsoft.FSharp.Core.Operators.unbox ((tables ()).Interpret(lexer, lexbuf, 0))
