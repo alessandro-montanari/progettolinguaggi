@@ -20,3 +20,4 @@ esperimentiFSharp/Expressions/bin/*
 esperimentiFSharp/Expressions/obj/*
 
 *.pdb
+*.exe

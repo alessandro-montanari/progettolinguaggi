@@ -113,6 +113,88 @@ let sampleCode = "p17 : mean(ciao), \n\
                                                     p11 : 4.5 + -5 \n\
                                                   }" 
 
+let code = "LOAD_TRAINING : \"C:\ciao\ciao\ain.dll\",
+LOAD_NETWORK : \"C:\ciao\ciao\et.dll\"
+
+// Mettendoli qui non perdo in generalità perché comunque il mio obbiettivo è quello di modellare reti con apprendimento supervisionato
+// Per efficienza si può anche mettere un parametro \"TRAINING_TABLE\" che rappresenta il training_set già caricato
+TRAINING_SET : \"C:\ciao\ciao\ciao.arff\"
+CLASS_ATTRIBUTE : \"Type\" 
+
+// Opzionale
+PREPROCESSING 
+{ 
+// Nelle espressioni specificate nei filtri si può fare riferimento agli attributi della tabella del training set o con il loro nome 
+//(RI, Na, \"mio att\") oppure tramite indice con il prefisso ATT<index>
+// L'interpretazione dell'attributo dipende da dove compare, se compare come argomento di una aggregate function viene interpretato come 
+// set di valori relativi a quell'attributo, altrimenti viene interpretato come valore singolo relativo ad una specifica riga
+	// Opzionale
+	ATTRIBUTE 
+	{ 	
+		p17(ciao: 56.0, attributes: 5.0),
+		p11(ciao:4.5 +5.0, ciao: 56.0) 
+	}
+ 
+	// Opzionale
+	INSTANCE 
+	{ 
+		p17(ciao: 56.0),
+		p11(ciao:4.5 +5.0) 
+	} 
+} 
+
+// Obbligatorio
+NETWORK MultiLayer
+{ 
+// Nelle funzioni di Act si fa riferimento agli ingressi e ai pesi rispettivamente con IN<index> e WE<index>. E' possibile utilizzare IN 
+// e WE per rappresentare tutti i valori di ingresso e tutti i pesi (utile per sumOfProducts)
+// Nella funzione di Out si fa riferimento all'unico ingresso con IN
+
+	SEED : 5.0					// Opzionale
+
+	ASPECT HIDDEN_LAYER				// Opzionale
+	{	 
+		NEURONS : 10.0,			
+		// Si potrebbe anche evitare di scrivere il nome della funzione -> si fa riferimento all'input con 'input'
+		// In questo modo si deve fornire una espressione F#
+		ACTIVATION_FUNCTION : 5.0,		
+		OUTPUT_FUNCTION : 6.0	
+	} 
+
+	ASPECT HIDDEN_LAYER
+	{	 
+		NEURONS : 5.0,
+		ACTIVATION_FUNCTION : \"sumOfProducts\",
+		OUTPUT_FUNCTION : \"sigmoid\"
+	} 
+
+	ASPECT HIDDEN_LAYER
+	{	 
+		NEURONS : 2.0,
+		ACTIVATION_FUNCTION : \"sumOfProducts\",
+		OUTPUT_FUNCTION : \"sigmoid\"
+	} 
+
+	ASPECT OUTPUT_LAYER 				
+	{	 
+		ACTIVATION_FUNCTION : \"sumOfProducts\",	
+		OUTPUT_FUNCTION : \"linear\"			
+	} 
+} 
+
+// Obbligatorio
+TRAINING BackPropagation 
+{ 
+	LEARNING_RATE : 0.3,
+	EPOCHS : 500.0
+} 
+
+// Opzionale
+VALIDATION 
+{ 
+	TEST_SET : \"C:\test.arrf\" 
+}"
+
 let createEditor =
     let text = new SyntaxHighlighter.SyntaxRichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
     text.Settings.Keywords.Add("INSTANCE")
@@ -123,8 +205,9 @@ let createEditor =
     text.Settings.Keywords.Add("NETWORK")
     text.Settings.Keywords.Add("TRAINING_SET")
     text.Settings.Keywords.Add("CLASS_ATTRIBUTE")
-    text.Settings.Keywords.Add("LOAD_TRAINING")
-    text.Settings.Keywords.Add("#LOAD_NETWORK")
+    text.Settings.Keywords.Add("ASPECT")
+//    text.Settings.Keywords.Add("LOAD_TRAINING")
+//    text.Settings.Keywords.Add("LOAD_NETWORK")
 
     text.Settings.Comment <- "//"
 
@@ -141,7 +224,10 @@ let createEditor =
 let main argv = 
     let parser (code:string) =
         let lexbuf = Lexing.LexBuffer<_>.FromString code
-        NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
+        try
+            NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
+        with
+        | exn -> failwithf "parse error near, line: %d - column: %d" lexbuf.EndPos.Line lexbuf.EndPos.Column
 
     let buildInterface (parser : string -> Network) =
         let form = new Form(Visible=true)

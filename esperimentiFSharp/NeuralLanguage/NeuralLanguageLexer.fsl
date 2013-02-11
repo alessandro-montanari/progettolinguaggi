@@ -19,8 +19,7 @@ let keywords = [
     "NETWORK", NETWORKKEY;
     "TRAINING_SET", TRAINSETKEY;
     "CLASS_ATTRIBUTE", CLASSKEY;
-    "LOAD_TRAINING", LOADTRAIN;
-    "LOAD_NETWROK", LOADNET] |> Map.ofList
+    "ASPECT", ASPECTKEY ] |> Map.ofList
 }
 
 let char				= ['a'-'z' 'A'-'Z']
@@ -65,8 +64,8 @@ rule tokenize = parse
 
 	// Identifiers
 	| attIdentifier	{ ATTINDEX(extractIndex (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
-	| instIdentifier{ INSTINDEX(extractIndex (lexeme lexbuf)) }													// stesso discorso di sopra
-	| "\""			{ STRING(string lexbuf.StartPos "" lexbuf) }
+	| instIdentifier{ INSTINDEX(extractIndex (lexeme lexbuf)) }											// stesso discorso di sopra
+	| "\""			{ QUOTEDSTRING(string lexbuf.StartPos "" lexbuf) }
  	| identifier	{ match keywords.TryFind(lexeme lexbuf) with
                         | Some(token) -> token
                         | None -> STRING(lexeme lexbuf) }
@@ -84,6 +83,7 @@ rule tokenize = parse
 	| ':'			{ COLON }
 	| ".."			{ DOTS }
 	| ';'			{ SEMICOLON }
+	| "//"			{ comment lexbuf; tokenize lexbuf}
 	| eof			{ EOF }
 	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }
 
@@ -91,4 +91,8 @@ and string pos s = parse			// Accumulo la stringa in s fino alla chiusura (") e 
 	| "\""		{ s }
 	| eof		{ failwithf "end of file in string started at or near line %d, character %d \n String : '%s'\n" pos.Line pos.Column s }
 	| _			{ string pos (s + (lexeme lexbuf)) lexbuf }
+
+and comment = parse			
+	| "\n"		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; }
+	| _			{ comment lexbuf }
 

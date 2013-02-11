@@ -12,10 +12,11 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 // Simboli terminali
 %token <string> STRING
 %token <int> ATTINDEX
-%token <int> INSTINDEX			
+%token <int> INSTINDEX		
+%token <string> QUOTEDSTRING	
 
 %token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS SEMICOLON
-%token PREPROC TRAININGKEY VALIDATIONKEY PLOT ATTKEY INSTKEY TRAINSETKEY TESTSETKEY NETWORKKEY CLASSKEY LOADTRAIN LOADNET
+%token PREPROC TRAININGKEY VALIDATIONKEY PLOT ATTKEY INSTKEY TRAINSETKEY TESTSETKEY NETWORKKEY CLASSKEY LOADTRAIN LOADNET ASPECTKEY
 
 %token <System.Double> DOUBLE
 %token <bool> BOOLEAN
@@ -26,8 +27,9 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 %token LT LTE GT GTE EQ NOTEQ
 %token SUMOFPRODUCTS
 
-
 %token EOF
+
+%nonassoc STRING
 
 // Scopo della grammatica
 %start start
@@ -49,12 +51,11 @@ start:	directives
 		EOF				{ { Directives = $1; TrainingSet = $2; ClassAttribute = $3; Preprocessing = $4; NetworkDefinition = $5; Training = $6; Validation = $7;} }
 
 directives :
-	|									{ [] }
-	| parameterList						{ $1 }
+	| parameterListOpt						{ $1 }
 
-trainingSet: TRAINSETKEY COLON STRING	{ $3 }
+trainingSet: TRAINSETKEY COLON QUOTEDSTRING 		{ $3 }
 
-classAttribute : CLASSKEY COLON STRING	{ $3 }
+classAttribute : CLASSKEY COLON QUOTEDSTRING 		{ $3 }
 
 preprocessing : PREPROC
 				LCB
@@ -87,7 +88,7 @@ parameter : STRING COLON parameterValue		{ Parameter ($1, $3) }
 
 parameterValue :
 	| BOr							{ Exp $1 }
-	| STRING						{ String $1 }
+	| QUOTEDSTRING					{ String $1 }
 	| attributeList					{ AttList (true, $1) }
 	| NOT attributeList				{ AttList (false, $2) }
 	| numberList					{ NumList (true, $1) }
@@ -98,12 +99,12 @@ parameterValue :
 attributeList : LB attributeInnerList RB	{ $2 }
 
 attributeInnerList :
-	| attributeElement								{ [$1] }
+	| attributeElement 								{ [$1] }
 	| attributeElement COMMA attributeInnerList		{ $1 :: $3 }
 
 attributeElement :
 	| ATTINDEX DOTS ATTINDEX			{ AttSequence (Convert.ToInt32($1, cultureInfo), Convert.ToInt32($3, cultureInfo)) }	
-	| STRING							{ AttName $1 }
+	| QUOTEDSTRING						{ AttName $1 }
 	| ATTINDEX							{ AttIndex (Convert.ToInt32($1, cultureInfo)) }
 
 numberList :
@@ -134,7 +135,7 @@ parameterList :
 
 parameterListOpt :
 	|									{ [] }
-	| parameterList						{ $1 }
+	| parameterList	%prec STRING					{ $1 }
 
 filter : 
 	| STRING LP parameterListOpt RP		{ Filter ($1, $3) }
@@ -147,10 +148,10 @@ filterList :
 attributeFilters : ATTKEY LCB filterList RCB	{ $3 }
 instanceFilters : INSTKEY LCB filterList RCB	{ $3 }
 
-aspect : STRING					
+aspect : ASPECTKEY STRING					
 		 LCB
 		 parameterList
-		 RCB						{ Aspect ($1, $3) }
+		 RCB						{ Aspect ($2, $4) }
 
 aspectList :
 	| aspect					{ [$1] }					// Se qui metto la lista vuota ho un errore reduce/reduce  (DA RIVEDERE)
