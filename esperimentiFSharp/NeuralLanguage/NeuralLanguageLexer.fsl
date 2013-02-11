@@ -5,7 +5,7 @@ open Microsoft.FSharp.Text.Lexing
 
 let lexeme = Lexing.LexBuffer<_>.LexemeString
 let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
-let extractId (text:string) = text.Split([|"ATT"; "INST"|], System.StringSplitOptions.RemoveEmptyEntries).[0]
+let extractIndex (text:string) = Convert.ToInt32(text.Split([|"ATT"; "INST"|], System.StringSplitOptions.RemoveEmptyEntries).[0])
 
 // Apro il modulo del parser per avere accesso ai token definiti li'
 open NeuralLanguageParser
@@ -16,6 +16,7 @@ let keywords = [
     "VALIDATION", VALIDATIONKEY;
     "ATTRIBUTE", ATTKEY;
     "INSTANCE", INSTKEY;
+    "NETWORK", NETWORKKEY;
     "TRAINING_SET", TRAINSETKEY;
     "CLASS_ATTRIBUTE", CLASSKEY;
     "LOAD_TRAINING", LOADTRAIN;
@@ -24,24 +25,55 @@ let keywords = [
 
 let char				= ['a'-'z' 'A'-'Z']
 let digit				= ['0'-'9']
-let number				= digit+ ('.' digit*)?
 let whitespace			= [' ' '\t']
 let newline				= "\n\r" | '\n' | '\r'
 let identifier			= char(char|digit|'_')*
 let attIdentifier		= "ATT"(digit)+
 let instIdentifier		= "INST"(digit)+
 
+let DoubleNumber = digit+ ('.' digit*)?(['e''E']['-']?digit+)?
+let function = "exp" | "sin" | "cos" | "acos" | "asin" | "tan" | "atan" | "sinh" | "tanh" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "abs"
+let aggregateFunction = "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
+let boolLiteral = "true" | "false"
+
 // rules
 rule tokenize = parse
 	| whitespace	{ tokenize lexbuf }
 	| newline		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf }
-	| number		{ NUMBER(Convert.ToDouble((lexeme lexbuf), cultureInfo)) }
-	| attIdentifier	{ ATTID(extractId (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
-	| instIdentifier{ INSTID(extractId (lexeme lexbuf)) }													// stesso discorso di sopra
-	| "\""			{ ID(string lexbuf.StartPos "" lexbuf) }
+	
+	// Bool literal
+	| boolLiteral		{ BOOLEAN(System.Boolean.Parse(lexeme lexbuf))}
+
+	// Operators
+	| function			{ FUNCTION(lexeme lexbuf) }	
+	| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
+	| "sumOfProducts"	{ SUMOFPRODUCTS }
+	| "+"				{ PLUS  }
+	| "-"				{ MINUS }
+	| "*"				{ ASTER }
+	| "/"				{ SLASH }
+	| "^"				{ POW }
+	| '<'				{ LT }
+	| "<="				{ LTE }
+	| '>'				{ GT }
+	| ">="				{ GTE }
+	| "=="				{ EQ }
+	| "!="				{ NOTEQ }
+	| "!"				{ NOT }
+	| "&&"				{ AND }
+	| "||"				{ OR }
+
+	// Identifiers
+	| attIdentifier	{ ATTINDEX(extractIndex (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
+	| instIdentifier{ INSTINDEX(extractIndex (lexeme lexbuf)) }													// stesso discorso di sopra
+	| "\""			{ STRING(string lexbuf.StartPos "" lexbuf) }
  	| identifier	{ match keywords.TryFind(lexeme lexbuf) with
                         | Some(token) -> token
-                        | None -> ID(lexeme lexbuf) }
+                        | None -> STRING(lexeme lexbuf) }
+
+	// Numeric constants
+	| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
+
 	| ','			{ COMMA }
 	| '('			{ LP }
 	| ')'			{ RP }

@@ -1,23 +1,52 @@
 ﻿module AST
 
+//open ExpressionsAst
+
+type Value =
+    | Boolean of bool
+    | Double   of double
+    | Id of string
+    | Function of string * Expression
+    | AggregateFunction of string * Expression list
+    | SumOfProducts of Expression list * Expression list                        
+
+and Expression =
+    | Value of Value
+    | Negative of Expression
+    | Not of Expression
+    | Times  of Expression * Expression
+    | Pow  of Expression * Expression
+    | Divide of Expression * Expression
+    | Plus  of Expression * Expression
+    | Minus of Expression * Expression
+    | And of Expression * Expression
+    | Or of Expression * Expression
+    | Lt of Expression * Expression
+    | Lte of Expression * Expression
+    | Gt of Expression * Expression
+    | Gte of Expression * Expression
+    | Eq of Expression * Expression
+    | NotEq of Expression * Expression
+
 type InstanceListElement = 
-    | InstId of int
-    | InstanceSequence of int * int
+    | InstIndex of int
+    | InstSequence of int * int
 
 type AttributeListElement =
-    | Id of string
-    | AttId of int
-    | AttributeSequence of int * int
+    | AttName of string
+    | AttIndex of int
+    | AttSequence of int * int
 
 type NumberListElement =
-    | Num of double
-    | NumberSequence of double * double
+    | Exp of Expression
+    | NumberSequence of Expression * Expression
 
 type ParameterValue =
     | AttList of bool * AttributeListElement list
     | NumList of bool * NumberListElement list
     | InstList of bool * InstanceListElement list
-    | Exp of Expression
+    | String of string                                      // C'è Id anche in Expression ma quello denota un valore double, questo è proprio una stringa
+    | Exp of Expression                                     // O stringa e poi chi la usa invoca il valutatore di Expressions??
 
 type Parameter = Parameter of string * ParameterValue
 type Filter = Filter of string * Parameter list
@@ -30,8 +59,8 @@ type Network =
         ClassAttribute : string
         Preprocessing : Filter list * Filter list;              // filtri di attributo e di istanza
         NetworkDefinition : string * Parameter list * Aspect list;
-        Training : string * Parameter list;
-        Validation : Parameter list;   // Forse qui conviene fattorizzare in un tipo Validation = string * Parameter list option
+        Training : string * Parameter list * Aspect list;
+        Validation : Parameter list * Aspect list;                                
     }
 
 
