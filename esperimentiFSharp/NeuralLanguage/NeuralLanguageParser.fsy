@@ -59,7 +59,7 @@ classAttribute : CLASSKEY COLON QUOTEDSTRING 		{ $3 }
 
 preprocessing : PREPROC
 				LCB
-				attributeFilters								// filtri per gli attributi SEMPRE prima di quelli per le istanze
+				attributeFilters								//TODO filtri per gli attributi SEMPRE prima di quelli per le istanze
 				instanceFilters
 				RCB					{ ($3, $4) }
 
@@ -203,7 +203,7 @@ Unary:
 Value:
 	| BOOLEAN											{ Value(Boolean($1))}
     | DOUBLE											{ Value(Double($1))  }
-	| STRING											{ Value(Id($1)) }
+	| STRING											{ Value(Id($1)) }			//TODO Non posso usare nomi degli attributi tra apici
     | LP BOr RP											{ $2 }
 	| FUNCTION LP BOr RP								{ Value(Function($1, $3)) }
 	| AGGFUNCTION LP ExprList RP						{ Value(AggregateFunction($1, $3)) }
