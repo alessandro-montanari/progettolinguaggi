@@ -64,6 +64,13 @@
     <None Include="App.config" />
     <None Include="NeuralLanguageParser.fsyacc.output" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.fsproj">
+      <Name>NeuralNetwork</Name>
+      <Project>{aefb4e87-d837-441a-91d0-0529aa7f8f9b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>

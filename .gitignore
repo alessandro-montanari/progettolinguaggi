@@ -21,3 +21,4 @@ esperimentiFSharp/Expressions/obj/*
 
 *.pdb
 *.exe
+*.cache

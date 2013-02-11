@@ -6,6 +6,9 @@ open NeuralLanguageParser
 open NeuralLanguageLex
 open System.Windows.Forms
 open System.Drawing
+open System
+open System.Collections.Generic
+open Parameter
 
 //[<EntryPoint>]
 //let main argv = 
@@ -194,6 +197,161 @@ VALIDATION
 { 
 	TEST_SET : \"C:\test.arrf\" 
 }"
+
+// ==================================================================================
+// ========================INTERPRETE================================================
+// ==================================================================================
+
+// Mi serve un'Environment "doppio" per tenere i valori scalari e le liste di valori
+type Environment() =
+    
+    let _envSingle = new Dictionary<string, double>(HashIdentity.Structural)
+    let _envSeries = new Dictionary<string, double list>(HashIdentity.Structural)
+
+    member this.EnvSingle = _envSingle
+    member this.EnvSeries = _envSeries
+
+/// Evaluate a value
+let rec evalValue factor (env:Environment) =
+    match factor with
+    | Double x   -> x
+    | Id id -> env.EnvSingle.[id]
+    | Boolean b -> match b with
+                    | true -> 1.0
+                    | false -> 0.0
+    | Function (name,ex) -> evalFunction name (evalExpression ex env)
+    | AggregateFunction (name, exList) -> evalAggregateFunction name (exList |> List.collect(fun exp -> match exp with
+                                                                                                        | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
+                                                                                                        | exp -> [evalExpression exp env]) )
+
+    | SumOfProducts(exList1, exList2) -> List.fold2 (fun acc el1 el2 -> acc + (evalExpression el1 env)*(evalExpression el2 env)) 0.0 exList1 exList2
+
+and evalAggregateFunction name (paramList: double list) =
+    match name with
+    | "min" -> paramList |> List.fold (fun prevMin currVal -> Math.Min(prevMin, currVal)) Double.MaxValue
+    | "max" -> paramList |> List.fold (fun prevMin currVal -> Math.Max(prevMin, currVal)) Double.MinValue
+    | "sum" -> paramList |> List.sum
+    | "sumsquared" -> paramList |> List.map(fun el -> el*el) |> List.sum
+    | "mean" -> paramList |> List.average
+    | "sd" ->   let avg = paramList |> List.average
+                sqrt (List.fold (fun acc elem -> acc + (float elem - avg) ** 2.0 ) 0.0 paramList / float paramList.Length)     
+
+and evalFunction name param =
+    match name with
+    | "sin" -> Math.Sin(param)
+    | "cos" -> Math.Cos(param)
+    | "acos" -> Math.Acos(param)
+    | "asin" -> Math.Asin(param)
+    | "tan" -> Math.Tan(param)
+    | "atan" -> Math.Atan(param)
+    | "sinh" -> Math.Sinh(param)
+    | "tanh" -> Math.Tanh(param)
+    | "log" -> Math.Log10(param)
+    | "ln" -> Math.Log(param)
+    | "floor" -> Math.Floor(param)
+    | "ceil" -> Math.Ceiling(param)
+    | "sqrt" -> Math.Sqrt(param)
+    | "exp" -> Math.Exp(param)
+    | "abs" -> Math.Abs(param)
+
+/// Evaluate an expression
+and evalExpression expr env =
+    let op f v v' = 
+        if (f v v') then
+            1.0
+        else
+            0.0
+    match expr with
+    | Plus (ex1, ex2)  -> (evalExpression ex1 env) + (evalExpression ex2 env)
+    | Minus (ex1, ex2) -> (evalExpression ex1 env) - (evalExpression ex2 env)
+    | Times (ex1, ex2)  -> (evalExpression ex1 env) * (evalExpression ex2 env)
+    | Pow (ex1, ex2) -> (evalExpression ex1 env) ** (evalExpression ex2 env)
+    | Divide (ex1, ex2) -> (evalExpression ex1 env) / (evalExpression ex2 env)
+    | Negative ex1 -> -(evalExpression ex1 env)
+    | Value value -> evalValue value env
+    | And(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | 1.0,1.0 -> 1.0
+                        | _, _ -> 0.0
+    | Or(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
+                        | 1.0,_ | _, 1.0 -> 1.0
+                        | _, _ -> 0.0
+    | Not ex -> match (evalExpression ex env) with
+                | 1.0 -> 0.0
+                | _ -> 1.0
+    | Lt(ex1, ex2) -> op (<) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Lte(ex1, ex2) -> op (<=) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Gt(ex1, ex2) -> op (>) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Gte(ex1, ex2) -> op (>=) (evalExpression ex1 env) (evalExpression ex2 env)
+    | Eq(ex1, ex2) -> op (=) (evalExpression ex1 env) (evalExpression ex2 env)
+    | NotEq(ex1, ex2) -> op (<>) (evalExpression ex1 env) (evalExpression ex2 env)
+
+
+let env = new Environment()
+let nOfInstances = 10
+let attList = new ResizeArray<string>()
+
+let rec evalParameter (store:ParameterStore) = function
+    | Parameter(name, value) -> let value = evalParameterValue value
+                                store.AddValue(name, value)
+                                store
+and evalParameterValue value = function
+    | Exp exp -> evalExpression exp env |> box              // TODO La valuto subito???
+    | String str -> str |> box
+    | InstList (compl, list) -> let resList = list |> List.collect(fun el -> evalInstanceListElement el) |> Set.ofList |> Set.toList
+                                if compl then
+                                    resList |> box
+                                else
+                                    [0..nOfInstances] |> List.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
+    | NumList list  -> list |> List.collect(fun el -> evalNumberListElement el) |> box
+    | AttList (compl, list) ->  let resList = list |> List.collect(fun el -> evalAttributeListElement el) |> Set.ofList |> Set.toList
+                                if compl then
+                                    resList |> box
+                                else
+                                    attList |> Seq.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
+
+and evalInstanceListElement = function
+    | InstIndex idx -> if idx >= 0 && idx <= nOfInstances-1 then
+                            [idx]
+                       else
+                             failwithf "An instance with index '%d' is not defined" idx
+    | InstSequence(idx1, idx2) -> let indexList = if idx1 <= idx2 then
+                                                        [idx1..idx2]
+                                                  else
+                                                        [idx1..(-1)..idx2]
+                                  if List.forall(fun el ->  el >= 0 && el <= nOfInstances-1) indexList then
+                                        indexList
+                                  else
+                                        failwithf "The instance range specified is not valid."
+
+and evalNumberListElement = function
+    | NumberListElement.Exp exp -> [evalExpression exp env]
+    | NumberSequence(exp1, exp2) -> let val1 = evalExpression exp1 env
+                                    let val2 = evalExpression exp2 env
+                                    if val1 <= val2 then
+                                        [val1..val2]
+                                    else
+                                        [val1..(-1.0)..val2]
+and evalAttributeListElement = function
+    | AttName name -> if attList.Contains(name) then
+                        [name]
+                      else
+                        failwithf "An attribute with name '%s' is not defined" name
+    | AttIndex idx -> try
+                        [attList.[idx]]
+                      with
+                       | :? ArgumentOutOfRangeException as e -> failwithf "An attribute with index '%d' is not defined" idx
+    | AttSequence(idx1, idx2) -> let indexList = if idx1 <= idx2 then
+                                                    [idx1..idx2]
+                                                 else
+                                                    [idx1..(-1)..idx2]
+                                 try
+                                    indexList |> List.map(fun idx -> attList.[idx])
+                                 with
+                                 | :? ArgumentOutOfRangeException as e -> failwith "The attribute range specified is not valid. 
+                                                                                    An attribute with index '%d' is not defined" (Convert.ToInt32(e.ActualValue))
+    
+
+
 
 let createEditor =
     let text = new SyntaxHighlighter.SyntaxRichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)

@@ -26,7 +26,7 @@ and Expression =
     | Gt of Expression * Expression
     | Gte of Expression * Expression
     | Eq of Expression * Expression
-    | NotEq of Expression * Expression
+    | NotEq of Expression * Expression  
 
 type InstanceListElement = 
     | InstIndex of int
@@ -43,7 +43,7 @@ type NumberListElement =
 
 type ParameterValue =
     | AttList of bool * AttributeListElement list
-    | NumList of bool * NumberListElement list
+    | NumList of NumberListElement list
     | InstList of bool * InstanceListElement list
     | String of string                                      // C'è Id anche in Expression ma quello denota un valore double, questo è proprio una stringa
     | Exp of Expression                                     // O stringa e poi chi la usa invoca il valutatore di Expressions??

@@ -91,8 +91,7 @@ parameterValue :
 	| QUOTEDSTRING					{ String $1 }
 	| attributeList					{ AttList (true, $1) }
 	| NOT attributeList				{ AttList (false, $2) }
-	| numberList					{ NumList (true, $1) }
-	| NOT numberList				{ NumList (false, $2) }
+	| numberList					{ NumList $1 }
 	| instList						{ InstList (true, $1) }
 	| NOT instList					{ InstList (false, $2) }
 
