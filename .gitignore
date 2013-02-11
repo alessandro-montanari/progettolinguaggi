@@ -18,3 +18,5 @@ esperimentiFSharp/NeuralTypes/bin/*
 esperimentiFSharp/NeuralTypes/obj/*
 esperimentiFSharp/Expressions/bin/*
 esperimentiFSharp/Expressions/obj/*
+
+*.pdb
