@@ -33,6 +33,7 @@ rule tokenize = parse
 	| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
 	| "sumOfProducts"	{ SUMOFPRODUCTS }
 	| identifier		{ ID(lexeme lexbuf) }
+	| "'"				{ ID(string lexbuf.StartPos "" lexbuf) }
 	| "+"				{ PLUS  }
 	| "-"				{ MINUS }
 	| "*"				{ ASTER }
@@ -62,4 +63,9 @@ rule tokenize = parse
 
 	// EOF
 	| eof   { EOF }
+
+and string pos s = parse
+	| "'"		{ s }
+	| eof		{ failwithf "end of file in string started at or near line %d, character %d \n String : '%s'\n" pos.Line pos.Column s }
+	| _			{ string pos (s + (lexeme lexbuf)) lexbuf }
 

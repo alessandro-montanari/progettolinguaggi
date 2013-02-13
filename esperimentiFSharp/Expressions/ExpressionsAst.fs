@@ -10,9 +10,6 @@ open System
 //      Si è ritenuto non complicare l'interprete più di tanto visto l'obbiettivo di voler rappresentare delle semplici funzioni matematiche.
 // - Espressioni booleane: valori double come boolean. 1.0 -> true, 0.0 -> false
 
-
-// TODO Mancano gli Id con i singoli apici
-
 type Value =
     | Boolean of bool
     | Double   of double

@@ -18,6 +18,7 @@ open Environment
 open Evaluator
 
 let env = new Environment()
+env.EnvSingle.Add("x y", 1.0)
                                                
 printfn "Calculator"
 
