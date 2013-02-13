@@ -2,6 +2,9 @@
 
 open System
 open System.Data
+open Environment
+open Evaluator
+open PreprocessingUtilities
 
 let removeRange (instances:int list) (table:DataTable) =
     instances
@@ -25,8 +28,20 @@ let removePercentage (percentage:double) (table:DataTable) =
     let list = loop numRows Set.empty<int>
     removeRange (Set.toList list) table
 
-let subsetByExpression (expression:string) (table:DataTable) =
-    let expression = "not("+expression+")"
-    let rowsToDelete = table.Select(expression)
-    rowsToDelete
-    |> Array.iter (fun row -> table.Rows.Remove(row) )
+let subsetByExpression expression (table:DataTable) =
+    let exp = parseExpression expression
+    let env = new Environment()
+
+    checkExpression table exp []
+
+    fillAttributesSeries env table
+
+    for row in table.Select() do
+        fillAttributesSingle env row
+        let testRes = try
+                        Some(evalExpression exp env)
+                      with
+                      | exn -> None                         // Vado qui se per un attributo specificato nell'espressione c'è un missing (non trova l'ID nell'env)
+        match testRes with
+        | Some(1.0) -> table.Rows.Remove(row)
+        | Some(_) | None -> ()                              // Se l'espressione è false o un valore è missing, non elimino la riga

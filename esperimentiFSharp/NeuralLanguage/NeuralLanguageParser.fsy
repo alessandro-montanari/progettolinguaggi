@@ -11,25 +11,20 @@ let cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us"
 
 // Simboli terminali
 %token <string> STRING
+%token <string> QUOTEDSTRING	
 %token <int> ATTINDEX
 %token <int> INSTINDEX		
-%token <string> QUOTEDSTRING	
 
-%token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS SEMICOLON
+%token LP RP LCB RCB LB RB COMMA NEWLINE COLON DOTS
 %token PREPROC TRAININGKEY VALIDATIONKEY PLOT ATTKEY INSTKEY TRAINSETKEY TESTSETKEY NETWORKKEY CLASSKEY LOADTRAIN LOADNET ASPECTKEY
 
 %token <System.Double> DOUBLE
 %token <bool> BOOLEAN
-%token <string> FUNCTION
-%token <string> AGGFUNCTION
-%token PLUS MINUS ASTER	SLASH POW
-%token AND OR NOT TRUE FALSE
-%token LT LTE GT GTE EQ NOTEQ
-%token SUMOFPRODUCTS
+%token <int> INT
+
+%token NOT 
 
 %token EOF
-
-%nonassoc STRING
 
 // Scopo della grammatica
 %start start
@@ -87,11 +82,12 @@ validation :
 parameter : STRING COLON parameterValue		{ Parameter ($1, $3) }
 
 parameterValue :
-	| BOr							{ Exp $1 }
+	| DOUBLE						{ Double $1 }
+	| INT							{ Integer $1 }
+	| BOOLEAN						{ Bool $1 }
 	| QUOTEDSTRING					{ String $1 }
 	| attributeList					{ AttList (true, $1) }
 	| NOT attributeList				{ AttList (false, $2) }
-	| numberList					{ NumList $1 }
 	| instList						{ InstList (true, $1) }
 	| NOT instList					{ InstList (false, $2) }
 
@@ -105,17 +101,6 @@ attributeElement :
 	| ATTINDEX DOTS ATTINDEX			{ AttSequence (Convert.ToInt32($1, cultureInfo), Convert.ToInt32($3, cultureInfo)) }	
 	| QUOTEDSTRING						{ AttName $1 }
 	| ATTINDEX							{ AttIndex (Convert.ToInt32($1, cultureInfo)) }
-
-numberList :
-	| LB numberInnerList RB						{ $2 }
-	
-numberInnerList :
-	| numberElement								{ [$1] }
-	| numberElement COMMA numberInnerList 		{ $1 :: $3 }
-
-numberElement :
-	| BOr DOTS BOr				{ NumberSequence ($1, $3) }	
-	| BOr						{ NumberListElement.Exp $1 }
 
 instList :
 	| LB instInnerList RB				{ $2 }
@@ -153,66 +138,9 @@ aspect : ASPECTKEY STRING
 		 RCB						{ Aspect ($2, $4) }
 
 aspectList :
-	| aspect					{ [$1] }					// Se qui metto la lista vuota ho un errore reduce/reduce  (DA RIVEDERE)
+	| aspect					{ [$1] }				
 	| aspect aspectList			{ $1 :: $2 }
 
 aspectListOpt :
 	|				{ [] }
 	| aspectList	{ $1 }
-
-
-
-// ============================================================================================
-// ==========================ESPRESSIONI=======================================================
-// ============================================================================================
-
-BOr:
-	| BAnd					{ $1 }
-	| BOr OR BAnd			{ Or($1, $3) }
-
-BAnd:
-	| CondExpr				{ $1 }
-	| BAnd AND CondExpr		{ And($1, $3) }
-
-CondExpr:
-	| Additive						{ $1 }
-	| CondExpr LT Additive			{ Lt($1, $3) }
-	| CondExpr LTE Additive			{ Lte($1, $3) }
-	| CondExpr GT Additive			{ Gt($1, $3) }
-	| CondExpr GTE Additive			{ Gte($1, $3) }
-	| CondExpr EQ Additive			{ Eq($1, $3) }
-	| CondExpr NOTEQ Additive		{ NotEq($1, $3) }
-	
-Additive: 
-    | Additive PLUS  Multiplicative		{ Plus($1, $3)  }
-    | Additive MINUS Multiplicative		{ Minus($1, $3) }
-	| Additive POW Multiplicative		{ Pow($1, $3) }
-    | Multiplicative					{ $1 }
-
-Multiplicative:
-    | Multiplicative ASTER Unary		{ Times($1, $3)  }
-    | Multiplicative SLASH Unary		{ Divide($1, $3) }
-    | Unary								{ $1 }
-
-Unary:
-    | Value			{ $1 }
-    | MINUS Value	{ Negative($2) }
-	| NOT Value		{ Not($2) }
-    
-Value:
-	| BOOLEAN											{ Value(Boolean($1))}
-    | DOUBLE											{ Value(Double($1))  }
-	| STRING											{ Value(Id($1)) }			//TODO Non posso usare nomi degli attributi tra apici
-    | LP BOr RP											{ $2 }
-	| FUNCTION LP BOr RP								{ Value(Function($1, $3)) }
-	| AGGFUNCTION LP ExprList RP						{ Value(AggregateFunction($1, $3)) }
-	| SUMOFPRODUCTS LP ExprList SEMICOLON ExprList RP	{ Value(SumOfProducts($3, $5)) }
-
-ExprList:
-	| BOr						{ [$1] }
-	| LB ExprInnerList RB		{ $2 }
-
-ExprInnerList:
-	| BOr						{ [$1] }
-	| BOr COMMA ExprInnerList 	{ $1 :: $3 }
-

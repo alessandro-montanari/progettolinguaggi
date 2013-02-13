@@ -30,9 +30,8 @@ let identifier			= char(char|digit|'_')*
 let attIdentifier		= "ATT"(digit)+
 let instIdentifier		= "INST"(digit)+
 
-let DoubleNumber = digit+ ('.' digit*)?(['e''E']['-']?digit+)?
-let function = "exp" | "sin" | "cos" | "acos" | "asin" | "tan" | "atan" | "sinh" | "tanh" | "log" | "ln" | "floor" | "ceil" | "sqrt" | "abs"
-let aggregateFunction = "mean" | "min" | "max" | "sd" | "sum" | "sumsquared"
+let doubleNumber = digit+ ('.' digit*)?(['e''E']['-']?digit+)?
+let intNumber = digit+
 let boolLiteral = "true" | "false"
 
 // rules
@@ -43,24 +42,7 @@ rule tokenize = parse
 	// Bool literal
 	| boolLiteral		{ BOOLEAN(System.Boolean.Parse(lexeme lexbuf))}
 
-	// Operators
-	| function			{ FUNCTION(lexeme lexbuf) }	
-	| aggregateFunction { AGGFUNCTION(lexeme lexbuf) }
-	| "sumOfProducts"	{ SUMOFPRODUCTS }
-	| "+"				{ PLUS  }
-	| "-"				{ MINUS }
-	| "*"				{ ASTER }
-	| "/"				{ SLASH }
-	| "^"				{ POW }
-	| '<'				{ LT }
-	| "<="				{ LTE }
-	| '>'				{ GT }
-	| ">="				{ GTE }
-	| "=="				{ EQ }
-	| "!="				{ NOTEQ }
 	| "!"				{ NOT }
-	| "&&"				{ AND }
-	| "||"				{ OR }
 
 	// Identifiers
 	| attIdentifier	{ ATTINDEX(extractIndex (lexeme lexbuf)) }											// Le regole fanno match dall'alto in basso, quindi questa va prima di identifier
@@ -71,7 +53,8 @@ rule tokenize = parse
                         | None -> STRING(lexeme lexbuf) }
 
 	// Numeric constants
-	| DoubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
+	| intNumber			{ INT (Int32.Parse(lexeme lexbuf, cultureInfo)) }
+	| doubleNumber		{ DOUBLE (Double.Parse(lexeme lexbuf, cultureInfo)) }
 
 	| ','			{ COMMA }
 	| '('			{ LP }
@@ -82,7 +65,6 @@ rule tokenize = parse
 	| ']'			{ RB }
 	| ':'			{ COLON }
 	| ".."			{ DOTS }
-	| ';'			{ SEMICOLON }
 	| "//"			{ comment lexbuf; tokenize lexbuf}
 	| eof			{ EOF }
 	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }

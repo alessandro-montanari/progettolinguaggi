@@ -5,56 +5,75 @@ open System.Data
 open System.Collections.Generic
 open TableUtilities
 open NeuralTypes
+open Environment
+open Evaluator
+open PreprocessingUtilities
 
-let private cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-us")
+// Posso referenziare l'attributo corrente con "A"
+// Pesante!!!
+let mathExpression (attributes:string list) expression (table:DataTable) =
+    let exp = parseExpression expression
+    let env = new Environment()
 
-// Individuo tutti gli attributi di un certo tipo
-let private getAttributesByType (attType:AttributeType) (table:DataTable) =
-    let colNames = new ResizeArray<string>()
-    for col in table.Columns do
-        if (col :?> AttributeDataColumn).AttributeType.GetType() = attType.GetType() then
-            colNames.Add(col.ColumnName)
-    List.ofSeq colNames
+    // Prima controllo che gli identificatori inseriti corrispondano ad attributi nella tabella
+    // Qui possibile speculazione...
+    checkExpression table exp ["A"]
 
+    fillAttributesSeries env table
 
-let mathExpression (attributesExpressions : (string*string) list) (table:DataTable) =
-    attributesExpressions
-    |> List.iteri (fun index (attName, exp) -> table.Columns.Add(attName+index.ToString(),typeof<double>, exp) |> ignore )
-
-    for row in table.Rows do
-        let mutable i = 0
-        for colName,_ in attributesExpressions do
-            row.[colName] <- row.[colName+i.ToString()]
-            i <- i+1
-
-    attributesExpressions
-    |> List.iteri (fun index (attName, _) -> table.Columns.Remove(attName+index.ToString()) )
+    for attName in attributes do
+        let seriesValue = env.EnvSeries.[attName]
+        env.EnvSeries.Remove(attName) |> ignore
+        env.EnvSeries.Add("A", seriesValue)
+        for row in table.Select() do
+            fillAttributesSingle env row
+            if env.EnvSingle.ContainsKey(attName) then          // Il valore corrente potrebbe essere Missing e quindi non esserci nell'env
+                let singleValue = env.EnvSingle.[attName]
+                env.EnvSingle.Remove(attName) |> ignore
+                env.EnvSingle.Add("A", singleValue)
+            row.[attName] <- try
+                                box (evalExpression exp env)          
+                             with
+                             | exn -> box DBNull.Value
+        env.EnvSeries.Remove("A") |> ignore
+        env.EnvSeries.Add(attName, seriesValue)
 
 let addExpression (attName:string) expression (table:DataTable) =
+    let exp = parseExpression expression
+    let env = new Environment()
+
+    // Prima controllo che gli identificatori inseriti corrispondano ad attributi nella tabella
+    // Qui possibile speculazione...
+    checkExpression table exp []
+
+    fillAttributesSeries env table
+
+    // Qui potrei andare parallelo/asincrono
     let col = new AttributeDataColumn(AttributeType.Numeric)
     col.DataType <- typeof<double>
     col.ColumnName <- attName
     table.Columns.Add(col)
-    mathExpression [(attName, expression)] table
+    for row in table.Select() do
+        fillAttributesSingle env row
+        env.EnvSingle.Remove(attName) |> ignore             // Rimuovo il nuovo attributo che sto inserendo altrimenti si potrebberoa scrivere delle espressioni "strane"
+        row.[attName] <- try
+                            box (evalExpression exp env)          
+                         with
+                         | exn -> box DBNull.Value          // Dopo il check fatto prima, se la valutazione fallisce significa che nell'espressione c'è un attributo che per la riga
+                                                            // corrente ha m valore Missing, quindi il risultato dell'espressione non può che essere Missing
 
 let normalize scale translation (table:DataTable) =
-    let expression = sprintf "(({0}-{1})/({2}-{1})*%f)+%f" scale translation
+    let expression = sprintf "((A-min(A))/(max(A)-min(A))*%f)+%f" scale translation
 
-    let expressions = getAttributesByType AttributeType.Numeric table
-                        |> List.map (fun colName -> let min = sprintf "%.10f" (Convert.ToDouble(table.Compute("min("+colName+")","")))      // precomputation: abbasso il tempo da più di 4 minuti a molto meno di 1 sec
-                                                    let max = sprintf "%.10f" (Convert.ToDouble(table.Compute("max("+colName+")","")))
-                                                    (colName, String.Format(expression, colName, min, max)) )
-    mathExpression expressions table
+    let attList = getAttributesByType AttributeType.Numeric table 
+    mathExpression attList expression table
 
 
 let standardize (table:DataTable) =
-    let expression = "({0}-{1})/({2})"
+    let expression = "(A-mean(A))/(sd(A))"
 
-    let expressions = getAttributesByType AttributeType.Numeric table
-                        |> List.map ( fun colName ->    let mean = sprintf "%.10f" (Convert.ToDouble(table.Compute("Avg("+colName+")","")))      // precomputation: abbasso il tempo da più di 4 minuti a molto meno di 1 sec
-                                                        let stdev = sprintf "%.10f" (Convert.ToDouble(table.Compute("StDev("+colName+")","")))
-                                                        (colName, String.Format(expression, colName, mean, stdev)) )
-    mathExpression expressions table
+    let attList = getAttributesByType AttributeType.Numeric table
+    mathExpression attList expression table
 
 let removeByName (attributes:string list) (table:DataTable) =
     attributes

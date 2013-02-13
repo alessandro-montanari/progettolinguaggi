@@ -63,6 +63,7 @@
     <Compile Include="TableUtilities.fs" />
     <Compile Include="Neural.fs" />
     <Compile Include="Validation.fs" />
+    <Compile Include="PreprocessingUtilities.fs" />
     <Compile Include="AttributePreprocessing.fs" />
     <Compile Include="InstancePreprocessing.fs" />
     <Compile Include="Preprocessing.fs" />
@@ -73,6 +74,11 @@
     <ProjectReference Include="..\ArffLanguage\ArffLanguage.fsproj">
       <Name>ArffLanguage</Name>
       <Project>{d64fc3c0-83a2-4cca-a39e-2cf2d4a2f92b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Expressions\Expressions.fsproj">
+      <Name>Expressions</Name>
+      <Project>{882f2a84-0ecd-4174-b233-93eb5c15a581}</Project>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\NeuralTypes\NeuralTypes.fsproj">

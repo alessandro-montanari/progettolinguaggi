@@ -1,32 +1,11 @@
 ﻿module AST
 
-//open ExpressionsAst
-
-type Value =
-    | Boolean of bool
-    | Double   of double
-    | Id of string
-    | Function of string * Expression
-    | AggregateFunction of string * Expression list
-    | SumOfProducts of Expression list * Expression list                        
-
-and Expression =
-    | Value of Value
-    | Negative of Expression
-    | Not of Expression
-    | Times  of Expression * Expression
-    | Pow  of Expression * Expression
-    | Divide of Expression * Expression
-    | Plus  of Expression * Expression
-    | Minus of Expression * Expression
-    | And of Expression * Expression
-    | Or of Expression * Expression
-    | Lt of Expression * Expression
-    | Lte of Expression * Expression
-    | Gt of Expression * Expression
-    | Gte of Expression * Expression
-    | Eq of Expression * Expression
-    | NotEq of Expression * Expression  
+// Tipi di dato che mi servono:
+// - String
+// - Numeri singoli (int e double)
+// - Lista di attributi
+// - Lista di istanze
+// - Valori bool
 
 type InstanceListElement = 
     | InstIndex of int
@@ -37,16 +16,13 @@ type AttributeListElement =
     | AttIndex of int
     | AttSequence of int * int
 
-type NumberListElement =
-    | Exp of Expression
-    | NumberSequence of Expression * Expression
-
 type ParameterValue =
     | AttList of bool * AttributeListElement list
-    | NumList of NumberListElement list
     | InstList of bool * InstanceListElement list
-    | String of string                                      // C'è Id anche in Expression ma quello denota un valore double, questo è proprio una stringa
-    | Exp of Expression                                     // O stringa e poi chi la usa invoca il valutatore di Expressions??
+    | String of string        
+    | Double of double
+    | Integer of int
+    | Bool of bool                             
 
 type Parameter = Parameter of string * ParameterValue
 type Filter = Filter of string * Parameter list
@@ -57,7 +33,7 @@ type Network =
         Directives : Parameter list;
         TrainingSet: string
         ClassAttribute : string
-        Preprocessing : Filter list * Filter list;              // filtri di attributo e di istanza
+        Preprocessing : Filter list * Filter list;              
         NetworkDefinition : string * Parameter list * Aspect list;
         Training : string * Parameter list * Aspect list;
         Validation : Parameter list * Aspect list;                                

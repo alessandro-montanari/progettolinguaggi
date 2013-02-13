@@ -46,6 +46,8 @@
     <Compile Include="Parser.fsi" />
     <Compile Include="Parser.fs" />
     <Compile Include="Lexer.fs" />
+    <Compile Include="Environment.fs" />
+    <Compile Include="Evaluator.fs" />
     <None Include="App.config" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -66,11 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.fsproj">
-      <Name>NeuralNetwork</Name>
-      <Project>{aefb4e87-d837-441a-91d0-0529aa7f8f9b}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\NeuralTypes\NeuralTypes.fsproj">
       <Name>NeuralTypes</Name>
       <Project>{79aa9006-bd70-4d2f-9e3d-21f6aedcc4d3}</Project>

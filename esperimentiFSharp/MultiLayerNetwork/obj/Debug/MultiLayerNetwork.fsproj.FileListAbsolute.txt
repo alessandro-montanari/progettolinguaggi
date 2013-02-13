@@ -8,7 +8,6 @@ C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\b
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\Microsoft.GLEE.GraphViewerGDI.dll
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\NeuralNetwork.exe
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\NeuralTypes.dll
-C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.Compiler.CodeDom.dll
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\ArffLanguage.exe
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.PowerPack.dll
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\NeuralNetwork.pdb
@@ -19,11 +18,12 @@ C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\b
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\Microsoft.GLEE.Drawing.pdb
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\Microsoft.GLEE.GraphViewerGDI.pdb
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.Core.xml
-C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.Compiler.CodeDom.pdb
-C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.Compiler.CodeDom.xml
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\ArffLanguage.pdb
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\ArffLanguage.xml
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.PowerPack.pdb
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\FSharp.PowerPack.xml
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\obj\Debug\MultiLayerNetwork.exe
 C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\obj\Debug\MultiLayerNetwork.pdb
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\Expressions.exe
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\Expressions.pdb
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\Expressions.xml
