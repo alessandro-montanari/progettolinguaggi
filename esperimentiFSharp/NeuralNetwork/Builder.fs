@@ -15,6 +15,21 @@ type Builder<'T>(globalRules:Dictionary<string, (string->obj->unit)>, aspectRule
     let _locParameterStore = new ParameterStore(globalRules)
     let _aspects = new Dictionary<string, ResizeArray<ParameterStore>>(HashIdentity.Structural)
 
+    member this.AddAspect(aspectName) =
+        let aspectRule = match aspectRules.TryGetValue(aspectName) with
+                            | res, rule when res=true -> rule
+                            | _ -> failwithf "The aspect %s cannot be set in the builder" aspectName
+        // Ho trovato le regole per questo aspetto adesso costruisco il ParameterStore e inserisco i valori
+        let paramStore = new ParameterStore(aspectRule)
+
+         // Inserisco il nuovo aspect nel builder
+        match _aspects.TryGetValue(aspectName) with
+        | res, storeList when res=true -> storeList.Add(paramStore)
+        | _,_ ->    let list = new ResizeArray<ParameterStore>()
+                    list.Add(paramStore)
+                    _aspects.Add(aspectName, list)
+        paramStore
+    
     /// Add the specified paramters to the specified aspect. An exception is raised if the aspect cannot be set in this builder or if the parameters doesn't pass the rules
     member this.AddAspect(aspectName, parameters:(string*obj) list) =
         let aspectRule = match aspectRules.TryGetValue(aspectName) with

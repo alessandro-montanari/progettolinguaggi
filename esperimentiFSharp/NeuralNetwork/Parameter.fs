@@ -18,7 +18,7 @@ type ParameterStore(rules : Dictionary<string, (string -> obj -> unit)>) =
     member this.AddValue(paramName, newValue) =
         let checkFun = match rules.TryGetValue(paramName) with
                         | res,checkFun when res=true -> checkFun
-                        | _ -> failwithf "The parameter %s cannot be set in the parameterstore" paramName
+                        | _ -> failwithf "The parameter '%s' cannot be set in the parameterstore" paramName
         checkFun paramName newValue                               // Se passa questo punto, il check è andato a buon fine, posso inserire il valore
         match _params.TryGetValue(paramName) with
         | res, objList when res=true -> objList.Add(newValue)

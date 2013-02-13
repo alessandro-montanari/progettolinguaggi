@@ -47,3 +47,13 @@ let attributeFilters =
 
 let instanceFilters =
     instanceFunctions.Keys |> Seq.toList
+
+let filterParamterNames filterName =
+    if attributeFunctions.ContainsKey(filterName) then
+        attributeFunctions.[filterName]
+        |> List.map(fun pInfo -> pInfo.Name)
+    elif instanceFunctions.ContainsKey(filterName) then
+        instanceFunctions.[filterName]
+        |> List.map(fun pInfo -> pInfo.Name)
+    else
+        failwithf "The filter '%s' is not defined" filterName

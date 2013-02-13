@@ -7,8 +7,6 @@ open System.Collections.Generic
 open NeuralTypes
 open TableUtilities
 
-//TODO In un modulo a parte si possono definire le varie funzioni di base (somma, sigmoid, gradino, ...)
-
 let private getUniqueId : (unit -> int) =
     let random = new System.Random()   
     let id = ref 0
@@ -17,7 +15,7 @@ let private getUniqueId : (unit -> int) =
 
 // Funzioni di uscita
 let sigmoid (t : double) : double = 1.0 / (1.0 + exp(-t))
-let heavisied (t :double) (theta :double) : double =    if t < theta then
+let heavside (t :double) (theta :double) : double =    if t < theta then
                                                             0.0
                                                         else
                                                             1.0

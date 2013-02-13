@@ -52,8 +52,8 @@ type BasicValidationBuilder() =
     override this.Build(gobalParameters:ParameterStore) =
         check this
         let trainingTable = gobalParameters.GetValues("TRAINING_TABLE") |> Seq.exactlyOne |> unbox          // Non controllo se c'è o meno il parametro, do per scontato che ci sia
-        let numOfGlobParams = this.LocalParameters.ParameterValues |> Seq.length
-        if numOfGlobParams = 1 then                                                     // Se non sono stati settati parametri utilizzo la training table
+        let numOfLocParams = this.LocalParameters.ParameterValues |> Seq.length
+        if numOfLocParams = 0 then                                                     // Se non sono stati settati parametri utilizzo la training table
             trainingTable
         else
             match this.LocalParameters.ParameterValues |> Seq.tryFind (fun (name,_) -> name = "TEST_SET") with

@@ -244,11 +244,11 @@ let evalAttributeListElement = function
                                  | :? ArgumentOutOfRangeException as e -> failwith "The attribute range specified is not valid. 
                                                                                     An attribute with index '%d' is not defined" (Convert.ToInt32(e.ActualValue))
 
-let evalParameterValue value = function
+let evalParameterValue = function
     | Bool value -> value |> box        
     | Integer value -> value |> box
     | Double value -> value |> box      
-    | String str -> str |> box      
+    | String str -> str |> box
     | InstList (compl, list) -> let resList = list |> List.collect(fun el -> evalInstanceListElement el) |> Set.ofList |> Set.toList
                                 if compl then
                                     resList |> box
@@ -261,12 +261,13 @@ let evalParameterValue value = function
                                     attList |> Seq.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
 
 let evalParameter (store:ParameterStore) = function
-    | Parameter(name, value) -> let value = evalParameterValue value
-                                store.AddValue(name, value)
+    | Parameter(name, value) -> let parValue = evalParameterValue value
+                                store.AddValue(name, parValue)
 
-let evalFilter filterNames invokeFunction table = function
+let evalFilter invokeFunction table = function
     | Filter(name, parameterList) ->    let rules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
-                                        filterNames |> List.iter(fun filterName -> rules.Add(filterName, (fun s o -> ())))          // So che i check sono fatti nel modulo Preprocessing
+                                        (filterParamterNames name) 
+                                        |> List.iter(fun filterName -> rules.Add(filterName, (fun s o -> ())))          // So che i check sono fatti nel modulo Preprocessing
                                         let store = new ParameterStore(rules)
 
                                         // Estraggo i parametri dall'AST
@@ -282,29 +283,23 @@ let evalFilter filterNames invokeFunction table = function
                                         invokeFunction name parameters
                                         ()
 
-let evalAspect aspectNames = function
-    | Aspect(name, parameterList) -> let rules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
-                                     aspectNames |> List.iter(fun filterName -> rules.Add(filterName, (fun s o -> ())))          // So che i check sono fatti nel modulo Preprocessing
-                                     let store = new ParameterStore(rules)
+let evalAspect (builder:Builder<'T>) = function
+    | Aspect(name, parameterList) -> let store = builder.AddAspect(name)
                                      parameterList |> List.iter(fun par -> evalParameter store par)
-                                     let parList = store.ParameterValues
-                                                     |> Seq.map(fun (name, seqObj) -> (name, seqObj |> Seq.head))
-                                                     |> Seq.toList
-                                     (name, parList)
 
 
 let private directiveRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
 directiveRules.Add("LOAD_NETWORK", (fun name input -> if input.GetType() <> typeof<string> then
                                                          invalidArg name "Wrong type, expected 'string'" ))
 
-directiveRules.Add("LOAD_TRAINING", (fun name input ->   if input.GetType() <> typeof<string> then
+directiveRules.Add("LOAD_TRAINING", (fun name input -> if not (typeof<string>.IsInstanceOfType(input)) then
                                                                 invalidArg name "Wrong type, expected 'string'" ))
 
 let private globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
 globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
                                                             invalidArg name "Wrong type, expected 'DataTable'" ))
 
-globalRules.Add("TRAINING_SET", (fun name input -> if input.GetType() <> typeof<string> then
+globalRules.Add("TRAINING_SET", (fun name input ->  if not (typeof<string>.IsInstanceOfType(input)) then
                                                         invalidArg name "Wrong type, expected 'string'" ))
 
 globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
@@ -328,26 +323,26 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
     globalStore.AddValue("TRAINING_SET", net.TrainingSet)                       //TODO Controllo se presente come file
     globalStore.AddValue("CLASS_ATTRIBUTE", net.ClassAttribute)                 //TODO Controllo se presente come attributo
     let trainingSet = buildTableFromArff net.TrainingSet
-    globalStore.AddValue("TRAINING_SET", trainingSet) 
+    globalStore.AddValue("TRAINING_TABLE", trainingSet) 
 
     // Filtraggio
     // Prima gli attributi e poi le istanze
     let attFilters, instFilters = net.Preprocessing
-    attFilters |> List.iter(fun filter -> evalFilter attributeFilters invokeAttributeFilter trainingSet filter)
-    instFilters |> List.iter(fun filter -> evalFilter instanceFilters invokeInstanceFilter trainingSet filter)
+    attFilters |> List.iter(fun filter -> evalFilter invokeAttributeFilter trainingSet filter)
+    instFilters |> List.iter(fun filter -> evalFilter invokeInstanceFilter trainingSet filter)
 
     // Costruzione rete
     let netName, paramList, aspectList = net.NetworkDefinition
     let netBuilder = networkBuilderFactory.CreateBuilder(netName)
     paramList |> List.iter(fun par -> evalParameter netBuilder.LocalParameters par)
-    aspectList |> List.map(fun aspect -> evalAspect (netBuilder.AspectsNames |> Seq.toList) aspect) |> List.iter(fun el -> netBuilder.AddAspect el)
+    aspectList |> List.iter(fun aspect -> evalAspect netBuilder aspect )
     let NN = netBuilder.Build(globalStore)
 
     // Training
     let trainName, paramList, aspectList = net.Training
     let trainBuilder = trainingBuilderFactory.CreateBuilder(trainName)
     paramList |> List.iter(fun par -> evalParameter trainBuilder.LocalParameters par)
-    aspectList |> List.map(fun aspect -> evalAspect (trainBuilder.AspectsNames |> Seq.toList) aspect) |> List.iter(fun el -> trainBuilder.AddAspect el)
+    aspectList |> List.iter(fun aspect -> evalAspect trainBuilder aspect )
     let trainAlg = trainBuilder.Build(globalStore)
 
     NN.TrainingFunction <- trainAlg
@@ -357,7 +352,7 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
     let paramList, aspectList = net.Validation
     let valBuilder = new BasicValidationBuilder()
     paramList |> List.iter(fun par -> evalParameter valBuilder.LocalParameters par)
-    aspectList |> List.map(fun aspect -> evalAspect (valBuilder.AspectsNames |> Seq.toList) aspect) |> List.iter(fun el -> valBuilder.AddAspect el)
+    aspectList |> List.iter(fun aspect -> evalAspect valBuilder aspect )
     let testTable = valBuilder.Build(globalStore)
 
     let stat = NN.Validate(testTable)
@@ -424,7 +419,7 @@ let main argv =
                                         console.AppendText("================")
                                         stat.PrintStatistcs()
                                     with e ->
-                                        console.Text <- "Error"
+                                        console.Text <- e.Message
                                     )
         let splitContainerVer = new SplitContainer(Dock=DockStyle.Fill)
         let splitContainerHor = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
