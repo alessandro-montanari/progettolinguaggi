@@ -41,3 +41,9 @@ let invokeInstanceFilter funcName paramValues =
 
 let invokeAttributeFilter funcName paramValues =
     invoke attributeModule attributeFunctions funcName paramValues
+
+let attributeFilters =
+    attributeFunctions.Keys |> Seq.toList
+
+let instanceFilters =
+    instanceFunctions.Keys |> Seq.toList

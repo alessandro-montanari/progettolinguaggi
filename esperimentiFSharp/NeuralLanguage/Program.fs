@@ -13,6 +13,8 @@ open Neural
 open System.Data
 open Builder
 open TableUtilities
+open Preprocessing
+open Validation
 
 //[<EntryPoint>]
 //let main argv = 
@@ -206,199 +208,162 @@ VALIDATION
 //// ========================INTERPRETE================================================
 //// ==================================================================================
 //
-//// Mi serve un'Environment "doppio" per tenere i valori scalari e le liste di valori
-//type Environment() =
-//    
-//    let _envSingle = new Dictionary<string, double>(HashIdentity.Structural)
-//    let _envSeries = new Dictionary<string, double list>(HashIdentity.Structural)
-//
-//    member this.EnvSingle = _envSingle
-//    member this.EnvSeries = _envSeries
-//
-///// Evaluate a value
-//let rec evalValue factor (env:Environment) =
-//    match factor with
-//    | Double x   -> x
-//    | Id id -> env.EnvSingle.[id]
-//    | Boolean b -> match b with
-//                    | true -> 1.0
-//                    | false -> 0.0
-//    | Function (name,ex) -> evalFunction name (evalExpression ex env)
-//    | AggregateFunction (name, exList) -> evalAggregateFunction name (exList |> List.collect(fun exp -> match exp with
-//                                                                                                        | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
-//                                                                                                        | exp -> [evalExpression exp env]) )
-//
-//    | SumOfProducts(exList1, exList2) -> List.fold2 (fun acc el1 el2 -> acc + (evalExpression el1 env)*(evalExpression el2 env)) 0.0 exList1 exList2
-//
-//and evalAggregateFunction name (paramList: double list) =
-//    match name with
-//    | "min" -> paramList |> List.fold (fun prevMin currVal -> Math.Min(prevMin, currVal)) Double.MaxValue
-//    | "max" -> paramList |> List.fold (fun prevMin currVal -> Math.Max(prevMin, currVal)) Double.MinValue
-//    | "sum" -> paramList |> List.sum
-//    | "sumsquared" -> paramList |> List.map(fun el -> el*el) |> List.sum
-//    | "mean" -> paramList |> List.average
-//    | "sd" ->   let avg = paramList |> List.average
-//                sqrt (List.fold (fun acc elem -> acc + (float elem - avg) ** 2.0 ) 0.0 paramList / float paramList.Length)     
-//
-//and evalFunction name param =
-//    match name with
-//    | "sin" -> Math.Sin(param)
-//    | "cos" -> Math.Cos(param)
-//    | "acos" -> Math.Acos(param)
-//    | "asin" -> Math.Asin(param)
-//    | "tan" -> Math.Tan(param)
-//    | "atan" -> Math.Atan(param)
-//    | "sinh" -> Math.Sinh(param)
-//    | "tanh" -> Math.Tanh(param)
-//    | "log" -> Math.Log10(param)
-//    | "ln" -> Math.Log(param)
-//    | "floor" -> Math.Floor(param)
-//    | "ceil" -> Math.Ceiling(param)
-//    | "sqrt" -> Math.Sqrt(param)
-//    | "exp" -> Math.Exp(param)
-//    | "abs" -> Math.Abs(param)
-//
-///// Evaluate an expression
-//and evalExpression expr env =
-//    let op f v v' = 
-//        if (f v v') then
-//            1.0
-//        else
-//            0.0
-//    match expr with
-//    | Plus (ex1, ex2)  -> (evalExpression ex1 env) + (evalExpression ex2 env)
-//    | Minus (ex1, ex2) -> (evalExpression ex1 env) - (evalExpression ex2 env)
-//    | Times (ex1, ex2)  -> (evalExpression ex1 env) * (evalExpression ex2 env)
-//    | Pow (ex1, ex2) -> (evalExpression ex1 env) ** (evalExpression ex2 env)
-//    | Divide (ex1, ex2) -> (evalExpression ex1 env) / (evalExpression ex2 env)
-//    | Negative ex1 -> -(evalExpression ex1 env)
-//    | Value value -> evalValue value env
-//    | And(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-//                        | 1.0,1.0 -> 1.0
-//                        | _, _ -> 0.0
-//    | Or(ex1, ex2) -> match (evalExpression ex1 env), (evalExpression ex2 env) with
-//                        | 1.0,_ | _, 1.0 -> 1.0
-//                        | _, _ -> 0.0
-//    | Not ex -> match (evalExpression ex env) with
-//                | 1.0 -> 0.0
-//                | _ -> 1.0
-//    | Lt(ex1, ex2) -> op (<) (evalExpression ex1 env) (evalExpression ex2 env)
-//    | Lte(ex1, ex2) -> op (<=) (evalExpression ex1 env) (evalExpression ex2 env)
-//    | Gt(ex1, ex2) -> op (>) (evalExpression ex1 env) (evalExpression ex2 env)
-//    | Gte(ex1, ex2) -> op (>=) (evalExpression ex1 env) (evalExpression ex2 env)
-//    | Eq(ex1, ex2) -> op (=) (evalExpression ex1 env) (evalExpression ex2 env)
-//    | NotEq(ex1, ex2) -> op (<>) (evalExpression ex1 env) (evalExpression ex2 env)
-//
-//
-//let env = new Environment()
-//let nOfInstances = 10
-//let attList = new ResizeArray<string>()
-//
-//let evalInstanceListElement = function
-//    | InstIndex idx -> if idx >= 0 && idx <= nOfInstances-1 then
-//                            [idx]
-//                       else
-//                             failwithf "An instance with index '%d' is not defined" idx
-//    | InstSequence(idx1, idx2) -> let indexList = if idx1 <= idx2 then
-//                                                        [idx1..idx2]
-//                                                  else
-//                                                        [idx1..(-1)..idx2]
-//                                  if List.forall(fun el ->  el >= 0 && el <= nOfInstances-1) indexList then
-//                                        indexList
-//                                  else
-//                                        failwithf "The instance range specified is not valid."
-//
-//let evalNumberListElement = function
-//    | NumberListElement.Exp exp -> [evalExpression exp env]
-//    | NumberSequence(exp1, exp2) -> let val1 = evalExpression exp1 env
-//                                    let val2 = evalExpression exp2 env
-//                                    if val1 <= val2 then
-//                                        [val1..val2]
-//                                    else
-//                                        [val1..(-1.0)..val2]
-//
-//let evalAttributeListElement = function
-//    | AttName name -> if attList.Contains(name) then
-//                        [name]
-//                      else
-//                        failwithf "An attribute with name '%s' is not defined" name
-//    | AttIndex idx -> try
-//                        [attList.[idx]]
-//                      with
-//                       | :? ArgumentOutOfRangeException as e -> failwithf "An attribute with index '%d' is not defined" idx
-//    | AttSequence(idx1, idx2) -> let indexList = if idx1 <= idx2 then
-//                                                    [idx1..idx2]
-//                                                 else
-//                                                    [idx1..(-1)..idx2]
-//                                 try
-//                                    indexList |> List.map(fun idx -> attList.[idx])
-//                                 with
-//                                 | :? ArgumentOutOfRangeException as e -> failwith "The attribute range specified is not valid. 
-//                                                                                    An attribute with index '%d' is not defined" (Convert.ToInt32(e.ActualValue))
-//
-//let evalParameterValue value = function
-//    | Exp exp -> exp |> box              // Non la valuto subito ma la setto nel parameter store, sarà chi la utilizza a valutarla, quindi NeuralNetork dipende da NeuralLanguage e vice-versa. Forse conviene trattarla come stringa
-//    | String str -> str |> box      
-//    | InstList (compl, list) -> let resList = list |> List.collect(fun el -> evalInstanceListElement el) |> Set.ofList |> Set.toList
-//                                if compl then
-//                                    resList |> box
-//                                else
-//                                    [0..nOfInstances] |> List.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
-//    | NumList list  -> list |> List.collect(fun el -> evalNumberListElement el) |> box
-//    | AttList (compl, list) ->  let resList = list |> List.collect(fun el -> evalAttributeListElement el) |> Set.ofList |> Set.toList
-//                                if compl then
-//                                    resList |> box
-//                                else
-//                                    attList |> Seq.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
-//
-//let evalParameter (store:ParameterStore) = function
-//    | Parameter(name, value) -> let value = evalParameterValue value
-//                                store.AddValue(name, value)
-//
-//
-//let private directiveRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
-//directiveRules.Add("LOAD_NETWORK", (fun name input -> if input.GetType() <> typeof<string> then
-//                                                         invalidArg name "Wrong type, expected 'string'" ))
-//
-//directiveRules.Add("LOAD_TRAINING", (fun name input ->   if input.GetType() <> typeof<string> then
-//                                                                invalidArg name "Wrong type, expected 'string'" ))
-//
-//let private globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
-//globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
-//                                                            invalidArg name "Wrong type, expected 'DataTable'" ))
-//
-//globalRules.Add("TRAINING_SET", (fun name input -> if input.GetType() <> typeof<string> then
-//                                                        invalidArg name "Wrong type, expected 'string'" ))
-//
-//globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
-//                                                            invalidArg name "Wrong type, expected 'string'" ))
-//// TODO Try..with con messaggi di errore??
-//let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * ValidationStatistics option) =
-//    let networkBuilderFactory = new BuilderFactory<Builder<SupervisedNeuralNetwork>, SupervisedNeuralNetwork>()
-//    let trainingBuilderFactory = new BuilderFactory<Builder<TrainigFunctionType>, TrainigFunctionType>()
-//    
-//    let directiveStore = new ParameterStore(directiveRules)
-//    let globalStore = new ParameterStore(globalRules)
-//
-//    // Valuto le direttive e carico i builder
-//    net.Directives |> List.iter(fun par -> evalParameter directiveStore par ) 
-//    directiveStore.ParameterValues |> Seq.iter(fun (name, values) -> if name = "LOAD_NETWORK" then
-//                                                                        values |> Seq.iter(fun value -> networkBuilderFactory.LoadBuilder(value.ToString()) |> ignore)
-//                                                                     elif name = "LOAD_TRAINING" then
-//                                                                        values |> Seq.iter(fun value -> trainingBuilderFactory.LoadBuilder(value.ToString()) |> ignore) )
-//
-//    // Carico il training set
-//    globalStore.AddValue("TRAINING_SET", net.TrainingSet)                       // Controllo se presente come file
-//    globalStore.AddValue("CLASS_ATTRIBUTE", net.ClassAttribute)                 // Controllo se presente come attributo
-//    let trainingSet = buildTableFromArff net.TrainingSet
-//    globalStore.AddValue("TRAINING_SET", trainingSet) 
-//
-//
-//
-//
-//
-//    ()
-//    
+let nOfInstances = 10
+let attList = new ResizeArray<string>()
+
+let evalInstanceListElement = function
+    | InstIndex idx -> if idx >= 0 && idx <= nOfInstances-1 then
+                            [idx]
+                       else
+                             failwithf "An instance with index '%d' is not defined" idx
+    | InstSequence(idx1, idx2) -> let indexList = if idx1 <= idx2 then
+                                                        [idx1..idx2]
+                                                  else
+                                                        [idx1..(-1)..idx2]
+                                  if List.forall(fun el ->  el >= 0 && el <= nOfInstances-1) indexList then
+                                        indexList
+                                  else
+                                        failwithf "The instance range specified is not valid."
+
+let evalAttributeListElement = function
+    | AttName name -> if attList.Contains(name) then
+                        [name]
+                      else
+                        failwithf "An attribute with name '%s' is not defined" name
+    | AttIndex idx -> try
+                        [attList.[idx]]
+                      with
+                       | :? ArgumentOutOfRangeException as e -> failwithf "An attribute with index '%d' is not defined" idx
+    | AttSequence(idx1, idx2) -> let indexList = if idx1 <= idx2 then
+                                                    [idx1..idx2]
+                                                 else
+                                                    [idx1..(-1)..idx2]
+                                 try
+                                    indexList |> List.map(fun idx -> attList.[idx])
+                                 with
+                                 | :? ArgumentOutOfRangeException as e -> failwith "The attribute range specified is not valid. 
+                                                                                    An attribute with index '%d' is not defined" (Convert.ToInt32(e.ActualValue))
+
+let evalParameterValue value = function
+    | Bool value -> value |> box        
+    | Integer value -> value |> box
+    | Double value -> value |> box      
+    | String str -> str |> box      
+    | InstList (compl, list) -> let resList = list |> List.collect(fun el -> evalInstanceListElement el) |> Set.ofList |> Set.toList
+                                if compl then
+                                    resList |> box
+                                else
+                                    [0..nOfInstances] |> List.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
+    | AttList (compl, list) ->  let resList = list |> List.collect(fun el -> evalAttributeListElement el) |> Set.ofList |> Set.toList
+                                if compl then
+                                    resList |> box
+                                else
+                                    attList |> Seq.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> box
+
+let evalParameter (store:ParameterStore) = function
+    | Parameter(name, value) -> let value = evalParameterValue value
+                                store.AddValue(name, value)
+
+let evalFilter filterNames invokeFunction table = function
+    | Filter(name, parameterList) ->    let rules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+                                        filterNames |> List.iter(fun filterName -> rules.Add(filterName, (fun s o -> ())))          // So che i check sono fatti nel modulo Preprocessing
+                                        let store = new ParameterStore(rules)
+
+                                        // Estraggo i parametri dall'AST
+                                        parameterList |> List.iter(fun par -> evalParameter store par)
+
+                                        // Preparo il dizionario per i parametri
+                                        let parameters = new Dictionary<string, obj>(HashIdentity.Structural)
+                                        store.ParameterValues
+                                        |> Seq.iter(fun (name, seqObj) -> parameters.Add(name, seqObj |> Seq.head))
+                                        parameters.Add("table", table)
+
+                                        // Invoco il filtro
+                                        invokeFunction name parameters
+                                        ()
+
+let evalAspect aspectNames = function
+    | Aspect(name, parameterList) -> let rules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+                                     aspectNames |> List.iter(fun filterName -> rules.Add(filterName, (fun s o -> ())))          // So che i check sono fatti nel modulo Preprocessing
+                                     let store = new ParameterStore(rules)
+                                     parameterList |> List.iter(fun par -> evalParameter store par)
+                                     let parList = store.ParameterValues
+                                                     |> Seq.map(fun (name, seqObj) -> (name, seqObj |> Seq.head))
+                                                     |> Seq.toList
+                                     (name, parList)
+
+
+let private directiveRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+directiveRules.Add("LOAD_NETWORK", (fun name input -> if input.GetType() <> typeof<string> then
+                                                         invalidArg name "Wrong type, expected 'string'" ))
+
+directiveRules.Add("LOAD_TRAINING", (fun name input ->   if input.GetType() <> typeof<string> then
+                                                                invalidArg name "Wrong type, expected 'string'" ))
+
+let private globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
+globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
+                                                            invalidArg name "Wrong type, expected 'DataTable'" ))
+
+globalRules.Add("TRAINING_SET", (fun name input -> if input.GetType() <> typeof<string> then
+                                                        invalidArg name "Wrong type, expected 'string'" ))
+
+globalRules.Add("CLASS_ATTRIBUTE", (fun name input ->   if input.GetType() <> typeof<string> then
+                                                            invalidArg name "Wrong type, expected 'string'" ))
+// TODO Try..with con messaggi di errore??
+let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * ValidationStatistics) =
+    let networkBuilderFactory = new BuilderFactory<Builder<SupervisedNeuralNetwork>, SupervisedNeuralNetwork>()
+    let trainingBuilderFactory = new BuilderFactory<Builder<TrainigFunctionType>, TrainigFunctionType>()
+    
+    let directiveStore = new ParameterStore(directiveRules)
+    let globalStore = new ParameterStore(globalRules)
+
+    // Valuto le direttive e carico i builder
+    net.Directives |> List.iter(fun par -> evalParameter directiveStore par ) 
+    directiveStore.ParameterValues |> Seq.iter(fun (name, values) -> if name = "LOAD_NETWORK" then
+                                                                        values |> Seq.iter(fun value -> networkBuilderFactory.LoadBuilder(value.ToString()) |> ignore)
+                                                                     elif name = "LOAD_TRAINING" then
+                                                                        values |> Seq.iter(fun value -> trainingBuilderFactory.LoadBuilder(value.ToString()) |> ignore) )
+
+    // Carico il training set
+    globalStore.AddValue("TRAINING_SET", net.TrainingSet)                       //TODO Controllo se presente come file
+    globalStore.AddValue("CLASS_ATTRIBUTE", net.ClassAttribute)                 //TODO Controllo se presente come attributo
+    let trainingSet = buildTableFromArff net.TrainingSet
+    globalStore.AddValue("TRAINING_SET", trainingSet) 
+
+    // Filtraggio
+    // Prima gli attributi e poi le istanze
+    let attFilters, instFilters = net.Preprocessing
+    attFilters |> List.iter(fun filter -> evalFilter attributeFilters invokeAttributeFilter trainingSet filter)
+    instFilters |> List.iter(fun filter -> evalFilter instanceFilters invokeInstanceFilter trainingSet filter)
+
+    // Costruzione rete
+    let netName, paramList, aspectList = net.NetworkDefinition
+    let netBuilder = networkBuilderFactory.CreateBuilder(netName)
+    paramList |> List.iter(fun par -> evalParameter netBuilder.LocalParameters par)
+    aspectList |> List.map(fun aspect -> evalAspect (netBuilder.AspectsNames |> Seq.toList) aspect) |> List.iter(fun el -> netBuilder.AddAspect el)
+    let NN = netBuilder.Build(globalStore)
+
+    // Training
+    let trainName, paramList, aspectList = net.Training
+    let trainBuilder = trainingBuilderFactory.CreateBuilder(trainName)
+    paramList |> List.iter(fun par -> evalParameter trainBuilder.LocalParameters par)
+    aspectList |> List.map(fun aspect -> evalAspect (trainBuilder.AspectsNames |> Seq.toList) aspect) |> List.iter(fun el -> trainBuilder.AddAspect el)
+    let trainAlg = trainBuilder.Build(globalStore)
+
+    NN.TrainingFunction <- trainAlg
+    NN.Train(trainingSet, net.ClassAttribute)
+
+    // Validation
+    let paramList, aspectList = net.Validation
+    let valBuilder = new BasicValidationBuilder()
+    paramList |> List.iter(fun par -> evalParameter valBuilder.LocalParameters par)
+    aspectList |> List.map(fun aspect -> evalAspect (valBuilder.AspectsNames |> Seq.toList) aspect) |> List.iter(fun el -> valBuilder.AddAspect el)
+    let testTable = valBuilder.Build(globalStore)
+
+    let stat = NN.Validate(testTable)
+
+    (NN, trainingSet, stat)
+    
     
 
 
@@ -453,7 +418,11 @@ let main argv =
         let console = new RichTextBox(Dock=DockStyle.Fill)
         console.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
         btnParse.Click.Add(fun _ -> try
-                                        console.Text <- sprintf "%A" (parser text.Text)
+                                        let net = parser text.Text
+                                        console.Text <- sprintf "%A" (net)
+                                        let NN, table, stat = evalNetwork net
+                                        console.AppendText("================")
+                                        stat.PrintStatistcs()
                                     with e ->
                                         console.Text <- "Error"
                                     )
