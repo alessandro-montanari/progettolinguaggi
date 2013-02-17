@@ -22,14 +22,17 @@ let mathExpression (attributes:string list) expression (table:DataTable) =
     fillAttributesSeries env table
 
     for attName in attributes do
+        let attIndex = table.Columns.IndexOf(attName)
         let seriesValue = env.EnvSeries.[attName]
         env.EnvSeries.Remove(attName) |> ignore
+        env.EnvSeries.Remove("ATT"+attIndex.ToString()) |> ignore
         env.EnvSeries.Add("A", seriesValue)
         for row in table.Select() do
             fillAttributesSingle env row
             if env.EnvSingle.ContainsKey(attName) then          // Il valore corrente potrebbe essere Missing e quindi non esserci nell'env
                 let singleValue = env.EnvSingle.[attName]
                 env.EnvSingle.Remove(attName) |> ignore
+                env.EnvSingle.Remove("ATT"+attIndex.ToString()) |> ignore
                 env.EnvSingle.Add("A", singleValue)
             row.[attName] <- try
                                 box (evalExpression exp env)          
@@ -37,6 +40,7 @@ let mathExpression (attributes:string list) expression (table:DataTable) =
                              | exn -> box DBNull.Value
         env.EnvSeries.Remove("A") |> ignore
         env.EnvSeries.Add(attName, seriesValue)
+        env.EnvSeries.Add("ATT"+attIndex.ToString(), seriesValue)
 
 let addExpression (attName:string) expression (table:DataTable) =
     let exp = parseExpression expression
@@ -55,7 +59,8 @@ let addExpression (attName:string) expression (table:DataTable) =
     table.Columns.Add(col)
     for row in table.Select() do
         fillAttributesSingle env row
-        env.EnvSingle.Remove(attName) |> ignore             // Rimuovo il nuovo attributo che sto inserendo altrimenti si potrebberoa scrivere delle espressioni "strane"
+         // L'istruzione sotto non serve perché alle righe del nuovo attributo non sono ancora stati assegnati dei valori, quindi non passa il check row.IsNull(colName) in fillAttributesSingle 
+//        env.EnvSingle.Remove(attName) |> ignore             // Rimuovo il nuovo attributo che sto inserendo altrimenti si potrebbero scrivere delle espressioni "strane"
         row.[attName] <- try
                             box (evalExpression exp env)          
                          with
