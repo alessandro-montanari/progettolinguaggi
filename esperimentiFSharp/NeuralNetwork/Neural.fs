@@ -6,6 +6,7 @@ open System.IO
 open System.Collections.Generic
 open NeuralTypes
 open TableUtilities
+open Environment
 
 let private getUniqueId : (unit -> int) =
     let random = new System.Random()   
@@ -24,8 +25,25 @@ let linear (t : double) : double = t                    // utile per predire val
 // Funzioni di attivazione
 let sumOfProducts (input : seq<double * double> ) : double = input 
                                                                 |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0 
-                        
 
+let buildActivationFunction (expression:string) (inputs:seq<double * double>) = 
+    let env = new Environment()
+    inputs 
+    |> Seq.iteri(fun index (value, weight) ->   env.EnvSingle.Add("IN"+index.ToString(), value)
+                                                env.EnvSingle.Add("WE"+index.ToString(), weight) )
+    let values, weights = inputs |> Seq.toList |> List.unzip
+    env.EnvSeries.Add("IN", values)
+    env.EnvSeries.Add("WE", weights)
+    let exp = Evaluator.parseExpression expression
+    Evaluator.evalExpression exp env
+
+let buildOutputFunction (expression:string) (input:double) = 
+    let env = new Environment()
+    env.EnvSingle.Add("IN", input)
+    let exp = Evaluator.parseExpression expression
+    Evaluator.evalExpression exp env
+    
+        
 // Con questa modellazione di neurone posso creare qualsiasi struttura
 // Comunque mi limito a supportare principlamente l'addestramento di tipo supervisionato in cui si ha sempre un trainig set d'ingresso
 // con gli esempi e l'uscita desiderata
