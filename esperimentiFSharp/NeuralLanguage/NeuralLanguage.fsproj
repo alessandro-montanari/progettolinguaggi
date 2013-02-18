@@ -61,10 +61,9 @@
     <Compile Include="NeuralLanguageParser.fsi" />
     <Compile Include="NeuralLanguageParser.fs" />
     <Compile Include="NeuralLanguageLexer.fs" />
-    <Compile Include="Iterpreter.fs" />
+    <Compile Include="NetworkIterpreter.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
-    <None Include="NeuralLanguageParser.fsyacc.output" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.fsproj">

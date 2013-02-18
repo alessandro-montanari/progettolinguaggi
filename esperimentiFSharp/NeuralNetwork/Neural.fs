@@ -14,7 +14,7 @@ let private getUniqueId : (unit -> int) =
     (function _ ->  id := !id+1
                     !id )
 
-//TODO Cercare di Memoizzare
+//TODO Cercare di Memoizzare e/o ottimizzare
 let buildActivationFunction (expression:string) (inputs:seq<double * double>) = 
     let env = new Environment()
     let exp = Evaluator.parseExpression expression
