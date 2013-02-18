@@ -221,25 +221,16 @@ let private globalRules = new Dictionary<string, (string->obj->unit)>(HashIdenti
 globalRules.Add("SEED", (fun name input -> if input.GetType() <> typeof<int> then
                                                 invalidArg name "Wrong type, expected 'int'" ))
 
-let private actFunctions = new Dictionary<string, ActivationFunType>(HashIdentity.Structural) 
-let private outFunctions = new Dictionary<string, OutputFunType>(HashIdentity.Structural) 
-actFunctions.Add("sumOfProducts", sumOfProducts)
-outFunctions.Add("sigmoid", sigmoid)
-//outFunctions.Add("heavside", heavside)
-outFunctions.Add("linear", linear)
-
 let private aspectsRules = new Dictionary<string, Dictionary<string,(string->obj->unit)>>(HashIdentity.Structural)
 let mutable private layerRules = new Dictionary<string, (string->obj->unit)>(HashIdentity.Structural)
-layerRules.Add("ACTIVATION_FUNCTION", (fun name input ->    match actFunctions.TryGetValue(input.ToString()) with
-                                                            | res,_ when res=true -> ()
-                                                            | _,_ -> failwithf "The activation function '%s' is not valid" (input.ToString()) ))
+layerRules.Add("ACTIVATION_FUNCTION", (fun name input -> if input.GetType() <> typeof<string> then
+                                                            invalidArg name "Wrong type, expected 'string'" ))
 
 //                                                            if not (typeof<ActivationFunType>.IsInstanceOfType(input)) then
 //                                                                invalidArg name "The activation function must be a function of type 'seq<double * double> -> double'" ))
 
-layerRules.Add("OUTPUT_FUNCTION", (fun name input ->  match outFunctions.TryGetValue(input.ToString()) with
-                                                            | res,_ when res=true -> ()
-                                                            | _,_ -> failwithf "The activation function '%s' is not valid" (input.ToString()) ))
+layerRules.Add("OUTPUT_FUNCTION", (fun name input ->  if input.GetType() <> typeof<string> then
+                                                        invalidArg name "Wrong type, expected 'string'"))
 
 //                                                            if not (typeof<OutputFunType>.IsInstanceOfType(input)) then
 //                                                                invalidArg name "The activation function must be a function of type 'double -> double'" ))
@@ -290,10 +281,10 @@ type MultiLayerNetworkBuilder() =
         else
             builder.GetAspects("HIDDEN_LAYER")
             |> Seq.map (fun pStore -> let neurons : int = pStore.GetValues("NEURONS") |> Seq.exactlyOne |> unbox  
-                                      let actFunName = pStore.GetValues("ACTIVATION_FUNCTION") |> Seq.exactlyOne |> unbox                                  
-                                      let actFun : ActivationFunType = actFunctions.[actFunName]
-                                      let outFunName = pStore.GetValues("OUTPUT_FUNCTION") |> Seq.exactlyOne |> unbox            
-                                      let outFun : OutputFunType = outFunctions.[outFunName]
+                                      let actFunStr = pStore.GetValues("ACTIVATION_FUNCTION") |> Seq.exactlyOne |> unbox                                  
+                                      let actFun : ActivationFunType = buildActivationFunction actFunStr
+                                      let outFunStr = pStore.GetValues("OUTPUT_FUNCTION") |> Seq.exactlyOne |> unbox            
+                                      let outFun : OutputFunType = buildOutputFunction outFunStr
                                       (neurons, actFun, outFun)  )
             |> Seq.toList 
             |> Some
@@ -303,10 +294,10 @@ type MultiLayerNetworkBuilder() =
             None
         else
             let outStore = builder.GetAspects("OUTPUT_LAYER") |> Seq.exactlyOne                                     
-            let actFunName = outStore.GetValues("ACTIVATION_FUNCTION") |> Seq.exactlyOne |> unbox                                  
-            let actFun : ActivationFunType = actFunctions.[actFunName]
-            let outFunName = outStore.GetValues("OUTPUT_FUNCTION") |> Seq.exactlyOne |> unbox            
-            let outFun : OutputFunType = outFunctions.[outFunName]
+            let actFunStr = outStore.GetValues("ACTIVATION_FUNCTION") |> Seq.exactlyOne |> unbox                                  
+            let actFun : ActivationFunType = buildActivationFunction actFunStr
+            let outFunStr = outStore.GetValues("OUTPUT_FUNCTION") |> Seq.exactlyOne |> unbox            
+            let outFun : OutputFunType = buildOutputFunction outFunStr
             Some(actFun, outFun)
 
     let createSeed  (builder:Builder<'T>) =

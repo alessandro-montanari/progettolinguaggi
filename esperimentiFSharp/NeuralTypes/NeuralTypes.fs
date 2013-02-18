@@ -6,6 +6,18 @@ open System.Collections.Generic
 type ActivationFunType = seq<double * double> -> double   // input * peso
 type OutputFunType = double -> double
 
+// Funzioni di uscita
+let sigmoid (t : double) : double = 1.0 / (1.0 + exp(-t))
+let heavside (t :double) (theta :double) : double =    if t < theta then
+                                                                    0.0
+                                                               else
+                                                                    1.0
+let linear (t : double) : double = t                    // utile per predire valori numerici
+
+// Funzioni di attivazione
+let sumOfProducts (input : seq<double * double> ) : double = input 
+                                                                |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0 
+
 type AttributeType =
     | String
     | Numeric
@@ -44,19 +56,3 @@ type DataSet =
         Attributes : Attribute list
         Data : seq<Instance>
     }
-
-//let str = String("ciao")
-//let str2 = String("ciaso")
-//str>str2
-//
-//let nom1 = Nominal("ciao",1)
-//let nom2 = Nominal("ciao",2)
-//nom1>nom2
-//
-//type MyType =
-//    | Num of double
-//    | Num2 of double
-//
-//let n = Num(8.9)
-//let n2 = Num(8.9)
-//n+n2

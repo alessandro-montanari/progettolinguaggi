@@ -14,33 +14,23 @@ let private getUniqueId : (unit -> int) =
     (function _ ->  id := !id+1
                     !id )
 
-// Funzioni di uscita
-let sigmoid (t : double) : double = 1.0 / (1.0 + exp(-t))
-let heavside (t :double) (theta :double) : double =    if t < theta then
-                                                            0.0
-                                                        else
-                                                            1.0
-let linear (t : double) : double = t                    // utile per predire valori numerici
-
-// Funzioni di attivazione
-let sumOfProducts (input : seq<double * double> ) : double = input 
-                                                                |> Seq.fold (fun acc el -> match el with (a,b) -> acc + a*b) 0.0 
-
+//TODO Cercare di Memoizzare
 let buildActivationFunction (expression:string) (inputs:seq<double * double>) = 
     let env = new Environment()
+    let exp = Evaluator.parseExpression expression
     inputs 
     |> Seq.iteri(fun index (value, weight) ->   env.EnvSingle.Add("IN"+index.ToString(), value)
                                                 env.EnvSingle.Add("WE"+index.ToString(), weight) )
     let values, weights = inputs |> Seq.toList |> List.unzip
     env.EnvSeries.Add("IN", values)
     env.EnvSeries.Add("WE", weights)
-    let exp = Evaluator.parseExpression expression
     Evaluator.evalExpression exp env
 
+//TODO Cercare di Memoizzare
 let buildOutputFunction (expression:string) (input:double) = 
     let env = new Environment()
-    env.EnvSingle.Add("IN", input)
     let exp = Evaluator.parseExpression expression
+    env.EnvSingle.Add("IN", input)
     Evaluator.evalExpression exp env
     
         

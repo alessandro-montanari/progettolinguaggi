@@ -27,7 +27,13 @@ let rec evalValue factor (env:Environment) =
                                                                                                         | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
                                                                                                         | exp -> [evalExpression exp env]) )
 
-    | SumOfProducts(exList1, exList2) -> List.fold2 (fun acc el1 el2 -> acc + (evalExpression el1 env)*(evalExpression el2 env)) 0.0 exList1 exList2
+    | SumOfProducts(exList1, exList2) -> let sxList = exList1 |> List.collect(fun exp -> match exp with
+                                                                                            | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
+                                                                                            | exp -> [evalExpression exp env])
+                                         let dxList = exList2 |> List.collect(fun exp -> match exp with
+                                                                                            | Value(Id(name)) when env.EnvSeries.ContainsKey(name) -> env.EnvSeries.[name]   // Se mi trovo un ID in una aggregate function, lo vado a cercare in un altro env
+                                                                                            | exp -> [evalExpression exp env])
+                                         List.fold2 (fun acc el1 el2 -> acc + el1*el2) 0.0 sxList dxList
 
 and evalAggregateFunction name (paramList: double list) =
     match name with
