@@ -1,7 +1,4 @@
-﻿// Learn more about F# at http://fsharp.net
-// See the 'F# Tutorial' project for more help.
-
-open AST
+﻿open AST
 open NeuralLanguageParser
 open NeuralLanguageLex
 open System.Windows.Forms
@@ -16,6 +13,25 @@ open TableUtilities
 open Preprocessing
 open Validation
 open NetworkIterpreter
+
+open System.Threading
+open System.ComponentModel
+
+
+//===================== GESTIONE PROGRESS BAR ===================
+// - BackGround worker solo per l'interprete
+// - la progress bar riflette l'avanzamento dell'interprete (5 fasi)
+// - dopo ogni fase si controlla se c'è una Cancellazione pendente
+//  - splittare le fasi in funzioni diverse così da semplificarsi la gestione della cancellazione
+
+
+let worker = new BackgroundWorker()
+
+
+
+let progressBar = new ProgressBar(Dock=DockStyle.Bottom)
+progressBar.Value <- 50
+progressBar.Style <- ProgressBarStyle.Continuous
 
 let createEditor =
     let text = new SyntaxHighlighter.SyntaxRichTextBox(Dock=DockStyle.Fill, AcceptsTab=true)
@@ -95,6 +111,7 @@ let main argv =
         form.Controls.Add(splitContainerVer)
         form.Controls.Add(btnParse)
         form.Controls.Add(btnSave)
+        form.Controls.Add(progressBar)
         Application.Run(form)
         Application.EnableVisualStyles()
     buildInterface parser

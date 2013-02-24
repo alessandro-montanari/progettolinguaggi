@@ -120,7 +120,7 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
                                                                      elif name = "LOAD_TRAINING" then
                                                                         values |> Seq.iter(fun value -> trainingBuilderFactory.LoadBuilder(value.ToString()) |> ignore) )
 
-    // Carico il training set
+    // 1 - Carico il training set
     globalStore.AddValue("TRAINING_SET", net.TrainingSet)                      
     globalStore.AddValue("CLASS_ATTRIBUTE", net.ClassAttribute)                
     let trainingSet = buildTableFromArff net.TrainingSet
@@ -130,20 +130,20 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
     for col in trainingSet.Columns do
         attList.Add(col.ColumnName)
 
-    // Filtraggio
+    // 2 - Filtraggio
     // Prima gli attributi e poi le istanze
     let attFilters, instFilters = net.Preprocessing
     attFilters |> List.iter(fun filter -> evalFilter invokeAttributeFilter trainingSet attList nOfInstances filter)
     instFilters |> List.iter(fun filter -> evalFilter invokeInstanceFilter trainingSet attList nOfInstances filter)
 
-    // Costruzione rete
+    // 3 - Costruzione rete
     let netName, paramList, aspectList = net.NetworkDefinition
     let netBuilder = networkBuilderFactory.CreateBuilder(netName)
     paramList |> List.iter(fun par -> evalParameter netBuilder.LocalParameters attList nOfInstances par)
     aspectList |> List.iter(fun aspect -> evalAspect netBuilder attList nOfInstances aspect )
     let NN = netBuilder.Build(globalStore)
 
-    // Training
+    // 4 - Training
     let trainName, paramList, aspectList = net.Training
     let trainBuilder = trainingBuilderFactory.CreateBuilder(trainName)
     paramList |> List.iter(fun par -> evalParameter trainBuilder.LocalParameters attList nOfInstances par)
@@ -153,7 +153,7 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
     NN.TrainingFunction <- trainAlg
     NN.Train(trainingSet, net.ClassAttribute)
 
-    // Validation
+    // 5 - Validation
     let paramList, aspectList = net.Validation
     let valBuilder = new BasicValidationBuilder()
     paramList |> List.iter(fun par -> evalParameter valBuilder.LocalParameters attList nOfInstances par)
