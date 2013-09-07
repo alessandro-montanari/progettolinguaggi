@@ -58,6 +58,8 @@ classicString.[3]
 classicString.[2..7]
 let concatenateString = "First" + " " + "Second" + " " + "Third"
 
+
+
  
 // LISTE (immutabili)
 
@@ -876,3 +878,8 @@ simpDeriv e3
 
 //---- Cap 16 ---- LEXING AND PARSING
 
+type MyList = MyList of string list * string list
+let myList = MyList([], ["ciao3"; "ciao4"])
+match myList with
+| MyList(a,b) when a <> [] -> List.iter2 (fun x y -> printfn "%s - %s" x y) a b
+| MyList(a,b) when a = [] -> printfn "error"

@@ -10,6 +10,8 @@ let extractIndex (text:string) = Convert.ToInt32(text.Split([|"ATT"; "INST"|], S
 // Apro il modulo del parser per avere accesso ai token definiti li'
 open NeuralLanguageParser
 
+
+//TODO metti anche questo nel parser
 let keywords = [ 
     "PREPROCESSING", PREPROC;
     "TRAINING", TRAININGKEY;
@@ -67,7 +69,7 @@ rule tokenize = parse
 	| ".."			{ DOTS }
 	| "//"			{ comment lexbuf; tokenize lexbuf}
 	| eof			{ EOF }
-	| _				{ failwithf "unrecognized input: '%s'" (lexeme lexbuf) }
+	| _				{ failwithf "unrecognized input: '%s' at line %d column %d" (lexeme lexbuf) lexbuf.StartPos.Line lexbuf.StartPos.Column }
 
 and string pos s = parse			// Accumulo la stringa in s fino alla chiusura (") e mi porto avanti la posizione iniziale per il messaggio di errore
 	| "\""		{ s }
@@ -75,6 +77,6 @@ and string pos s = parse			// Accumulo la stringa in s fino alla chiusura (") e 
 	| _			{ string pos (s + (lexeme lexbuf)) lexbuf }
 
 and comment = parse			
-	| "\n"		{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; }
-	| _			{ comment lexbuf }
+	| "\n" 	{ lexbuf.EndPos <- lexbuf.EndPos.NextLine; }
+	| _		{ comment lexbuf }
 

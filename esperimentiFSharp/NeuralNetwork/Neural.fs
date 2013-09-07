@@ -98,7 +98,8 @@ type ValidationStatistics(dict : Dictionary<string,obj>) =
     member vs.PrintStatistcs() =
         vs.PrintStatistcs(_statDict.Keys |> Seq.toList)
 
-     member vs.PrintStatistcs(stats:string list) =
+    //TODO no printf
+    member vs.PrintStatistcs(stats:string list) =
         _statDict
         |> Seq.filter (fun el -> List.exists (fun stat -> el.Key = stat) stats)
         |> Seq.iter (fun el -> printfn "%s : %A" el.Key el.Value)

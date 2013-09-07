@@ -23,10 +23,8 @@ open System.ComponentModel
 // - la progress bar riflette l'avanzamento dell'interprete (5 fasi)
 // - dopo ogni fase si controlla se c'è una Cancellazione pendente
 //  - splittare le fasi in funzioni diverse così da semplificarsi la gestione della cancellazione
-
-
-let worker = new BackgroundWorker()
-
+       
+        
 
 
 let progressBar = new ProgressBar(Dock=DockStyle.Bottom)
@@ -65,10 +63,11 @@ let createEditor =
 let main argv = 
     let parser (code:string) =
         let lexbuf = Lexing.LexBuffer<_>.FromString code
+        // TODO lexbuf.BufferLocalStore
         try
             NeuralLanguageParser.start NeuralLanguageLex.tokenize lexbuf
         with
-        | exn -> failwithf "parse error near, line: %d - column: %d" lexbuf.EndPos.Line lexbuf.EndPos.Column
+        | exn -> failwithf "parse error near, line: %d - column: %d \nLast token: %s \nMessage: %s" lexbuf.StartPos.Line lexbuf.StartPos.Column (System.String(lexbuf.Lexeme)) exn.Message
 
     let buildInterface (parser : string -> Network) =
         let form = new Form(Visible=true)
@@ -80,20 +79,67 @@ let main argv =
         btnParse.Font <- new Font(btnParse.Font, btnParse.Font.Style ||| FontStyle.Bold)
         let btnSave = new Button(Dock=DockStyle.Bottom, Text="Save")
         btnSave.Click.Add(fun _ ->  text.SaveFile(@"C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\NeuralLanguage\Code.txt"))
+        let btnCancel = new Button(Dock=DockStyle.Bottom, Text="Cancel")
+        
+//        let worker = new BackgroundWorker()
+//        worker.WorkerSupportsCancellation <- true
+        let worker = getEvalNetworkWorker
+        worker.RunWorkerCompleted.Add(fun args ->
+                                         //TODO args.Error = null if there was no exception
+                                         if args.Cancelled then
+                                            printfn "Execution Cancelled."
+                                         elif args.Error <> null then
+                                            printfn "Execution aborted."
+                                            printfn "%s" args.Error.Message
+                                         else
+                                             let NN, table, stat = args.Result :?> (SupervisedNeuralNetwork * DataTable * ValidationStatistics option)
+                                             printfn "Execution terminated with success!!!"
+                                             match stat with
+                                             | Some(statVal) -> printfn "Statistics available:" 
+                                                                statVal.PrintStatistcs()
+                                             | _ -> ()
+                                       )
+
+//        worker.DoWork.Add(fun args ->
+//                            //    try
+//                                    let NN, table, stat = evalNetwork (args.Argument :?> Network)
+//                                    //console.AppendText("================")
+//                                    match stat with
+//                                    | Some(statVal) -> statVal.PrintStatistcs()
+//                                    | None -> ()
+//
+//                                    args.Result <- stat
+//                                    )                                   
+                            //    with e ->
+
+        btnCancel.Click.Add(fun _ -> worker.CancelAsync())
         let console = new RichTextBox(Dock=DockStyle.Fill)
         console.Font <- new Font(FontFamily.GenericMonospace, float32(10.0))
-        btnParse.Click.Add(fun _ -> try
+        btnParse.Click.Add(fun _ ->
                                         let net = parser text.Text
-                                        console.Text <- sprintf "%A" (net)
-                                        let NN, table, stat = evalNetwork net
-                                        console.AppendText("================")
-                                        stat.PrintStatistcs()
-                                        let form = new Form(Visible=true)
-                                        let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
-                                        form.Controls.Add(grid)
-                                    with e ->
-                                        console.Text <- e.Message
-                                    )
+                                        worker.RunWorkerAsync(net)                                 
+
+                           )
+//        btnParse.Click.Add(fun _ -> worker.DoWork.Add( fun args ->
+//                                                                    //try
+//                                                                        let net = parser text.Text
+//                                                                        //console.Text <- sprintf "%A" (net)
+//                                                                        let NN, table, stat = evalNetwork net
+//                                                                        //console.AppendText("================")
+//                                                                        match stat with
+//                                                                        | Some(statVal) -> statVal.PrintStatistcs()
+//                                                                        | None -> ()
+//
+//                                                                        args.Result <- stat
+//
+//                                                                        //let form = new Form(Visible=true)
+//                                                                        //let grid = new DataGridView(DataSource=table, Dock=DockStyle.Fill)
+//                                                                        //form.Controls.Add(grid)
+//                                                                    //with e ->
+//                                                                    //    console.Text <- e.Message
+//                                                                    )
+//                                    worker.RunWorkerAsync()
+//                                    )
         let splitContainerVer = new SplitContainer(Dock=DockStyle.Fill)
         let splitContainerHor = new SplitContainer(Dock=DockStyle.Fill, Orientation=Orientation.Horizontal)
         splitContainerVer.Panel2.Controls.Add(splitContainerHor)
@@ -110,6 +156,7 @@ let main argv =
         splitContainerHor.Panel2.Controls.Add(console)
         form.Controls.Add(splitContainerVer)
         form.Controls.Add(btnParse)
+        form.Controls.Add(btnCancel)
         form.Controls.Add(btnSave)
         form.Controls.Add(progressBar)
         Application.Run(form)
