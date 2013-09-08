@@ -169,7 +169,7 @@ let private loadBuilders net directiveStore attList =
 
 // TODO Try..with con messaggi di errore??
 // http://stackoverflow.com/questions/5244656/how-to-handle-errors-during-parsing-in-f
-let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * ValidationStatistics option) =
+let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * ValidationStatistics option * (SupervisedNeuralNetwork -> Control)) =
     let attList = new ResizeArray<string>()
     
     let directiveStore = new ParameterStore(initDirectiveRules ())
@@ -202,8 +202,12 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
 
     // 5 - Validation (Pesante!!!) - TODO: Opzionale
     let stat = validate net NN attList nOfInstances globalStore
+
+    let netName, _, _ = net.NetworkDefinition
+    let builder = networkbuilderFactory.CreateBuilder(netName)
+    let visualizer = builder.GetVisualizer
                        
-    (NN, trainingSet, stat)
+    (NN, trainingSet, stat, visualizer)
 
 
 
@@ -212,6 +216,7 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
 let getEvalNetworkWorker =
     let worker = new BackgroundWorker()
     worker.WorkerSupportsCancellation <- true
+    worker.WorkerReportsProgress <- true
 
     worker.DoWork.Add(fun args ->
                             let net = args.Argument :?> Network
@@ -226,6 +231,7 @@ let getEvalNetworkWorker =
                             // 1 - Carico il training set
                             loadTrainingSet globalStore net
                             
+                            worker.ReportProgress(10);
                             if worker.CancellationPending = true then
                                 args.Cancel <- true
                                 ()
@@ -240,11 +246,13 @@ let getEvalNetworkWorker =
                             // Prima gli attributi e poi le istanze
                             let attFilters, instFilters = net.Preprocessing
                             invokeFilters net attFilters invokeAttributeFilter trainingSet attList nOfInstances
+                            worker.ReportProgress(30);
                             if worker.CancellationPending = true then
                                 args.Cancel <- true
                                 ()
 
                             invokeFilters net instFilters invokeInstanceFilter trainingSet attList nOfInstances
+                            worker.ReportProgress(50);
                             if worker.CancellationPending = true then
                                 args.Cancel <- true
                                 ()
@@ -252,23 +260,30 @@ let getEvalNetworkWorker =
 
                             // 3 - Costruzione rete
                             let NN = buildNetwork net networkbuilderFactory attList nOfInstances globalStore
+                            worker.ReportProgress(60);
                             if worker.CancellationPending = true then
                                 args.Cancel <- true
                                 ()
 
                             // 4 - Training (Pesante!!!)
                             train net NN trainingSet trainingBuilderFactory attList nOfInstances globalStore
+                            worker.ReportProgress(80);
                             if worker.CancellationPending = true then
                                 args.Cancel <- true
                                 ()
 
                             // 5 - Validation (Pesante!!!) - TODO: Opzionale
                             let stat = validate net NN attList nOfInstances globalStore
+                            worker.ReportProgress(100);
                             if worker.CancellationPending = true then
                                 args.Cancel <- true
                                 ()
+
+                            let netName, _, _ = net.NetworkDefinition
+                            let builder = networkbuilderFactory.CreateBuilder(netName)
+                            let visualizer = builder.GetVisualizer
                        
-                            args.Result <- (NN, trainingSet, stat)
+                            args.Result <- (NN, trainingSet, stat, visualizer)
                             )      
 
     worker
