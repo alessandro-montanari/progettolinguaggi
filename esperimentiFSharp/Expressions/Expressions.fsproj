@@ -67,13 +67,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NeuralTypes\NeuralTypes.fsproj">
-      <Name>NeuralTypes</Name>
-      <Project>{79aa9006-bd70-4d2f-9e3d-21f6aedcc4d3}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>fsyacc "$(ProjectDir)Parser.fsy" --module Parser
 fslex "$(ProjectDir)Lexer.fsl" --unicode</PreBuildEvent>

@@ -14,7 +14,6 @@ let private getUniqueId : (unit -> int) =
     (function _ ->  id := !id+1
                     !id )
 
-//TODO Cercare di Memoizzare e/o ottimizzare
 let buildActivationFunction (expression:string) (inputs:seq<double * double>) = 
     let env = new Environment()
     let exp = Evaluator.parseExpression expression
@@ -26,7 +25,6 @@ let buildActivationFunction (expression:string) (inputs:seq<double * double>) =
     env.EnvSeries.Add("WE", weights)
     Evaluator.evalExpression exp env
 
-//TODO Cercare di Memoizzare
 let buildOutputFunction (expression:string) (input:double) = 
     let env = new Environment()
     let exp = Evaluator.parseExpression expression
@@ -95,14 +93,13 @@ type ValidationStatistics(dict : Dictionary<string,obj>) =
     member vs.StatisticValues = _statDict.Values |> Seq.readonly
     member vs.Statistics = _statDict |> Seq.readonly
 
-    member vs.PrintStatistcs() =
-        vs.PrintStatistcs(_statDict.Keys |> Seq.toList)
-
-    //TODO no printf
-    member vs.PrintStatistcs(stats:string list) =
-        _statDict
-        |> Seq.filter (fun el -> List.exists (fun stat -> el.Key = stat) stats)
-        |> Seq.iter (fun el -> printfn "%s : %A" el.Key el.Value)
+//    member vs.PrintStatistcs() =
+//        vs.PrintStatistcs(_statDict.Keys |> Seq.toList)
+//
+//    member vs.PrintStatistcs(stats:string list) =
+//        _statDict
+//        |> Seq.filter (fun el -> List.exists (fun stat -> el.Key = stat) stats)
+//        |> Seq.iter (fun el -> printfn "%s : %A" el.Key el.Value)
 
 // Interfaccia
 type private StatisticsCollector =

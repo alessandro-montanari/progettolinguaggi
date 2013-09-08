@@ -13,7 +13,6 @@ open Microsoft.FSharp.Text.Lexing
 open ExpressionsAst
 open Lexer
 open Parser
-open NeuralTypes
 open Environment
 open Evaluator
 

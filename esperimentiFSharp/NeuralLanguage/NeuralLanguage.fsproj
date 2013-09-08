@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParameterStore.fs" />
+    <Compile Include="Builder.fs" />
+    <Compile Include="Validation.fs" />
     <Compile Include="AST.fs" />
     <None Include="NeuralLanguageParser.fsy" />
     <None Include="NeuralLanguageLexer.fsl" />

@@ -1,0 +1,80 @@
+LOAD_TRAINING : "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\MultiLayerNetwork.exe",
+LOAD_NETWORK : "C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\MultiLayerNetwork\bin\Debug\MultiLayerNetwork.exe"
+
+// Mettendoli qui non perdo in generalità perché comunque il mio obbiettivo è quello di modellare reti con apprendimento supervisionato
+// Per efficienza si può anche mettere un parametro "TRAINING_TABLE" che rappresenta il training_set già caricato
+TRAINING_SET : "C:\Users\Alessandro\Dropbox\Magistrale\Linguaggi\Progetto\DataSet\iris.arff"
+CLASS_ATTRIBUTE : "class" 
+
+// Opzionale
+PREPROCESSING 
+{ 
+// Nelle espressioni specificate nei filtri si può fare riferimento agli attributi della tabella del training set o con il loro nome 
+//(RI, Na, "mio att") oppure tramite indice con il prefisso ATT<index>
+// L'interpretazione dell'attributo dipende da dove compare, se compare come argomento di una aggregate function viene interpretato come 
+// set di valori relativi a quell'attributo, altrimenti viene interpretato come valore singolo relativo ad una specifica riga
+	// Opzionale -> NO, ricontrolla!!
+	ATTRIBUTE 
+	{ 	
+		//removeByName(attributes:!["Type", "RI", "Na", ATT3, ATT4..ATT8]),
+		addExpression(expression:"ATT1+1000", attName:"NewAtt"), //// se applico removeByName prima, questo non va (con iris.arff)
+		//mathExpression(attributes:["Na", ATT0, "K"], expression:"A+1000")
+	}
+ 
+	// Opzionale -> NO, ricontrolla!!
+	INSTANCE 
+	{ 
+		//removeRange(instances:![INST1])
+	} 
+} 
+
+// Obbligatorio
+NETWORK MultiLayerNetwork
+{ 
+// Nelle funzioni di Act si fa riferimento agli ingressi e ai pesi rispettivamente con IN<index> e WE<index>. E' possibile utilizzare IN 
+// e WE per rappresentare tutti i valori di ingresso e tutti i pesi (utile per sumOfProducts)
+// Nella funzione di Out si fa riferimento all'unico ingresso con IN
+
+	SEED : 5						// Opzionale
+
+
+	ASPECT HIDDEN_LAYER				// Opzionale
+	{	 
+		NEURONS : 10,			
+		ACTIVATION_FUNCTION : "sumOfProducts(WE;IN)",
+		OUTPUT_FUNCTION : "1.0 / (1.0 + exp(-IN))"
+	} 
+
+	ASPECT HIDDEN_LAYER
+	{	 
+		NEURONS : 5,
+		ACTIVATION_FUNCTION : "sumOfProducts(WE;IN)",
+		OUTPUT_FUNCTION : "1.0 / (1.0 + exp(-IN))"
+	} 
+
+	//ASPECT HIDDEN_LAYER
+	//{	 
+	//	NEURONS : 2,
+	//	ACTIVATION_FUNCTION : "sumOfProducts(WE;IN)",
+	//	OUTPUT_FUNCTION : "1.0 / (1.0 + exp(-IN))"
+	//} 
+
+	ASPECT OUTPUT_LAYER 				
+	{	 
+		ACTIVATION_FUNCTION : "sumOfProducts(WE;IN)",
+		OUTPUT_FUNCTION : "1.0 / (1.0 + exp(-IN))"		
+	} 
+} 
+
+// Obbligatorio
+TRAINING BackPropagation 
+{ 
+	LEARNING_RATE : 0.3,
+	EPOCHS : 10
+} 
+
+// Opzionale
+VALIDATION 
+{ 
+	PERCENTAGE_SPLIT : 50.0
+}

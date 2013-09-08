@@ -3,7 +3,7 @@
 open System
 open AST
 open Neural
-open Parameter
+open ParameterStore
 open System.Collections.Generic
 open Preprocessing
 open Builder
@@ -16,7 +16,6 @@ open System.ComponentModel
 
 open System.Windows.Forms
 
-//TODO rivedere i parametri di tutte le funzioni
 
 let evalInstanceListElement nOfInstances = function
     | InstIndex idx -> if idx >= 0 && idx <= nOfInstances-1 then
@@ -31,6 +30,7 @@ let evalInstanceListElement nOfInstances = function
                                         indexList
                                   else
                                         failwithf "The instance range specified is not valid."
+
 
 let evalAttributeListElement (attList:ResizeArray<string>) = function
     | AttName name -> if attList.Contains(name) then
@@ -48,8 +48,8 @@ let evalAttributeListElement (attList:ResizeArray<string>) = function
                                  try
                                     indexList |> List.map(fun idx -> attList.[idx])
                                  with
-                                 | :? ArgumentOutOfRangeException as e -> failwith "The attribute range specified is not valid. 
-                                                                                    An attribute with index '%d' is not defined" (Convert.ToInt32(e.ActualValue))
+                                 | :? ArgumentOutOfRangeException as e -> failwith "The attribute range specified is not valid.\nAn attribute with index '%d' is not defined" (Convert.ToInt32(e.ActualValue))
+
 
 let evalParameterValue attList nOfInstances = function
     | Bool value -> value |> box        
@@ -67,9 +67,11 @@ let evalParameterValue attList nOfInstances = function
                                 else
                                     attList |> Seq.filter(fun el -> not (List.exists(fun el2 -> el = el2) resList) ) |> Seq.toList |> box
 
-let evalParameter (store:ParameterStore) attList nOfInstances = function
+
+let evalParameter attList nOfInstances = function
     | Parameter(name, value) -> let parValue = evalParameterValue attList nOfInstances value
-                                store.AddValue(name, parValue)
+                                (name, parValue)
+
 
 let evalFilter invokeFunction table attList nOfInstances = function
     | Filter(name, parameterList) ->    let rules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
@@ -78,7 +80,9 @@ let evalFilter invokeFunction table attList nOfInstances = function
                                         let store = new ParameterStore(rules)
 
                                         // Estraggo i parametri dall'AST
-                                        parameterList |> List.iter(fun par -> evalParameter store attList nOfInstances par)
+                                        parameterList 
+                                        |> List.map(fun par -> evalParameter attList nOfInstances par) 
+                                        |> List.iter (fun (name, value) -> store.AddValue(name, value))
 
                                         // Preparo il dizionario per i parametri
                                         let parameters = new Dictionary<string, obj>(HashIdentity.Structural)
@@ -90,14 +94,14 @@ let evalFilter invokeFunction table attList nOfInstances = function
                                         invokeFunction name parameters
                                         ()
 
-let evalAspect (builder:Builder<'T>) attList nOfInstances = function
-    | Aspect(name, parameterList) -> let store = builder.AddAspect(name)
-                                     parameterList |> List.iter(fun par -> evalParameter store attList nOfInstances par)
 
+let evalAspect attList nOfInstances = function
+    | Aspect(aspectName, parameterList) -> let valueList = parameterList 
+                                                             |> List.map(fun par -> evalParameter attList nOfInstances par)
+                                                             |> List.map (fun (name, value) -> (name, value))
+                                           (aspectName, valueList)
 
-
-let initDirectiveRules () =
-
+let private initDirectiveRules () =
     let directiveRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
     directiveRules.Add("LOAD_NETWORK", (fun name input -> if input.GetType() <> typeof<string> then
                                                                 invalidArg name "Wrong type, expected 'string'" ))
@@ -107,7 +111,7 @@ let initDirectiveRules () =
     directiveRules
 
 
-let initGlobalRules () =
+let private initGlobalRules () =
     let globalRules = new Dictionary<string, (string -> obj -> unit)>(HashIdentity.Structural)
     globalRules.Add("TRAINING_TABLE", (fun name input ->    if not (typeof<DataTable>.IsInstanceOfType(input)) then     
                                                                 invalidArg name "Wrong type, expected 'DataTable'" ))
@@ -132,15 +136,27 @@ let private invokeFilters net filters filterInvocationFunction trainingSet attLi
 let private buildNetwork net (networkBuilderFactory:BuilderFactory<Builder<SupervisedNeuralNetwork>, SupervisedNeuralNetwork>) attList nOfInstances globalStore =
     let netName, paramList, aspectList = net.NetworkDefinition
     let netBuilder = networkBuilderFactory.CreateBuilder(netName)
-    paramList |> List.iter(fun par -> evalParameter netBuilder.LocalParameters attList nOfInstances par)
-    aspectList |> List.iter(fun aspect -> evalAspect netBuilder attList nOfInstances aspect )
+    paramList 
+    |> List.map(fun par -> evalParameter attList nOfInstances par)
+    |> List.iter (fun (name, value) -> netBuilder.LocalParameters.AddValue(name, value))
+    aspectList 
+    |> List.map(fun aspect -> evalAspect attList nOfInstances aspect )
+    |> List.iter(fun (aspectName, valueList) -> let store = netBuilder.AddAspect(aspectName)
+                                                valueList
+                                                |> List.iter (fun (name, value) -> store.AddValue(name, value)))
     netBuilder.Build(globalStore)
 
 let private train net (neuralNetwork:SupervisedNeuralNetwork) trainingSet (trainingBuilderFactory:BuilderFactory<Builder<TrainigFunctionType>, TrainigFunctionType>) attList nOfInstances globalStore  =
     let trainName, paramList, aspectList = net.Training
     let trainBuilder = trainingBuilderFactory.CreateBuilder(trainName)
-    paramList |> List.iter(fun par -> evalParameter trainBuilder.LocalParameters attList nOfInstances par)
-    aspectList |> List.iter(fun aspect -> evalAspect trainBuilder attList nOfInstances aspect )
+    paramList 
+    |> List.map(fun par -> evalParameter attList nOfInstances par)
+    |> List.iter (fun (name, value) -> trainBuilder.LocalParameters.AddValue(name, value))
+    aspectList 
+    |> List.map(fun aspect -> evalAspect attList nOfInstances aspect )
+    |> List.iter(fun (aspectName, valueList) -> let store = trainBuilder.AddAspect(aspectName)
+                                                valueList
+                                                |> List.iter (fun (name, value) -> store.AddValue(name, value)))
     let trainAlg = trainBuilder.Build(globalStore)
 
     neuralNetwork.TrainingFunction <- trainAlg
@@ -150,15 +166,23 @@ let private validate net (neuralNetwork:SupervisedNeuralNetwork) attList nOfInst
     match net.Validation with
         | ([], []) -> None
         | (paramList,aspectList) -> let valBuilder = new BasicValidationBuilder()
-                                    paramList |> List.iter(fun par -> evalParameter valBuilder.LocalParameters attList nOfInstances par)
-                                    aspectList |> List.iter(fun aspect -> evalAspect valBuilder attList nOfInstances aspect )
+                                    paramList 
+                                    |> List.map(fun par -> evalParameter attList nOfInstances par)
+                                    |> List.iter (fun (name, value) -> valBuilder.LocalParameters.AddValue(name, value))
+                                    aspectList 
+                                    |> List.map(fun aspect -> evalAspect attList nOfInstances aspect )
+                                    |> List.iter(fun (aspectName, valueList) -> let store = valBuilder.AddAspect(aspectName)
+                                                                                valueList
+                                                                                |> List.iter (fun (name, value) -> store.AddValue(name, value)))
                                     let testTable = valBuilder.Build(globalStore)
                                     Some(neuralNetwork.Validate(testTable))
 
-let private loadBuilders net directiveStore attList =
+let private loadBuilders net (directiveStore:ParameterStore) attList =
     let networkBuilderFactory = new BuilderFactory<Builder<SupervisedNeuralNetwork>, SupervisedNeuralNetwork>()
     let trainingBuilderFactory = new BuilderFactory<Builder<TrainigFunctionType>, TrainigFunctionType>()
-    net.Directives |> List.iter(fun par -> evalParameter directiveStore attList 0 par ) 
+    net.Directives 
+    |> List.map(fun par -> evalParameter attList 0 par ) 
+    |> List.iter (fun (name, value) -> directiveStore.AddValue(name, value))
     directiveStore.ParameterValues |> Seq.iter(fun (name, values) -> if name = "LOAD_NETWORK" then
                                                                         values |> Seq.iter(fun value -> networkBuilderFactory.LoadBuilder(value.ToString()) |> ignore)
                                                                      elif name = "LOAD_TRAINING" then
@@ -166,8 +190,6 @@ let private loadBuilders net directiveStore attList =
     (networkBuilderFactory, trainingBuilderFactory)
 
 
-
-// TODO Try..with con messaggi di errore??
 // http://stackoverflow.com/questions/5244656/how-to-handle-errors-during-parsing-in-f
 let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * ValidationStatistics option * (SupervisedNeuralNetwork -> Control)) =
     let attList = new ResizeArray<string>()
@@ -200,7 +222,7 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
     // 4 - Training (Pesante!!!)
     train net NN trainingSet trainingBuilderFactory attList nOfInstances globalStore
 
-    // 5 - Validation (Pesante!!!) - TODO: Opzionale
+    // 5 - Validation (Pesante!!!)
     let stat = validate net NN attList nOfInstances globalStore
 
     let netName, _, _ = net.NetworkDefinition
@@ -210,9 +232,8 @@ let evalNetwork (net:Network) : (SupervisedNeuralNetwork * DataTable * Validatio
     (NN, trainingSet, stat, visualizer)
 
 
-
-
-
+// Get a BackgroundWorker configured to evaluate the source code
+// The worker supports cancellation and reporting of progress
 let getEvalNetworkWorker =
     let worker = new BackgroundWorker()
     worker.WorkerSupportsCancellation <- true
@@ -272,7 +293,7 @@ let getEvalNetworkWorker =
                                 args.Cancel <- true
                                 ()
 
-                            // 5 - Validation (Pesante!!!) - TODO: Opzionale
+                            // 5 - Validation (Pesante!!!)
                             let stat = validate net NN attList nOfInstances globalStore
                             worker.ReportProgress(100);
                             if worker.CancellationPending = true then

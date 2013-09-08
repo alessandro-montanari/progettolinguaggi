@@ -58,6 +58,11 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NeuralLanguage\NeuralLanguage.fsproj">
+      <Name>NeuralLanguage</Name>
+      <Project>{1f3330ec-f7e5-41e9-ab3d-c3824a268560}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.fsproj">
       <Name>NeuralNetwork</Name>
       <Project>{aefb4e87-d837-441a-91d0-0529aa7f8f9b}</Project>

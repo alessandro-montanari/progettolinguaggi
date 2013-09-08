@@ -7,7 +7,7 @@ open NeuralTypes
 open Neural
 open TableUtilities
 open Builder
-open Parameter
+open ParameterStore
 
 type NeuralLayer() =   
    inherit ResizeArray<Neuron>()  
@@ -27,6 +27,9 @@ type MultiLayerNetwork(trainingFun : TrainigFunctionType) =
     member nn.OutputLayer = _outputLayer
 
     member nn.CreateNetork(trainingSet : DataTable, classAtt : string, seed:int option, hiddenLayers:(int*ActivationFunType*OutputFunType) list option, outputLayer:(ActivationFunType*OutputFunType) option) =    // Potrebbe accettare una lista di int che dicono quanti livelli nascosti ci devono essere e con quanti neuroni ciascuno
+        if trainingSet.Columns.Contains(classAtt) <> true then
+            failwithf "The attribute '%s' does not exists" classAtt
+
         nn.OutputLayer.Clear()                      // Elimino la rete precedente
         nn.HiddenLayers
         |> Seq.iter(fun el -> el.Clear())

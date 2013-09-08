@@ -1,4 +1,4 @@
-﻿module Parameter
+﻿module ParameterStore
 
 open System
 open System.Collections.Generic

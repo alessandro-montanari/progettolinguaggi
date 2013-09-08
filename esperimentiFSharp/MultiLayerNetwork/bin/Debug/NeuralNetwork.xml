@@ -38,104 +38,10 @@
 <member name="">
 
 </member>
-<member name="M:Builder.BuilderFactory`2.LoadBuilder(System.Reflection.Assembly)">
-<summary>
- Searches for &apos;T inside the specified assembly and returns the number of builders added to the factory
-</summary>
-</member>
-<member name="M:Builder.BuilderFactory`2.LoadBuilder(System.String)">
-<summary>
- Loads the assembly from the specified path and searches for &apos;T inside it and returns the number of builders added to the factory
-</summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="P:Builder.Builder`1.AspectsNames">
-<summary>
- Names of the aspects that can be setted in the builder
-</summary>
-</member>
-<member name="P:Builder.Builder`1.Aspects">
-<summary>
- Returns a sequence of ParameterStore for each aspect currently in the builder
-</summary>
-</member>
-<member name="M:Builder.Builder`1.GetVisualizer(`0)">
-<summary>
- Returns a System.Windows.Forms.Control that is able to display an object of type &apos;T. If the visualizer is not available, this method returns null
-</summary>
-</member>
-<member name="M:Builder.Builder`1.GetAspects(System.String)">
-<summary>
- Returns the sequence of ParameterStore for the specified aspect
-</summary>
-</member>
-<member name="M:Builder.Builder`1.ClearAspects">
-<summary>
- Clear all the values for all aspects
-</summary>
-</member>
-<member name="">
-
-</member>
-<member name="M:Builder.Builder`1.AddAspect(System.String,Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.String,System.Object}})">
-<summary>
- Add the specified paramters to the specified aspect. An exception is raised if the aspect cannot be set in this builder or if the parameters doesn&apos;t pass the rules
-</summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:Builder.Builder`1">
-<summary>
- Every builder is able to build an object of type &apos;T configured via global parameters or aspects (collections of parameters).
- The constructor takes the cheking rules for the global parameters and the set of rules for each parameter in each aspect
-</summary>
-</member>
-<member name="T:Builder">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="">
 
 </member>
 <member name="T:InstancePreprocessing">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
 
 </member>
 <member name="">
@@ -368,47 +274,6 @@
 <member name="">
 
 </member>
-<member name="P:Parameter.ParameterStore.ParameterValues">
-<summary>
- Returns the sequence of values for each parameter in the store
-</summary>
-</member>
-<member name="P:Parameter.ParameterStore.ParameterNames">
-<summary>
- Names of the parameters that can be setted in this store
-</summary>
-</member>
-<member name="M:Parameter.ParameterStore.GetValues(System.String)">
-<summary>
- Returns the list of values for the specified parameter
-</summary>
-</member>
-<member name="M:Parameter.ParameterStore.Clear">
-<summary>
- Clear all the values for all parameters
-</summary>
-</member>
-<member name="M:Parameter.ParameterStore.AddValue``1(System.String,``0)">
-<summary>
- Add a new value for the specified parameter. An exception is raised if it is not possible to set the specified parameter 
- or if the constraint on the value is not satisfied
-</summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:Parameter">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="">
 
 </member>
@@ -486,30 +351,6 @@
 </summary>
 </member>
 <member name="T:TableUtilities">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:Validation">
 
 </member>
 </members>

@@ -3,7 +3,7 @@
 open System
 open System.Data
 open System.Collections.Generic
-open Parameter
+open ParameterStore
 open Builder
 
 let private globalRules = new Dictionary<string, (string->obj->unit)>(HashIdentity.Structural)

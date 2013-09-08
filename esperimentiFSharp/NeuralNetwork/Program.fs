@@ -3,8 +3,8 @@
 open System
 open System.Data
 open System.Windows.Forms
-open Parameter
-open Validation
+//open ParameterStore
+//open Validation
 open Neural
 open AttributePreprocessing
 open InstancePreprocessing
@@ -16,7 +16,7 @@ open System.CodeDom.Compiler
 open Microsoft.FSharp.Compiler.CodeDom
 
 open System.Reflection
-open Builder
+//open Builder
 
 
 

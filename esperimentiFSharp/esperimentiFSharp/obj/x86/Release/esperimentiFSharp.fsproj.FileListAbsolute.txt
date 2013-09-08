@@ -1,0 +1,1 @@
+C:\Users\Alessandro\Desktop\repo-linguaggi\esperimentiFSharp\esperimentiFSharp\obj\x86\Release\esperimentiFSharp.fsprojResolveAssemblyReference.cache

@@ -58,11 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parameter.fs" />
-    <Compile Include="Builder.fs" />
     <Compile Include="TableUtilities.fs" />
     <Compile Include="Neural.fs" />
-    <Compile Include="Validation.fs" />
     <Compile Include="PreprocessingUtilities.fs" />
     <Compile Include="AttributePreprocessing.fs" />
     <Compile Include="InstancePreprocessing.fs" />

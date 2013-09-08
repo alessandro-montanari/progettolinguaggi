@@ -5,7 +5,7 @@ open System.Windows.Forms
 open System.Drawing
 open System
 open System.Collections.Generic
-open Parameter
+open ParameterStore
 open Neural
 open System.Data
 open Builder
@@ -16,16 +16,6 @@ open NetworkIterpreter
 
 open System.Threading
 open System.ComponentModel
-
-
-//===================== GESTIONE PROGRESS BAR ===================
-// - BackGround worker solo per l'interprete
-// - la progress bar riflette l'avanzamento dell'interprete (5 fasi)
-// - dopo ogni fase si controlla se c'è una Cancellazione pendente
-//  - splittare le fasi in funzioni diverse così da semplificarsi la gestione della cancellazione
-       
-        
-
 
 
 let createEditor =
@@ -132,6 +122,7 @@ let main argv =
 
     let buildInterface (parser : string -> Network) =
         let form = new Form(Visible=true)
+        form.Text <- "N# IDE - A language and a simulator for neural networks"
         form.Size <- new Size(1200,800)
         let progressBar = new ProgressBar(Dock=DockStyle.Bottom)
         let text = createEditor
@@ -246,7 +237,7 @@ let main argv =
                                                      if dialog.ShowDialog() = DialogResult.OK then
                                                         text.Clear()
                                                         text.ProcessAllLines()
-                                                        text.LoadFile(dialog.FileName, RichTextBoxStreamType.RichText)
+                                                        text.LoadFile(dialog.FileName, RichTextBoxStreamType.PlainText)
                                                         text.Tag <- dialog.FileName
                                                         text.ProcessAllLines()
                                                         btnSave.Enabled <- true
@@ -254,7 +245,7 @@ let main argv =
                                                         btnParse.Enabled <- true
 
                                                 elif args.Button = btnSave then
-                                                    text.SaveFile(text.Tag.ToString())
+                                                    text.SaveFile(text.Tag.ToString(), RichTextBoxStreamType.PlainText)
 
                                                 elif args.Button = btnSaveAs then
                                                     let dialog = new SaveFileDialog()
@@ -267,7 +258,7 @@ let main argv =
                                                     if dialog.FileName <> "" then
                                                           // Saves the file via a FileStream created by the OpenFile method.
                                                           let fs = dialog.OpenFile() :?> System.IO.FileStream;
-                                                          text.SaveFile(fs, RichTextBoxStreamType.RichText)
+                                                          text.SaveFile(fs, RichTextBoxStreamType.PlainText)
                                                           text.Tag <- dialog.FileName
                                                           fs.Close();                                               
                                 )
@@ -275,7 +266,6 @@ let main argv =
         splitContainerVer.Panel2.Controls.Add(splitContainerHor)
         splitContainerHor.Panel1.Controls.Add(text)
         splitContainerHor.Panel2.Controls.Add(console)
-
         form.Controls.Add(splitContainerVer)
         form.Controls.Add(toolBar)
         form.Controls.Add(progressBar)

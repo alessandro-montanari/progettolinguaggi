@@ -4,7 +4,7 @@
 
 open System
 open System.Collections.Generic
-open Parameter
+open ParameterStore
 open System.Reflection
 
 /// Every builder is able to build an object of type 'T configured via global parameters or aspects (collections of parameters).

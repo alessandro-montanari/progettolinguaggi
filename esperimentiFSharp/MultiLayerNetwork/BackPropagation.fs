@@ -8,7 +8,7 @@ open NeuralTypes
 open TableUtilities
 open Builder
 open MultiLayerNetwork
-open Parameter
+open ParameterStore
 
 let private der (f:double->double) (x:double) =
     (f(x-2.0) - 8.0*(f(x-1.0)) + 8.0*(f(x+1.0)) - f(x+2.0)) / 12.0
@@ -38,6 +38,9 @@ let backPropagation learningRate ephocs (nn:SupervisedNeuralNetwork) (dt:DataTab
                 nn :?> MultiLayerNetwork
              else 
                 failwithf "the back propagation algorithm cannot be applied to a network of type %A" (nn.GetType())
+
+    if dt.Columns.Contains(attName) <> true then
+        failwithf "The attribute '%s' does not exists" attName
      
     for _ in 0..ephocs do                
         let mutable globalError = 0.0
